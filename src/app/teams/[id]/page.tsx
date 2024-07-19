@@ -1,3 +1,8 @@
+import AwardSlides from './slides';
+
+import 'swiper/css';
+import 'swiper/css/pagination';
+
 export interface TeamPageParams {
     readonly id: string;
 }
@@ -15,10 +20,9 @@ export default async function Team({params}: { params: TeamPageParams }) {
 
     // TODO: Remove placeholder
     return (
-        <div>
-            <h1>{team.id}</h1>
-            <h1>{team.name}</h1>
-        </div>
+        <>
+            <AwardSlides team={team} />
+        </>
     );
 };
 
