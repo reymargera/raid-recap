@@ -3,18 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate": "graphql-codegen",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.8",
+    "chart.js": "^4.4.3",
     "next": "14.2.5",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "swiper": "^11.1.5"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.3.2",
+    "@types/graphql": "^14.5.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
