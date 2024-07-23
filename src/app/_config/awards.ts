@@ -3,7 +3,7 @@ import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 export interface Award {
     readonly name: string;
     readonly description: string;
-    readonly statSort?: (a: PlayerStats, b: PlayerStats) => number;
+    readonly statSort: (a: PlayerStats, b: PlayerStats) => number;
     readonly stat: (p: PlayerStats) => number;
 }
 
@@ -137,4 +137,4 @@ export const StaticAwards: Award[] = [
 // TODO: Awards tied to current season
 export const SeasonalAwards: Award[] = [];
 
-export const CurrentAwards = [...StaticAwards, ...StaticAwards];
+export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];

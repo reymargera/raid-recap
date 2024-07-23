@@ -89,6 +89,7 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             server: playerDetails[playerId].server,
             role: teamComposition[playerId].specs[0].role,
             spec: teamComposition[playerId].specs[0].spec,
+            playerClass: playerDetails[playerId].type,
         });
 
         const bossStat: Stats = {

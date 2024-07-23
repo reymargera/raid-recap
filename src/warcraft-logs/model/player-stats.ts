@@ -36,14 +36,16 @@ export class PlayerStats {
     private readonly _server: string;
     private readonly _spec: string;
     private readonly _role: string;
+    private readonly _playerClass: string;
     protected readonly _statBreakDown: { [key: 'Boss' | 'Trash']: Stats; };
 
-    constructor({ id, name, server, spec, role }) {
+    constructor({ id, name, server, playerClass, spec, role }) {
         this._id = id;
         this._name = name;
         this._server = server;
         this._spec = spec;
         this._role = role;
+        this._playerClass = playerClass;
         this._statBreakDown = {
             Boss: generateBlankStats(),
             Trash: generateBlankStats(),
@@ -55,6 +57,7 @@ export class PlayerStats {
             id: '',
             name: '',
             server: '',
+            playerClass: '',
             spec: '',
             role: '',
         }), JSON.parse(serializedStats));
@@ -92,6 +95,10 @@ export class PlayerStats {
 
     get server(): string {
         return this._server;
+    }
+
+    get playerClass(): string {
+        return this._playerClass;
     }
 
     get spec(): string {
