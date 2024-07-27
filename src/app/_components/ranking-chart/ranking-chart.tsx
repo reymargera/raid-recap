@@ -51,17 +51,49 @@ export default function RankingChart(props: RankingChartProps) {
 };
 
 function getChartGlobalOptions() {
+    const fontSize = 20;
+    const titleFontSize =  fontSize * 1.2;
+
     return {
         responsive: true,
         plugins: {
             classImage: {
                 padding: 8,
             },
+            tooltip: {
+                titleFont: {
+                    size: titleFontSize,
+                },
+                bodyFont: {
+                    size: fontSize,
+                }
+            }
         },
         scales: {
             y: {
+                grace: '10%',
+                grid: {
+                    color: "rgba(255, 255, 255, 0.7)",
+                },
                 ticks: {
-                    callback: largeNumberFormat
+                    callback: largeNumberFormat,
+                    color: 'white',
+                    font: {
+                        size: fontSize,
+                        style: 'strong',
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    color: 'white',
+                    autoSkip: false,
+                    minRotation: 45,
+                    maxRotation: 45,
+                    font: {
+                        size: fontSize,
+                        style: 'strong',
+                    }
                 }
             }
         }

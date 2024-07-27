@@ -11,6 +11,7 @@ import {Team} from "@/app/teams/[id]/page";
 import {CurrentAwards} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
+import Image from "next/image";
 
 export interface AwardSlidesProps {
     team: Team;
@@ -30,7 +31,6 @@ export default function AwardSlides(props: AwardSlidesProps) {
         );
     } else {
         content = awards.map(a => {
-            console.log('Creating Award Slide for', a.name);
             const playerStats: PlayerStats[] = props.team.stats.map(PlayerStats.fromJson);
 
             const style = {
@@ -39,7 +39,23 @@ export default function AwardSlides(props: AwardSlidesProps) {
 
             return (
                 <SwiperSlide key={a.name}>
-                    <RankingChart playerStats={playerStats} statSort={a.statSort} statSelection={a.stat} />
+                    <div className={"min-h-screen justify-center items-center"}>
+                        <Image src={"/backgrounds/Fyrakk.png"}
+                            layout={"fill"}
+                               objectFit={"cover"}
+                               objectPosition={"center"}
+                               className={"slide-background"}
+                        />
+                        <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
+                            <div className={"award-heading"}>
+                                <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{a.name}</h1>
+                                <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
+                            </div>
+                            <div className={"ranking-chart"}>
+                                <RankingChart playerStats={playerStats} statSort={a.statSort} statSelection={a.stat} />
+                            </div>
+                        </div>
+                    </div>
                 </SwiperSlide>
             );
         });
