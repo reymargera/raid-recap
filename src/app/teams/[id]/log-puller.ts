@@ -1,8 +1,9 @@
 import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
+import {DpsLossDebuffs, FloorFireAbilities, PolyMorphBomb, PowerInfusion, TrackedDebuffs, ZskarnBomb} from "@/app/_config/auras";
 
-const DRAGON_FLIGHT_SEASON_4_START = 0;
+const DRAGON_FLIGHT_SEASON_4_START = 1713855600000;
 
 export type ReportFilter =  (r: Report) => boolean;
 
@@ -29,6 +30,9 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent }
             reportCode,
             trashFightIds: reportsSplitByFightType[reportCode].trashFightIds,
             bossFightIds: reportsSplitByFightType[reportCode].bossFightIds,
+            buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
+            debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
+            fireFilter: `ability.id IN (${FloorFireAbilities.join(", ")})`,
         });
 
         const reportStats = extractPlayerStatsFromLog(reportData);
@@ -105,6 +109,13 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             damageAbsorbed: bossStats.damageTaken[playerId]?.reduced ?? 0,
             threat: bossStats.threat[playerId] ?? 0,
             deaths: bossStats.deaths[playerId] ?? 0,
+            powerInfusions: bossStats.powerInfusions[playerId] ?? 0,
+            mechanicsTaken: bossStats.mechanicsTaken[playerId] ?? 0,
+            fireDamageTaken: bossStats.fireDamageTaken[playerId] ?? 0,
+            friendlyFireDamageDone: bossStats.friendlyFireDone[playerId] ?? 0,
+            friendlyFireDamageTaken: bossStats.friendlyFireTakenByName[playerStat.name] ?? 0,
+            bombsDetonated: bossStats.bombsDetonated[playerId] ?? 0,
+            duckApplications: bossStats.duckApplications[playerId] ?? 0,
         };
 
         const trashStat: Stats = {
@@ -120,6 +131,13 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             damageAbsorbed: trashStats.damageTaken[playerId]?.reduced ?? 0,
             threat: trashStats.threat[playerId] ?? 0,
             deaths: trashStats.deaths[playerId] ?? 0,
+            powerInfusions: 0,
+            mechanicsTaken: 0,
+            fireDamageTaken: 0,
+            friendlyFireDamageDone: 0,
+            friendlyFireDamageTaken: 0,
+            bombsDetonated: 0,
+            duckApplications: 0
         };
 
         playerStat.addStats('Boss', bossStat);
@@ -142,7 +160,11 @@ function extractPlayerStatsFromFightReport(report: {
     dispels?: any;
     interupts?: any;
     threat?: any;
-    damageTaken?: any
+    damageTaken?: any;
+    trackedBuffs?: any;
+    trackedDebuffs?: any;
+    fireDamage?: any;
+    friendlyFire?: any;
 } | null | undefined) {
 
     const baseData = report?.baseData.data;
@@ -172,5 +194,49 @@ function extractPlayerStatsFromFightReport(report: {
         ? report.preWipeDeaths.data.entries.reduce((map, player) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
         : baseData.deathEvents.reduce((map, player) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {});
 
-    return {damage, healing, casts, dispels, interrupts, threat, damageTaken, deaths};
+    const powerInfusions = report?.trackedBuffs?.data.filter(b => b.abilityGameID === PowerInfusion)
+        .map(b => b.target.guid)
+        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const bombsDetonated = report?.trackedDebuffs?.data.filter(b => b.abilityGameID === ZskarnBomb)
+        .map(b => b.target.guid)
+        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const duckApplications = report?.trackedDebuffs?.data.filter(b => b.abilityGameID === PolyMorphBomb)
+        .map(b => b.target.guid)
+        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const mechanicsTaken = report?.trackedDebuffs?.data.filter(d => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0)
+        .map(b => b.target.guid)
+        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const fireDamageTaken = report?.fireDamage?.data.entries
+        .reduce((map, player) => (map[player.guid] = player.total, map), {});
+
+    const friendlyFireDone = report?.friendlyFire?.data.entries
+        .reduce((map, player) => (map[player.guid] = player.total, map), {});
+
+    const friendlyFireTakenByName = report?.friendlyFire?.data.entries
+        .map(ff => ff.targets)
+        .flat()
+        .reduce((map, player) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
+
+    return {
+        damage,
+        healing,
+        casts,
+        dispels,
+        interrupts,
+        threat,
+        damageTaken,
+        deaths,
+        powerInfusions,
+        mechanicsTaken,
+        fireDamageTaken,
+        bombsDetonated,
+        duckApplications,
+        friendlyFireDone,
+        friendlyFireTakenByName,
+    };
+
 }

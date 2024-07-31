@@ -24,12 +24,28 @@ export interface RankingChartProps {
     playerStats: PlayerStats[];
     statSort: (a: PlayerStats, b: PlayerStats) => number;
     statSelection: (ps: PlayerStats) => number;
+    filter?: (ps: PlayerStats) => boolean;
 }
 export default function RankingChart(props: RankingChartProps) {
-    const {playerStats, statSort, statSelection} = props;
+    const {playerStats, statSort, statSelection, filter} = props;
 
     const options = getChartGlobalOptions();
-    const sortedStats = playerStats.sort(statSort);
+
+    const filteredStats = filter
+        ? playerStats.map(ps => {
+            return filter(ps) ? ps : new PlayerStats({
+                id: ps.id,
+                name: ps.name,
+                server: ps.server,
+                playerClass: ps.playerClass,
+                spec: ps.spec,
+                role: ps.role,
+            });
+
+        })
+        : playerStats;
+
+    const sortedStats = filteredStats.sort(statSort);
     const labels = sortedStats.map(ps => ps.name);
     const playerClasses = sortedStats.map(ps => ps.playerClass);
     const barColors = playerClasses.map(pc => ClassColors[pc]);

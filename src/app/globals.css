@@ -6,6 +6,12 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  /* Swiper Variables*/
+  --swiper-pagination-bullet-width: 15px;
+  --swiper-pagination-bullet-height: 15px;
+  --swiper-pagination-bullet-vertical-gap: 8px;
+  --swiper-pagination-color: rgb(128, 128, 128);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -41,4 +47,8 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.swiper-pagination-bullet {
+  outline: 2px solid white;
 }
