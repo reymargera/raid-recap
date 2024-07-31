@@ -12,21 +12,39 @@ import {Award, CurrentAwards} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
 import Image from "next/image";
+import {useState} from "react";
 
 export interface AwardSlidesProps {
     team: Team;
 }
 
+function generateViewToggle(value, updateValue) {
+    return (
+        <div className={"fixed top-4 right-4 z-50"}>
+            <label className="inline-flex items-center cursor-pointer">
+                {/*<span className="ms-3 me-3 text-sm font-medium text-gray-900 dark:text-gray-300">Show Overall</span>*/}
+                <input type="checkbox" value={value} className="sr-only peer" onClick={() => updateValue(value => !value)}/>
+                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gray-500"></div>
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Avg. Per Night</span>
+            </label>
+        </div>
+);
+}
+
 export default function AwardSlides(props: AwardSlidesProps) {
+    const [useOverall, setOverall] = useState(true);
+
     const {team} = props;
     const awards = CurrentAwards;
 
     const titleSlide = generateTitleSlide(team);
-    const awardSlides = generateAwardSlides(team, awards);
+    const awardSlides = generateAwardSlides(team, awards, useOverall);
     const disclaimerSlide = generateDisclaimerSlide();
+    const viewToggle = generateViewToggle(useOverall, setOverall);
 
     return (
         <>
+            {viewToggle}
             <Swiper
                 direction={'vertical'}
                 slidesPerView={1}
@@ -69,7 +87,7 @@ function generateTextSlide(heading: string, subtext: string) {
     );
 }
 
-function generateAwardSlides(team: Team, awards: Award[]) {
+function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) {
     let content;
 
     if (team.stats?.length === 0 || awards.length === 0) {
@@ -97,8 +115,17 @@ function generateAwardSlides(team: Team, awards: Award[]) {
                                 <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
                             </div>
                             <div className={"ranking-chart"}>
-                                <RankingChart playerStats={playerStats} statSort={a.statSort} statSelection={a.stat} filter={a.playerFilter}/>
+                                <RankingChart
+                                    playerStats={playerStats}
+                                    statSelection={a.stat}
+                                    filter={a.playerFilter}
+                                    useOverall={a.supportsAveraging ? userOverall : true}/>
                             </div>
+                            {!a.supportsAveraging && !userOverall && (
+                                <div>
+                                    <p className={"text-sm font-normal text-white"}>*Stat does not support per raid night averaging</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </SwiperSlide>

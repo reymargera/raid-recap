@@ -23,11 +23,11 @@ ChartJS.register(
 export interface RankingChartProps {
     playerStats: PlayerStats[];
     statSort: (a: PlayerStats, b: PlayerStats) => number;
-    statSelection: (ps: PlayerStats) => number;
     filter?: (ps: PlayerStats) => boolean;
+    useOverall?: boolean;
 }
 export default function RankingChart(props: RankingChartProps) {
-    const {playerStats, statSort, statSelection, filter} = props;
+    const {playerStats, statSelection, filter, useOverall} = props;
 
     const options = getChartGlobalOptions();
 
@@ -45,7 +45,13 @@ export default function RankingChart(props: RankingChartProps) {
         })
         : playerStats;
 
-    const sortedStats = filteredStats.sort(statSort);
+    const sortedStats = filteredStats.sort((a, b) => {
+        let divisorA = useOverall ? 1 : a.appearances('Boss');
+        let divisorB = useOverall ? 1 : b.appearances('Boss');
+
+        return (statSelection(b) / divisorB) - (statSelection(a) / divisorA);
+    });
+
     const labels = sortedStats.map(ps => ps.name);
     const playerClasses = sortedStats.map(ps => ps.playerClass);
     const barColors = playerClasses.map(pc => ClassColors[pc]);
@@ -53,7 +59,9 @@ export default function RankingChart(props: RankingChartProps) {
     const data = {
         labels,
         datasets: [{
-            data: sortedStats.map(statSelection),
+            data: sortedStats.map(p => {
+                return statSelection(p) / (useOverall ? 1 : p.appearances('Boss'));
+            }),
             backgroundColor: barColors,
             playerClass: playerClasses,
         }],
@@ -96,7 +104,6 @@ function getChartGlobalOptions() {
                     color: 'white',
                     font: {
                         size: fontSize,
-                        style: 'strong',
                     }
                 }
             },
@@ -108,7 +115,6 @@ function getChartGlobalOptions() {
                     maxRotation: 45,
                     font: {
                         size: fontSize,
-                        style: 'strong',
                     }
                 }
             }
