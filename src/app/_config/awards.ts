@@ -233,6 +233,7 @@ export const mostTikToksWatch: Award = {
     name: 'Zoomer',
     description: 'Total Number Of TikTok\'s Watched During Raid Time',
     stat: (p) => p.damageDone('Boss'),
+    playerFilter: (p) => p.id == 239606790,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }
@@ -240,8 +241,9 @@ export const mostTikToksWatch: Award = {
 // Shadow Hunters Gold
 export const mostExtraMinutes: Award = {
     name: 'One Sec',
-    description: 'Total Extra Minutes Given Even After Marking Themselves As Ready',
+    description: 'Total Extra Minutes Someone Needed, Despite Marking Themselves As Ready',
     stat: (p) => p.damageDone('Boss'),
+    playerFilter: (p) => p.id == 250133977,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }
@@ -251,6 +253,13 @@ export const mostReadyChecks: Award = {
     name: 'Gas Pedal',
     description: 'Total Number Of Ready Checks Spammed During Fight Explanations',
     stat: (p) => p.damageDone('Boss'),
+    playerFilter: (p) => p.id == 163879647 || p.id == 247519581,
     supportsAveraging: false,
     background: 'Raszageth.png',
+}
+
+export const TeamBits = {
+    'shadow-hunters-gold-team': [mostExtraMinutes],
+    'shadow-hunters-green-team': [mostReadyChecks],
+    'mostly-mediocre-raid-team-1': [mostTikToksWatch],
 }

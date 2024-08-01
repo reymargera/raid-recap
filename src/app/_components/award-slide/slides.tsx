@@ -8,7 +8,7 @@ import 'swiper/css/pagination';
 import './slides.css';
 
 import {Team} from "@/app/teams/[id]/page";
-import {Award, CurrentAwards} from "@/app/_config/awards";
+import {Award, CurrentAwards, TeamBits} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
 import Image from "next/image";
@@ -35,7 +35,8 @@ export default function AwardSlides(props: AwardSlidesProps) {
     const [useOverall, setOverall] = useState(true);
 
     const {team} = props;
-    const awards = CurrentAwards;
+    const teamBits = TeamBits[team.id] ?? [];
+    const awards = [...CurrentAwards, ...teamBits];
 
     const titleSlide = generateTitleSlide(team);
     const awardSlides = generateAwardSlides(team, awards, useOverall);

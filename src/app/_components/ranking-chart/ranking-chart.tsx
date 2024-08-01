@@ -22,7 +22,6 @@ ChartJS.register(
 
 export interface RankingChartProps {
     playerStats: PlayerStats[];
-    statSort: (a: PlayerStats, b: PlayerStats) => number;
     filter?: (ps: PlayerStats) => boolean;
     useOverall?: boolean;
 }
@@ -126,7 +125,7 @@ function getChartGlobalOptions() {
  * Formats Y-axis labels to trim down larger numbers.
  * If large number criteria is met, every other tick will be skipped.
  */
-function largeNumberFormat(value, index, ticks) {
+function largeNumberFormat(value, index) {
     if (value >= 1000) {
         const units = ['k', 'M', 'B', 'T'];
         const order = Math.floor(Math.log(value) / Math.log(1000));
