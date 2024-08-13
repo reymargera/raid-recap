@@ -47,6 +47,17 @@ export function generateBlankStats(): Stats {
     };
 }
 
+export interface BasePlayer {
+    id: number;
+    name: string,
+    server: string,
+    playerClass: string,
+    spec: string,
+    role: string
+}
+
+export type FightTypes = 'Boss' |  'Trash';
+
 export class PlayerStats {
     private readonly _id: number;
     private readonly _name: string;
@@ -54,9 +65,9 @@ export class PlayerStats {
     private readonly _spec: string;
     private readonly _role: string;
     private readonly _playerClass: string;
-    protected readonly _statBreakDown: { [key: 'Boss' | 'Trash']: Stats; };
+    protected readonly _statBreakDown: { [key in FightTypes]: Stats; };
 
-    constructor({ id, name, server, playerClass, spec, role }) {
+    constructor({ id, name, server, playerClass, spec, role }: BasePlayer) {
         this._id = id;
         this._name = name;
         this._server = server;
@@ -71,7 +82,7 @@ export class PlayerStats {
 
     static fromJson(serializedStats: string): PlayerStats {
         return Object.assign(new PlayerStats({
-            id: '',
+            id: 0,
             name: '',
             server: '',
             playerClass: '',
@@ -209,7 +220,7 @@ export class PlayerStats {
         return this.getStatValue('duckApplications', type);
     }
 
-    private getStatValue(field, type?): number {
+    private getStatValue(field: keyof Stats, type?: FightTypes): number {
         return type
             ? this._statBreakDown[type][field]
             : this._statBreakDown['Boss'][field] + this._statBreakDown['Trash'][field];

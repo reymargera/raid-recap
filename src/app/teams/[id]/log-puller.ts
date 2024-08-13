@@ -7,6 +7,10 @@ const DRAGON_FLIGHT_SEASON_4_START = 1713855600000;
 
 export type ReportFilter =  (r: Report) => boolean;
 
+export interface PlayerAccumulator {
+    [key: number | string ]: any;
+}
+
 export interface FightSegmentation {
     bossFightIds: number[];
     trashFightIds: number[];
@@ -23,7 +27,7 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent }
     // Once reports are available, we need to split the fights within the report
     // into boss fights and trash fights to segregate stats by fight type
     const reportsSplitByFightType = splitReportFights(filteredReports);
-    const playerStats = new Map<number, PlayerStats>();
+    const playerStats = new Map<number | string, PlayerStats>();
 
     for (const reportCode in reportsSplitByFightType) {
         const reportData = await warcraftLogs.getReport({
@@ -55,8 +59,9 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
     const reportEntries = reports.map(r => {
-        const fights: ReportFight[] = r.fights ?? [];
-        const fightSegmentation = {bossFightIds: [], trashFightIds: []};
+        // Fights has a Maybe<ReportType>[] value which we need to make sure that items are not null
+        const fights: ReportFight[] = r?.fights?.filter(mrf => mrf != null) || [];
+        const fightSegmentation: FightSegmentation = {bossFightIds: [], trashFightIds: []};
         for (const fight of fights) {
             isBossFight(fight)
                 ? fightSegmentation.bossFightIds.push(fight.id)
@@ -74,13 +79,17 @@ function isBossFight(fight: ReportFight) {
 }
 
 function extractPlayerStatsFromLog(reportData: GetReportQuery) {
-    const playerStats = new Map<number, PlayerStats>();
+    const playerStats = new Map<number | string, PlayerStats>();
 
     const baseData = reportData.bossFights?.report?.baseData.data;
-    const playerDetails: { [key: number]: any; } = Object.values(baseData.playerDetails)
+    const playerDetails: PlayerAccumulator = (Object.values(baseData.playerDetails) as any[])
         .flat()
-        .reduce((map, player) => (map[player.guid] = player, map), {});
-    const teamComposition = baseData.composition.reduce((map, player) => (map[player.guid] = player, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
+    const playerDetailsOnTrash: PlayerAccumulator = (Object.values(reportData.trashFights?.report?.baseData.data.playerDetails) as any)
+        .flat()
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
+
+    const teamComposition = baseData.composition.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
 
     const bossStats = extractPlayerStatsFromFightReport(reportData.bossFights?.report);
     const trashStats = extractPlayerStatsFromFightReport(reportData.trashFights?.report);
@@ -88,7 +97,7 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
     // Tracked players is based off of boss fights
     for (const playerId of Object.keys(playerDetails)) {
         const playerStat = new PlayerStats({
-            id: playerId,
+            id: Number(playerId),
             name: playerDetails[playerId].name,
             server: playerDetails[playerId].server,
             role: teamComposition[playerId].specs[0].role,
@@ -122,8 +131,8 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             damageDone: trashStats.damage[playerId] ?? 0,
             healingDone: trashStats.healing[playerId] ?? 0,
             appearances: 1,
-            potionsUsed: trashStats[playerId]?.potionUse ?? 0,
-            healthStonesUsed: trashStats[playerId]?.healthstoneUse ?? 0,
+            potionsUsed: playerDetailsOnTrash[playerId]?.potionUse ?? 0,
+            healthStonesUsed: playerDetailsOnTrash[playerId]?.healthstoneUse ?? 0,
             dispels: trashStats.dispels[playerId] ?? 0,
             casts: trashStats.casts[playerId] ?? 0,
             interrupts: trashStats.interrupts[playerId] ?? 0,
@@ -168,58 +177,62 @@ function extractPlayerStatsFromFightReport(report: {
 } | null | undefined) {
 
     const baseData = report?.baseData.data;
-    const damage = baseData.damageDone.reduce((map, player) => (map[player.guid] = player.total, map), {});
-    const healing = baseData.healingDone.reduce((map, player) => (map[player.guid] = player.total, map), {});
-    const casts = report?.casts.data.entries.reduce((map, player) => (map[player.guid] = player.total, map), {});
+    const damage = baseData.damageDone.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
+    const healing = baseData.healingDone.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
+    const casts = report?.casts.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
     const dispels = report?.dispels.data.entries
-        .map(e => e.entries)
+        .map((e: any) => e.entries)
         .flat()
-        .map(e => e.details)
+        .map((e: any) => e.details)
         .flat()
-        .reduce((map, player) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
     const interrupts = report?.interupts.data.entries
-        .map(e => e.entries)
+        .map((e: any)=> e.entries)
         .flat()
-        .map(e => e.details)
+        .map((e: any) => e.details)
         .flat()
-        .reduce((map, player) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
-    const threat = report?.threat.data.threat.reduce((map, player) => (map[player.guid] = player.totalUptime, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
+    const threat = report?.threat.data.threat.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.totalUptime, map), {});
     const damageTaken = report?.damageTaken.data.entries
-        .reduce((map, player) => (map[player.guid] = {
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = {
             taken: player.total,
             reduced: player.totalReduced,
         }, map), {});
 
     const deaths = report?.preWipeDeaths
-        ? report.preWipeDeaths.data.entries.reduce((map, player) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
-        : baseData.deathEvents.reduce((map, player) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {});
+        ? report.preWipeDeaths.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
+        : baseData.deathEvents.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {});
 
-    const powerInfusions = report?.trackedBuffs?.data.filter(b => b.abilityGameID === PowerInfusion)
-        .map(b => b.target.guid)
-        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const powerInfusions = report?.trackedBuffs?.data
+        .filter((b: any)=> b.abilityGameID === PowerInfusion)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any)=> (map[player] ? ++map[player] : map[player] = 1, map), {});
 
-    const bombsDetonated = report?.trackedDebuffs?.data.filter(b => b.abilityGameID === ZskarnBomb)
-        .map(b => b.target.guid)
-        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const bombsDetonated = report?.trackedDebuffs?.data
+        .filter((b: any) => b.abilityGameID === ZskarnBomb)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 
-    const duckApplications = report?.trackedDebuffs?.data.filter(b => b.abilityGameID === PolyMorphBomb)
-        .map(b => b.target.guid)
-        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const duckApplications = report?.trackedDebuffs?.data
+        .filter((b: any) => b.abilityGameID === PolyMorphBomb)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 
-    const mechanicsTaken = report?.trackedDebuffs?.data.filter(d => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0)
-        .map(b => b.target.guid)
-        .reduce((map, player) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const mechanicsTaken = report?.trackedDebuffs?.data
+        .filter((d: any) => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 
     const fireDamageTaken = report?.fireDamage?.data.entries
-        .reduce((map, player) => (map[player.guid] = player.total, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
 
     const friendlyFireDone = report?.friendlyFire?.data.entries
-        .reduce((map, player) => (map[player.guid] = player.total, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
 
     const friendlyFireTakenByName = report?.friendlyFire?.data.entries
-        .map(ff => ff.targets)
+        .map((ff: any) => ff.targets)
         .flat()
-        .reduce((map, player) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
 
     return {
         damage,

@@ -258,8 +258,8 @@ export const mostReadyChecks: Award = {
     background: 'Raszageth.png',
 }
 
-export const TeamBits = {
+export const TeamBits: { [key: string]: Award[]; } = {
     'shadow-hunters-gold-team': [mostExtraMinutes],
     'shadow-hunters-green-team': [mostReadyChecks],
     'mostly-mediocre-raid-team-1': [mostTikToksWatch],
-}
+};

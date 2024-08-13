@@ -3,7 +3,6 @@ import AwardSlides from '../../_components/award-slide/slides';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import {fetchTeamStats} from "@/app/teams/[id]/log-puller";
-import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import {RaidTeams, TeamConfig} from "@/app/_config/teams";
 
 export interface TeamPageParams {
@@ -34,7 +33,7 @@ export async function generateStaticParams(): Promise<TeamPageParams[]> {
     return Object.keys(RaidTeams).map(k => ({id: k}));
 }
 
-export async function getTeam(teamConfig: TeamConfig): Promise<Team> {
+async function getTeam(teamConfig: TeamConfig): Promise<Team> {
     const teamStats = await fetchTeamStats({
         guildId: teamConfig.guildId,
         reportFilter: teamConfig.reportFilter,

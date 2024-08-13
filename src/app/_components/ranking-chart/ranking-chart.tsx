@@ -23,6 +23,7 @@ ChartJS.register(
 export interface RankingChartProps {
     playerStats: PlayerStats[];
     filter?: (ps: PlayerStats) => boolean;
+    statSelection: (ps: PlayerStats) => number;
     useOverall?: boolean;
 }
 export default function RankingChart(props: RankingChartProps) {
@@ -125,15 +126,17 @@ function getChartGlobalOptions() {
  * Formats Y-axis labels to trim down larger numbers.
  * If large number criteria is met, every other tick will be skipped.
  */
-function largeNumberFormat(value, index) {
-    if (value >= 1000) {
+function largeNumberFormat(value: number | string, index: number) {
+    const tickValue = Number(value);
+
+    if (tickValue >= 1000) {
         const units = ['k', 'M', 'B', 'T'];
-        const order = Math.floor(Math.log(value) / Math.log(1000));
+        const order = Math.floor(Math.log(tickValue / Math.log(1000)));
         const unitName = units[(order - 1)];
-        const num = value / 1000 ** order;
+        const num = tickValue / 1000 ** order;
 
         return index % 2 === 1 ? '' : `${num}  ${unitName}`;
     }
 
-    return value.toLocaleString();
+    return tickValue.toLocaleString();
 }

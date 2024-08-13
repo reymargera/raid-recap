@@ -1,4 +1,4 @@
-export const ClassColors = {
+export const ClassColors: { [key: string]: string; } = {
     'DeathKnight': '#C41E3A',
     'DemonHunter': '#A330C9',
     'Druid': '#FF7C0A',

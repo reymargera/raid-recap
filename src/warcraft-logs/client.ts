@@ -34,7 +34,7 @@ export class WarcraftLogsClient {
            }
         });
 
-        const reports: Report[] = result.data.reportData?.reports?.data ?? [];
+        const reports: Report[] = (result.data.reportData?.reports?.data ?? []) as Report[];
 
         console.log(`Found a total of ${reports.length} reports for guild ${guildId}`);
 
