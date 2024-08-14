@@ -10,6 +10,7 @@ import {
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import {ClassImage} from "@/app/_components/ranking-chart/class-image-plugin";
 import {ClassColors} from "@/app/_components/ranking-chart/class-colors";
+import {number} from "prop-types";
 
 ChartJS.register(
     CategoryScale,
@@ -130,8 +131,8 @@ function largeNumberFormat(value: number | string, index: number) {
     const tickValue = Number(value);
 
     if (tickValue >= 1000) {
-        const units = ['k', 'M', 'B', 'T'];
-        const order = Math.floor(Math.log(tickValue / Math.log(1000)));
+        const units = ['k', 'M', 'B', 'T', 'Q'];
+        const order = Math.floor(Math.log(tickValue) / Math.log(1000));
         const unitName = units[(order - 1)];
         const num = tickValue / 1000 ** order;
 
