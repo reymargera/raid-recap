@@ -16,7 +16,7 @@ export interface FightSegmentation {
     trashFightIds: number[];
 }
 
-export async function fetchTeamStats({guildId, reportFilter, attendancePercent }: { guildId: number, reportFilter?: ReportFilter, attendancePercent?: number}) {
+export async function fetchTeamStats({guildId, reportFilter, attendancePercent, alts }: { guildId: number, reportFilter?: ReportFilter, attendancePercent?: number, alts?: { [key: string]: string[] } }) {
     const warcraftLogs = new WarcraftLogsClient();
 
     // Pulling all logs for the given guild from the current season, optionally filter reports
@@ -51,10 +51,11 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent }
     }
 
     const allStats = Array.from(playerStats.values());
+    const altMergedStats = mergeAlts(allStats, alts);
 
     return attendancePercent
-        ? allStats.filter(p => p.appearances() / filteredReports.length >= attendancePercent)
-        : allStats;
+        ? altMergedStats.filter(p => p.appearances() / filteredReports.length >= attendancePercent)
+        : altMergedStats;
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
@@ -252,4 +253,28 @@ function extractPlayerStatsFromFightReport(report: {
         friendlyFireTakenByName,
     };
 
+}
+
+function mergeAlts(playerStats: PlayerStats[], alts?: { [key: string]: string[]; }) {
+
+    if (!alts) {
+        return playerStats;
+    }
+
+    Object.entries(alts).forEach(([mainName, altNames]) => {
+        const mainStat = playerStats.find(ps => ps.name === mainName);
+
+        if (mainStat) {
+            altNames.forEach(altName => {
+                const altStat = playerStats.find(ps => ps.name === altName);
+                if (altStat) {
+                    mainStat.merge(altStat);
+                }
+            });
+        }
+    });
+
+    const allAlts = Object.values(alts).flat();
+
+    return playerStats.filter(ps => !allAlts.includes(ps.name));
 }

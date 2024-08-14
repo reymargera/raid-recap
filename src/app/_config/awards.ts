@@ -50,7 +50,7 @@ const mostDamageOverall: Award = {
 };
 
 const mostHealingOnBoss: Award = {
-    name: 'Arise, My Champion - Boss Encounters',
+    name: 'Stand In My... - Boss Encounters',
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
@@ -58,7 +58,7 @@ const mostHealingOnBoss: Award = {
 };
 
 const mostHealingOverall: Award = {
-    name: 'Arise, My Champion - Overall',
+    name: 'Stand In My... - Overall',
     description: 'Most Healing Done Throughout All Encounters',
     stat: (p) => p.healingDone(),
     supportsAveraging: true,

@@ -38,6 +38,8 @@ async function getTeam(teamConfig: TeamConfig): Promise<Team> {
         guildId: teamConfig.guildId,
         reportFilter: teamConfig.reportFilter,
         attendancePercent: teamConfig.attendancePercent,
+        // Requires more work to not muddy up stats
+        // alts: teamConfig.alts,
     });
 
     return {

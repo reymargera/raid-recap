@@ -64,23 +64,29 @@ export default function AwardSlides(props: AwardSlidesProps) {
 };
 
 function generateTitleSlide(team: Team) {
-    return generateTextSlide(team.name, "Dragonflight Season 4 Award Ceremony");
+    return generateTextSlide(team.name, ["Dragonflight Season 4 Award Ceremony"]);
 }
 
 function generateDisclaimerSlide() {
-    return generateTextSlide('Disclaimer', "All of the following stats have been taken directly from Warcraft Logs " +
-        "and meant to be taken in as a light-hearted and humorous recap of the season. The stats shown should not be interpreted as a " +
-        "measurement of player skill or overall contribution to the raid team. Players not meeting an attendance threshold are excluded " +
-        "and alts are not currently being tracked which can skew some of the data.");
+    return generateTextSlide('Disclaimer', [
+        "All of the following stats have been taken directly from Warcraft Logs " +
+            "and meant to be taken in as a light-hearted and humorous recap of the season. The stats shown should not be interpreted as a " +
+            "measurement of player skill or overall contribution to the raid team. Players not meeting an attendance threshold are excluded " +
+            "and alts are not currently being tracked which can skew some of the data.",
+        "PS: I also rushed making this so parsing logic may not be the best :)"
+    ]);
 }
 
-function generateTextSlide(heading: string, subtext: string) {
+function generateTextSlide(heading: string, subtext: string[]) {
     return (
         <SwiperSlide>
             <div className={"min-h-screen justify-center items-center"}>
                 <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
                     <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{heading}</h1>
-                    <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{subtext}</p>
+                    {subtext.map((text, index) => (
+                        <p key={index} className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{text}</p>
+                    ))}
+                    {/*<p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{subtext}</p>*/}
                 </div>
             </div>
         </SwiperSlide>
@@ -105,12 +111,10 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                     <div className={"min-h-screen justify-center items-center"}>
                         <Image src={`/backgrounds/${a.background ?? 'Fyrakk.png'}`}
                                alt={a.background ?? 'Fyrakk'}
-                               layout={"fill"}
-                               objectFit={"cover"}
-                               objectPosition={"center"}
-                               className={"slide-background"}
+                               className={"slide-background object-cover object-center"}
+                               fill={true}
                         />
-                        <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
+                        <div className={"flex flex-col p-12 min-h-screen justify-center content-center"}>
                             <div className={"award-heading"}>
                                 <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{a.name}</h1>
                                 <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
