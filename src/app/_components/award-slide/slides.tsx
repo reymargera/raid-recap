@@ -120,7 +120,7 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                                 <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{a.name}</h1>
                                 <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
                             </div>
-                            <div className={"ranking-chart max-h-[75%] min-w-full"}>
+                            <div className={"ranking-chart"}>
                                 <RankingChart
                                     playerStats={playerStats}
                                     statSelection={a.stat}

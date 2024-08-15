@@ -70,7 +70,7 @@ export default function RankingChart(props: RankingChartProps) {
 
     return (
       <>
-        <Bar data={data} options={options} className={"min-w-full"} />
+        <Bar data={data} options={options} className={""} />
       </>
     );
 };
