@@ -29,7 +29,7 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
     const reportsSplitByFightType = splitReportFights(filteredReports);
     const playerStats = new Map<number | string, PlayerStats>();
 
-    for (const reportCode in reportsSplitByFightType) {
+    for (const reportCode of Object.keys(reportsSplitByFightType)) {
         const reportData = await warcraftLogs.getReport({
             reportCode,
             trashFightIds: reportsSplitByFightType[reportCode].trashFightIds,

@@ -44,20 +44,25 @@ export class WarcraftLogsClient {
     public async getReport({reportCode, trashFightIds, bossFightIds, debuffFilter, buffFilter, fireFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
-        const result = await this.client.query({
-            query: GetReportDocument,
-            variables: {
-                reportCode,
-                trashFightIds,
-                bossFightIds,
-                debuffFilter,
-                buffFilter,
-                fireFilter,
-            }
-        });
+        try {
+            const result = await this.client.query({
+                query: GetReportDocument,
+                variables: {
+                    reportCode,
+                    trashFightIds,
+                    bossFightIds,
+                    debuffFilter,
+                    buffFilter,
+                    fireFilter,
+                }
+            });
 
-        console.log(`Successfully pulle data for report ${reportCode}`);
+            console.log(`Successfully pulled data for report ${reportCode}`);
 
-        return result.data;
+            return result.data;
+        } catch (error) {
+            console.error(`Failed to fetch report ${reportCode}`, error);
+            throw error;
+        }
     }
 }
