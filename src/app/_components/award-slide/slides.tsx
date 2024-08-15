@@ -115,12 +115,12 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                                className={"slide-background object-cover object-center"}
                                fill={true}
                         />
-                        <div className={"flex flex-col p-12 min-h-screen justify-center content-center"}>
+                        <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
                             <div className={"award-heading"}>
                                 <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{a.name}</h1>
                                 <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
                             </div>
-                            <div className={"ranking-chart"}>
+                            <div className={"ranking-chart max-h-[75%] min-w-full"}>
                                 <RankingChart
                                     playerStats={playerStats}
                                     statSelection={a.stat}
