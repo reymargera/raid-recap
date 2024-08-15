@@ -2,7 +2,7 @@ import gql from '@apollo/client/core';
 
 // @ts-ignore
 export const GetReport = gql`
-    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $fireFilter: String) {
+    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $fireFilter: String, $buffStart: Float, $debuffStart: Float) {
         bossFights: reportData {
             report(code: $reportCode) {
                 code
@@ -16,10 +16,12 @@ export const GetReport = gql`
                 interupts: table(fightIDs: $bossFightIds, dataType: Interrupts)
                 threat: table(fightIDs: $bossFightIds, dataType: Threat)
                 damageTaken: table(fightIDs: $bossFightIds, dataType: DamageTaken)
-                trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false) {
+                trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
+                    nextPageTimestamp
                     data
                 }
-                trackedBuffs: events(fightIDs: $bossFightIds, dataType: Buffs, filterExpression: $buffFilter, useActorIDs: false) {
+                trackedBuffs: events(fightIDs: $bossFightIds, dataType: Buffs, filterExpression: $buffFilter, useActorIDs: false, startTime: $buffStart) {
+                    nextPageTimestamp
                     data
                 }
                 fireDamage: table(fightIDs: $bossFightIds, dataType: DamageTaken, filterExpression: $fireFilter)

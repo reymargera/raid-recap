@@ -1,4 +1,4 @@
-import {ApolloClient, InMemoryCache} from "@apollo/client";
+import {ApolloClient, ApolloQueryResult, InMemoryCache} from "@apollo/client";
 import {
     GetReportDocument,
     GetReportQuery,
@@ -23,29 +23,50 @@ export class WarcraftLogsClient {
         });
     }
 
-    public async getReportsForGuild({ guildId, seasonStartTime } : GetReportsForGuildQueryVariables): Promise<Report[]> {
+    public async getReportsForGuild({guildId, seasonStartTime}: GetReportsForGuildQueryVariables): Promise<Report[]> {
         console.log(`Executing request to fetch logs for guild ${guildId}`);
 
-        const result = await this.client.query({
-           query: GetReportsForGuildDocument,
-           variables: {
-               guildId,
-               seasonStartTime,
-           }
-        });
+        let page = 1;
+        let queryPage = true;
+        const allReports: Report[] = [];
 
-        const reports: Report[] = (result.data.reportData?.reports?.data ?? []) as Report[];
+        do {
+            const result = await this.client.query({
+                query: GetReportsForGuildDocument,
+                variables: {
+                    guildId,
+                    seasonStartTime,
+                    page,
+                }
+            });
 
-        console.log(`Found a total of ${reports.length} reports for guild ${guildId}`);
+            const reports: Report[] = (result.data.reportData?.reports?.data ?? []) as Report[];
+            allReports.push(...reports);
 
-        return reports;
+            console.log(`Found a total of ${reports.length} reports for guild ${guildId} on page ${page}`);
+
+            queryPage = result.data?.reportData?.reports?.hasMorePages || false;
+            page++;
+        } while (queryPage)
+
+
+        console.log(`Found a total of ${allReports.length} reports for guild ${guildId}`);
+
+        return allReports;
     }
 
     public async getReport({reportCode, trashFightIds, bossFightIds, debuffFilter, buffFilter, fireFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
-        try {
-            const result = await this.client.query({
+        let buffStart = null;
+        let debuffStart = null;
+
+        const allBuffData: any[] = [];
+        const allDebuffData: any[] = [];
+        let coreReport: GetReportQuery | null = null;
+
+        do {
+            const result: ApolloQueryResult<GetReportQuery> = await this.client.query({
                 query: GetReportDocument,
                 variables: {
                     reportCode,
@@ -54,15 +75,46 @@ export class WarcraftLogsClient {
                     debuffFilter,
                     buffFilter,
                     fireFilter,
+                    buffStart,
+                    debuffStart,
                 }
             });
 
-            console.log(`Successfully pulled data for report ${reportCode}`);
+            const buffData = result.data.bossFights?.report?.trackedBuffs?.data || [];
+            const debuffData = result.data.bossFights?.report?.trackedDebuffs?.data || [];
 
-            return result.data;
-        } catch (error) {
-            console.error(`Failed to fetch report ${reportCode}`, error);
-            throw error;
+            // Save report data for initial request
+            if (coreReport === null) {
+                coreReport = JSON.parse(JSON.stringify(result.data));
+            }
+
+            // On initial request save buff data, for subsequent requests only save if the request is new a.k.a token was not reset to null
+            if (allBuffData.length === 0 || buffStart) {
+                allBuffData.push(...buffData);
+            }
+
+            if (allDebuffData.length === 0 || debuffStart) {
+                allDebuffData.push(...debuffData);
+            }
+
+            // Capture next timestamp tokens to see if we need to make more requests, if any of them are set, we need to redo the request from that timestamp
+            buffStart = result.data.bossFights?.report?.trackedBuffs?.nextPageTimestamp;
+            debuffStart = result.data.bossFights?.report?.trackedDebuffs?.nextPageTimestamp;
+
+            if (buffStart || debuffStart) {
+                console.log(`Request did not return all event data (buffs: ${!buffStart}, debuffs: ${!debuffStart}), re-executing request to fetch additional data`);
+            }
+        } while (buffStart || debuffStart)
+
+        if (coreReport !== null && coreReport.bossFights?.report?.trackedBuffs) {
+            //coreReport = Object.assign({}, coreReport, { bossFights: { report: { trackedBuffs: { data: allBuffData }}}});
+            coreReport.bossFights.report.trackedBuffs.data = allBuffData;
         }
+
+        if (coreReport !== null && coreReport.bossFights?.report?.trackedDebuffs) {
+            coreReport.bossFights.report.trackedDebuffs.data = allDebuffData;
+        }
+
+        return coreReport!;
     }
 }
