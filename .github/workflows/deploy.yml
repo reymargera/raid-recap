@@ -71,6 +71,7 @@ jobs:
 
       - name: Build with Next.js
         env:
+          NEXT_PUBLIC_BASE_PATH: "/raid-recap"
           TOKEN: ${{ secrets.WARCRAFTLOGSTOKEN }}
         run: npm run build
 

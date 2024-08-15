@@ -13,6 +13,7 @@ import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
 import Image from "next/image";
 import {Dispatch, SetStateAction, useState} from "react";
+import {publicBase} from "@/app/_config/paths";
 
 export interface AwardSlidesProps {
     team: Team;
@@ -109,7 +110,7 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
             return (
                 <SwiperSlide key={a.name}>
                     <div className={"min-h-screen justify-center items-center"}>
-                        <Image src={`/backgrounds/${a.background ?? 'Fyrakk.png'}`}
+                        <Image src={`${publicBase}/backgrounds/${a.background ?? 'Fyrakk.png'}`}
                                alt={a.background ?? 'Fyrakk'}
                                className={"slide-background object-cover object-center"}
                                fill={true}
