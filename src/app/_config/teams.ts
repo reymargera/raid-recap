@@ -14,7 +14,7 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         id: 'shadow-hunters-gold-team',
         name: 'Shadow Hunters Gold Team',
         guildId: 44873,
-        reportFilter: (report: Report) => report.title.includes("Gold") && report?.owner?.id === 1476581,
+        reportFilter: (report: Report) => report.title.includes("Gold"),
         attendancePercent: 0.4,
         alts: {
             'Tadarlis': ['Tadaflinn'],

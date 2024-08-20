@@ -1,7 +1,7 @@
 import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
-import {DpsLossDebuffs, FloorFireAbilities, PolyMorphBomb, PowerInfusion, TrackedDebuffs, ZskarnBomb} from "@/app/_config/auras";
+import {DpsLossDebuffs, FloorFireAbilities, PolyMorphBomb, PolyMorphBomb2, PowerInfusion, TrackedDebuffs, ZskarnBomb} from "@/app/_config/auras";
 
 const DRAGON_FLIGHT_SEASON_4_START = 1713855600000;
 
@@ -215,7 +215,7 @@ function extractPlayerStatsFromFightReport(report: {
         .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 
     const duckApplications = report?.trackedDebuffs?.data
-        .filter((b: any) => b.abilityGameID === PolyMorphBomb)
+        .filter((b: any) => b.abilityGameID === PolyMorphBomb || b.abilityGameID === PolyMorphBomb2)
         .map((b: any) => b.target.guid)
         .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 

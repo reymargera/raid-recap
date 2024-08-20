@@ -67,6 +67,7 @@ export const DpsLossDebuffs = [
 ];
 
 export const PolyMorphBomb = 418720;
+export const PolyMorphBomb2 = 418589;
 
 export const ZskarnBomb = 404955;
 
@@ -135,4 +136,4 @@ export const FloorFireAbilities = [
     419504,
 ];
 
-export const TrackedDebuffs = [...DpsLossDebuffs, PolyMorphBomb, ZskarnBomb];
+export const TrackedDebuffs = [...DpsLossDebuffs, PolyMorphBomb, PolyMorphBomb2, ZskarnBomb];
