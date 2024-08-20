@@ -8,6 +8,7 @@ const nextConfig = {
     experimental: {
         cpus: 1
     },
+    staticPageGenerationTimeout: 60 * 15,
 };
 
 export default nextConfig;
