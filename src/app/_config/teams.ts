@@ -43,10 +43,4 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         reportFilter: (report: Report) => report.title.includes("Green"),
         attendancePercent: 0.4,
     },
-    'mostly-mediocre-team-1': {
-        id: 'mostly-mediocre-team-1',
-        name: 'Mostly Mediocre Raid Team 1',
-        guildId: 44873,
-        reportFilter: (report: Report) => report.title.includes("Gold") && report?.owner?.id === 1476581,
-    },
 };
