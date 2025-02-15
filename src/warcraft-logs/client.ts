@@ -55,7 +55,7 @@ export class WarcraftLogsClient {
         return allReports;
     }
 
-    public async getReport({reportCode, trashFightIds, bossFightIds, debuffFilter, buffFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
+    public async getReport({reportCode, bossFightIds, debuffFilter, buffFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
         let buffStart = null;
@@ -70,7 +70,6 @@ export class WarcraftLogsClient {
                 query: GetReportDocument,
                 variables: {
                     reportCode,
-                    trashFightIds,
                     bossFightIds,
                     debuffFilter,
                     buffFilter,

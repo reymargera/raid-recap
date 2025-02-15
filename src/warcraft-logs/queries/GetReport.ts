@@ -2,7 +2,7 @@ import { gql } from '@apollo/client/core';
 
 // @ts-ignore
 export const GetReport = gql`
-    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float) {
+    query getReport($reportCode: String, $bossFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float) {
         bossFights: reportData {
             report(code: $reportCode) {
                 code

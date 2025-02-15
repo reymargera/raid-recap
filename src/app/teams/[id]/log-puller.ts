@@ -2,8 +2,9 @@ import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
 import {DpsLossDebuffs, FloorFireAbilities, PolyMorphBomb, PolyMorphBomb2, PowerInfusion, TrackedDebuffs, ZskarnBomb} from "@/app/_config/auras";
+import { NerubarPalaceEncounters } from "@/app/_config/encounters";
 
-const DRAGON_FLIGHT_SEASON_4_START = 1713855600000;
+const SEASON_START_TIME = new Date("2024-09-10T22:00:00Z").getTime();
 
 export type ReportFilter =  (r: Report) => boolean;
 
@@ -20,7 +21,7 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
     const warcraftLogs = new WarcraftLogsClient();
 
     // Pulling all logs for the given guild from the current season, optionally filter reports
-    const reports = await warcraftLogs.getReportsForGuild({guildId, seasonStartTime: DRAGON_FLIGHT_SEASON_4_START});
+    const reports = await warcraftLogs.getReportsForGuild({guildId, seasonStartTime: SEASON_START_TIME});
     const filteredReports = reportFilter ? reports.filter(reportFilter) : reports;
     console.log(`Retained a total of ${filteredReports.length} logs after applying filter`);
 
@@ -30,9 +31,15 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
     const playerStats = new Map<number | string, PlayerStats>();
 
     for (const reportCode of Object.keys(reportsSplitByFightType)) {
+        const bossFights = reportsSplitByFightType[reportCode].bossFightIds;
+
+        if (bossFights == null || bossFights.length === 0) {
+            console.log(`Skipping report ${reportCode} as it has no boss fights`);
+            continue;
+        }
+
         const reportData = await warcraftLogs.getReport({
             reportCode,
-            trashFightIds: reportsSplitByFightType[reportCode].trashFightIds,
             bossFightIds: reportsSplitByFightType[reportCode].bossFightIds,
             buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
             debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
@@ -58,12 +65,16 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
+    const seasonalEncounters = NerubarPalaceEncounters.map(e => e.id);
+
     const reportEntries = reports.map(r => {
         // Fights has a Maybe<ReportType>[] value which we need to make sure that items are not null
-        const fights: ReportFight[] = r?.fights?.filter(mrf => mrf != null) || [];
+        const fights: ReportFight[] = r?.fights
+            ?.filter(mrf => mrf != null) || [];
+
         const fightSegmentation: FightSegmentation = {bossFightIds: [], trashFightIds: []};
         for (const fight of fights) {
-            isBossFight(fight)
+            isBossFight(seasonalEncounters, fight)
                 ? fightSegmentation.bossFightIds.push(fight.id)
                 : fightSegmentation.trashFightIds.push(fight.id);
         }
@@ -74,8 +85,8 @@ function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegm
     return Object.fromEntries(reportEntries);
 }
 
-function isBossFight(fight: ReportFight) {
-    return fight.difficulty === null && fight.kill === null;
+function isBossFight(seasonalEncounters: number[], fight: ReportFight) {
+    return seasonalEncounters.includes(fight.encounterID);
 }
 
 function extractPlayerStatsFromLog(reportData: GetReportQuery) {
@@ -138,7 +149,6 @@ function extractPlayerStatsFromFightReport(report: {
     casts?: any;
     dispels?: any;
     interupts?: any;
-    threat?: any;
     damageTaken?: any;
     trackedBuffs?: any;
     trackedDebuffs?: any;
@@ -162,7 +172,6 @@ function extractPlayerStatsFromFightReport(report: {
         .map((e: any) => e.details)
         .flat()
         .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
-    const threat = report?.threat.data.threat.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.totalUptime, map), {});
     const damageTaken = report?.damageTaken.data.entries
         .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = {
             taken: player.total,
@@ -178,23 +187,10 @@ function extractPlayerStatsFromFightReport(report: {
         .map((b: any) => b.target.guid)
         .reduce((map: PlayerAccumulator, player: any)=> (map[player] ? ++map[player] : map[player] = 1, map), {});
 
-    const bombsDetonated = report?.trackedDebuffs?.data
-        .filter((b: any) => b.abilityGameID === ZskarnBomb)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const duckApplications = report?.trackedDebuffs?.data
-        .filter((b: any) => b.abilityGameID === PolyMorphBomb || b.abilityGameID === PolyMorphBomb2)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
     const mechanicsTaken = report?.trackedDebuffs?.data
         .filter((d: any) => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0)
         .map((b: any) => b.target.guid)
         .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const fireDamageTaken = report?.fireDamage?.data.entries
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
 
     const friendlyFireDone = report?.friendlyFire?.data.entries
         .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
@@ -210,14 +206,10 @@ function extractPlayerStatsFromFightReport(report: {
         casts,
         dispels,
         interrupts,
-        threat,
         damageTaken,
         deaths,
         powerInfusions,
         mechanicsTaken,
-        fireDamageTaken,
-        bombsDetonated,
-        duckApplications,
         friendlyFireDone,
         friendlyFireTakenByName,
     };
