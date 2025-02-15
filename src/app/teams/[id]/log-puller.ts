@@ -36,7 +36,6 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
             bossFightIds: reportsSplitByFightType[reportCode].bossFightIds,
             buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
             debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
-            fireFilter: `ability.id IN (${FloorFireAbilities.join(", ")})`,
         });
 
         const reportStats = extractPlayerStatsFromLog(reportData);
@@ -86,14 +85,10 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
     const playerDetails: PlayerAccumulator = (Object.values(baseData.playerDetails) as any[])
         .flat()
         .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
-    const playerDetailsOnTrash: PlayerAccumulator = (Object.values(reportData.trashFights?.report?.baseData.data.playerDetails) as any)
-        .flat()
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
 
     const teamComposition = baseData.composition.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player, map), {});
 
     const bossStats = extractPlayerStatsFromFightReport(reportData.bossFights?.report);
-    const trashStats = extractPlayerStatsFromFightReport(reportData.trashFights?.report);
 
     // Tracked players is based off of boss fights
     for (const playerId of Object.keys(playerDetails)) {
@@ -117,41 +112,15 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             interrupts: bossStats.interrupts[playerId] ?? 0,
             damageTaken: bossStats.damageTaken[playerId]?.taken ?? 0,
             damageAbsorbed: bossStats.damageTaken[playerId]?.reduced ?? 0,
-            threat: bossStats.threat[playerId] ?? 0,
             deaths: bossStats.deaths[playerId] ?? 0,
             powerInfusions: bossStats.powerInfusions[playerId] ?? 0,
             mechanicsTaken: bossStats.mechanicsTaken[playerId] ?? 0,
-            fireDamageTaken: bossStats.fireDamageTaken[playerId] ?? 0,
             friendlyFireDamageDone: bossStats.friendlyFireDone[playerId] ?? 0,
             friendlyFireDamageTaken: bossStats.friendlyFireTakenByName[playerStat.name] ?? 0,
-            bombsDetonated: bossStats.bombsDetonated[playerId] ?? 0,
-            duckApplications: bossStats.duckApplications[playerId] ?? 0,
         };
 
-        const trashStat: Stats = {
-            damageDone: trashStats.damage[playerId] ?? 0,
-            healingDone: trashStats.healing[playerId] ?? 0,
-            appearances: 1,
-            potionsUsed: playerDetailsOnTrash[playerId]?.potionUse ?? 0,
-            healthStonesUsed: playerDetailsOnTrash[playerId]?.healthstoneUse ?? 0,
-            dispels: trashStats.dispels[playerId] ?? 0,
-            casts: trashStats.casts[playerId] ?? 0,
-            interrupts: trashStats.interrupts[playerId] ?? 0,
-            damageTaken: trashStats.damageTaken[playerId]?.taken ?? 0,
-            damageAbsorbed: trashStats.damageTaken[playerId]?.reduced ?? 0,
-            threat: trashStats.threat[playerId] ?? 0,
-            deaths: trashStats.deaths[playerId] ?? 0,
-            powerInfusions: 0,
-            mechanicsTaken: 0,
-            fireDamageTaken: 0,
-            friendlyFireDamageDone: 0,
-            friendlyFireDamageTaken: 0,
-            bombsDetonated: 0,
-            duckApplications: 0
-        };
 
         playerStat.addStats('Boss', bossStat);
-        playerStat.addStats('Trash', trashStat);
         playerStats.set(playerId, playerStat);
     }
 

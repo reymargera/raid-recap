@@ -18,35 +18,19 @@ const attendance: Award = {
 }
 
 const mostDeathsOnBoss: Award = {
-    name: 'Floor POV - Boss Encounters',
+    name: 'Floor POV',
     description: 'Most Deaths On Boss Fights Before Wipe Is Called',
     stat: (p) => p.deaths('Boss'),
     supportsAveraging: true,
     background: 'Raszageth.png',
 };
 
-const mostDeathsOverall: Award = {
-    name: 'Floor POV - Overall',
-    description: 'Most Deaths Overall Throughout All Encounters',
-    stat: (p) => p.deaths(),
-    supportsAveraging: true,
-    background: 'Experiments.png',
-};
-
 const mostDamageOnBoss: Award = {
-    name: 'Unga Bunga - Boss Encounters',
+    name: 'Unga Bunga',
     description: 'Most Damage Done To Bosses',
     stat: (p) => p.damageDone('Boss'),
     supportsAveraging: true,
     background: 'Fyrakk.png'
-};
-
-const mostDamageOverall: Award = {
-    name: 'Unga Bunga - Overall',
-    description: 'Most Damage Done Throughout All Encounters',
-    stat: (p) => p.damageDone(),
-    supportsAveraging: true,
-    background: 'Fyrakk2.png',
 };
 
 const mostHealingOnBoss: Award = {
@@ -55,14 +39,6 @@ const mostHealingOnBoss: Award = {
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
     background: 'Nymue.png',
-};
-
-const mostHealingOverall: Award = {
-    name: 'Stand In My... - Overall',
-    description: 'Most Healing Done Throughout All Encounters',
-    stat: (p) => p.healingDone(),
-    supportsAveraging: true,
-    background: 'Amirdrassil.jpg',
 };
 
 const mostHealthStonesUsed: Award = {
@@ -79,22 +55,6 @@ const mostPotionsUsed: Award = {
     stat: (p) => p.potionsUsed(),
     supportsAveraging: true,
     background: 'Experiments.png',
-};
-
-const mostDamageOnTrash: Award = {
-    name: 'Real Parser - Damage',
-    description: 'Most Damage Done To Trash',
-    stat: (p) => p.damageDone('Trash'),
-    supportsAveraging: true,
-    background: 'Golem.png'
-};
-
-const mostHealingOnTrash: Award = {
-    name: 'Real Parser - Healing',
-    description: 'Most Healing Done On Trash Fights',
-    stat: (p) => p.healingDone('Trash'),
-    supportsAveraging: true,
-    background: 'Amirdrassil.jpg',
 };
 
 const mostCasts: Award = {
@@ -162,22 +122,6 @@ const mostFriendlyFireDamageTaken: Award = {
     background: 'Neltharion.png',
 };
 
-const mostDamageTakenFromFire: Award = {
-    name: 'Stand In Fire, DPS Higher',
-    description: 'Most Damage Taken From Fire On The Ground',
-    stat: (p) => p.fireDamageTaken('Boss'),
-    supportsAveraging: true,
-    background: 'Neltharion2.png',
-};
-
-const mostBombDetonations: Award = {
-    name: 'Bomb Squad',
-    description: 'Most Number Of Bombs Detonated During Zskarn Encounter',
-    stat: (p) => p.bombsDetonated('Boss'),
-    supportsAveraging: false,
-    background: 'Zskarn.png',
-}
-
 const mostMechanicsGiven: Award = {
     name: 'Mechanics Magnet',
     description: 'Target Of Mechanics That Result In DPS Loss',
@@ -186,27 +130,14 @@ const mostMechanicsGiven: Award = {
     background: 'Raszageth.png',
 }
 
-const mostDuckApplications: Award = {
-    name: 'Admiral Quackers',
-    description: 'Most Number Of Times Turned Into A Duck',
-    stat: (p) => p.duckApplications('Boss'),
-    supportsAveraging: false,
-    background: 'Ducks.jpg',
-};
-
 // Awards not tied to any seasonal encounters and can be leveraged any time
 export const StaticAwards: Award[] = [
     attendance,
     mostDamageOnBoss,
-    mostDamageOverall,
     mostHealingOnBoss,
-    mostHealingOverall,
     mostDeathsOnBoss,
-    mostDeathsOverall,
     mostHealthStonesUsed,
     mostPotionsUsed,
-    mostDamageOnTrash,
-    mostHealingOnTrash,
     mostCasts,
     mostInterrupts,
     mostDispels,
@@ -214,36 +145,37 @@ export const StaticAwards: Award[] = [
     mostDamageReduced,
     mostPowerInfusions,
     mostMechanicsGiven,
-    mostDamageTakenFromFire,
 ];
 
 export const SeasonalAwards: Award[] = [
+    // Somehow can still be relevant across seasons due to things like blessing of sacrifice
     mostFriendlyFire,
     mostFriendlyFireDamageTaken,
-    mostBombDetonations,
-    mostDuckApplications,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
 
 // Team related bits, data needs to be manually passed, defaulted to damage done
 
-// Mostly Mediocre
-export const mostTikToksWatch: Award = {
-    name: 'Zoomer',
-    description: 'Total Number Of TikTok\'s Watched During Raid Time',
+// Shadow Hunters Gold
+export const mostNameChanges: Award = {
+    name: 'A Girl Has No Name',
+    description: 'Total Number Of Name Changes During The Season',
     stat: (p) => p.damageDone('Boss'),
-    playerFilter: (p) => p.id == 239606790,
+
+    // TODO: Figure out Kieshon's ID
+    playerFilter: (p) => p.id == 250133977,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }
 
-// Shadow Hunters Gold
-export const mostExtraMinutes: Award = {
-    name: 'One Sec',
-    description: 'Total Extra Minutes Someone Needed, Despite Marking Themselves As Ready',
+export const mostAggroStrips: Award = {
+    name: 'So Anyways, I Started Blasting',
+    description: 'Total Number Of Times Aggro Was Stripped Due To Lack Of Threat Meters',
     stat: (p) => p.damageDone('Boss'),
-    playerFilter: (p) => p.id == 250133977,
+
+    // TODO: Figure out Ryan's ID
+    playerFilter: (p) => p.id == 163879647,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }
@@ -258,8 +190,18 @@ export const mostReadyChecks: Award = {
     background: 'Raszageth.png',
 }
 
+export const mostIntentionalEarlyPulls: Award = {
+    name: 'Well... I Was Ready',
+    description: 'Total Number Of Intentional Early Pulls',
+    stat: (p) => p.damageDone('Boss'),
+
+    // TODO: Figure out Sio's ID
+    playerFilter: (p) => p.id == 163879647 || p.id == 247519581,
+    supportsAveraging: false,
+    background: 'Raszageth.png',
+}
+
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostExtraMinutes],
-    'shadow-hunters-green-team': [mostReadyChecks],
-    'mostly-mediocre-raid-team-1': [mostTikToksWatch],
+    'shadow-hunters-gold-team': [mostNameChanges, mostAggroStrips],
+    'shadow-hunters-green-team': [mostReadyChecks, mostIntentionalEarlyPulls],
 };

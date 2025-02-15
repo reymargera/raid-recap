@@ -1,8 +1,8 @@
-import gql from '@apollo/client/core';
+import { gql } from '@apollo/client/core';
 
 // @ts-ignore
 export const GetReport = gql`
-    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $fireFilter: String, $buffStart: Float, $debuffStart: Float) {
+    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float) {
         bossFights: reportData {
             report(code: $reportCode) {
                 code
@@ -14,7 +14,6 @@ export const GetReport = gql`
                 casts: table(fightIDs: $bossFightIds, dataType: Casts)
                 dispels: table(fightIDs: $bossFightIds, dataType: Dispels)
                 interupts: table(fightIDs: $bossFightIds, dataType: Interrupts)
-                threat: table(fightIDs: $bossFightIds, dataType: Threat)
                 damageTaken: table(fightIDs: $bossFightIds, dataType: DamageTaken)
                 trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
                     nextPageTimestamp
@@ -24,22 +23,7 @@ export const GetReport = gql`
                     nextPageTimestamp
                     data
                 }
-                fireDamage: table(fightIDs: $bossFightIds, dataType: DamageTaken, filterExpression: $fireFilter)
                 friendlyFire: table(fightIDs: $bossFightIds, dataType: DamageDone, targetClass: "Player", viewBy: Source, filterExpression: "source.id != target.id")
-            }
-        }
-        trashFights: reportData {
-            report(code: $reportCode) {
-                code
-                title
-                startTime
-                endTime
-                baseData: table(fightIDs: $trashFightIds)
-                casts: table(fightIDs: $trashFightIds, dataType: Casts)
-                dispels: table(fightIDs: $trashFightIds, dataType: Dispels)
-                interupts: table(fightIDs: $trashFightIds, dataType: Interrupts)
-                threat: table(fightIDs: $trashFightIds, dataType: Threat)
-                damageTaken: table(fightIDs: $trashFightIds, dataType: DamageTaken)
             }
         }
     }

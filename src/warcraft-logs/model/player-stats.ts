@@ -10,17 +10,12 @@ export interface Stats {
     interrupts: number;
     damageTaken: number;
     damageAbsorbed: number;
-    threat: number;
     powerInfusions: number;
     mechanicsTaken: number;
-    fireDamageTaken: number;
 
     // Season Specific
     friendlyFireDamageDone: number;
     friendlyFireDamageTaken: number;
-    bombsDetonated: number;
-    duckApplications: number;
-
 }
 
 export function generateBlankStats(): Stats {
@@ -36,14 +31,10 @@ export function generateBlankStats(): Stats {
         healthStonesUsed: 0,
         interrupts: 0,
         potionsUsed: 0,
-        threat: 0,
         powerInfusions: 0,
         mechanicsTaken: 0,
-        fireDamageTaken: 0,
         friendlyFireDamageDone: 0,
         friendlyFireDamageTaken: 0,
-        bombsDetonated: 0,
-        duckApplications: 0,
     };
 }
 
@@ -105,14 +96,10 @@ export class PlayerStats {
         currentStats.interrupts += newStats.interrupts;
         currentStats.damageTaken += newStats.damageTaken;
         currentStats.damageAbsorbed += newStats.damageAbsorbed;
-        currentStats.threat += newStats.threat;
         currentStats.powerInfusions += newStats.powerInfusions;
         currentStats.mechanicsTaken += newStats.mechanicsTaken;
-        currentStats.fireDamageTaken += newStats.fireDamageTaken;
         currentStats.friendlyFireDamageTaken += newStats.friendlyFireDamageTaken;
         currentStats.friendlyFireDamageDone += newStats.friendlyFireDamageDone;
-        currentStats.bombsDetonated += newStats.bombsDetonated;
-        currentStats.duckApplications += newStats.duckApplications;
     }
 
     public merge(playerStats: PlayerStats) {
@@ -188,20 +175,12 @@ export class PlayerStats {
         return this.getStatValue('damageAbsorbed', type);
     }
 
-    public threat(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('threat', type);
-    }
-
     public powerInfusions(type?: 'Boss' | 'Trash'): number {
         return this.getStatValue('powerInfusions', type);
     }
 
     public mechanicsTaken(type?: 'Boss' | 'Trash'): number {
         return this.getStatValue('mechanicsTaken', type);
-    }
-
-    public fireDamageTaken(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('fireDamageTaken', type);
     }
 
     public friendlyFireDamageDone(type?: 'Boss' | 'Trash'): number {
@@ -212,13 +191,6 @@ export class PlayerStats {
         return this.getStatValue('friendlyFireDamageTaken', type);
     }
 
-    public bombsDetonated(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('bombsDetonated', type);
-    }
-
-    public duckApplications(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('duckApplications', type);
-    }
 
     private getStatValue(field: keyof Stats, type?: FightTypes): number {
         return type

@@ -18,18 +18,6 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         guildId: 44873,
         reportFilter: (report: Report) => report.title.includes("Gold"),
         attendancePercent: 0.4,
-        alts: {
-            'Tadarlis': ['Tadaflinn'],
-            'Semetare': ['Arhandeo'],
-            'Holycenter': ['Centerblast'],
-            'Tiamoamore': ['Baciami'],
-            'Carcinogenz': ['Valhealla'],
-            'Gialiana': ['Auyriella'],
-            'Azzâ': ['Palyvain'],
-            'Zakkeshien': ['Volcaanis'],
-            'Flibbidan': ['Flibbit'],
-            'Edlights': ['Edyd'],
-        }
     },
     'shadow-hunters-blue-team': {
         id: 'shadow-hunters-blue-team',

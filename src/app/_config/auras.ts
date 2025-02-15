@@ -1,74 +1,36 @@
 export const DpsLossDebuffs = [
-    // Greater Flame Rift
-    396094,
+    // Ulgrax - Carnivorous Contest - Pull
+    457668,
 
-    // FlameRift
-    390715,
+    // Sikran - Phase Blades - Dashes
+    433517,
 
-    // Conductive Mark
-    371624,
+    //Rashanan - Spinnerets Strands - Webs
+    439783,
 
-    // Meteor Axe
-    374039,
+    // Kyveza - Assassination - Portals
+    436870,
 
-    // Searing Carnage
-    374023,
+    // Kyveza - Twighlight Massacre - Dashes
+    438141,
 
-    // Ground Shatter
-    374427,
+    // Ovinax - Sticky Web - Webs
+    446349,
 
-    // Static Charge
-    381615,
-
-    // Fulminating Charge
-    377467,
-
-    // Ray of Anguish
-    402253,
-
-    // Umbral Detonation
-    405036,
-
-    // Blistering Twilight
-    405642,
-
-    // Rending Charge
-    406365,
-
-    // Searing Slam
-    405819,
-
-    // Volcanic Heart
-    410953,
-
-    // Controlled Burn
-    421972,
-
-    // Ashen Devistation
-    428896,
-
-    // Polymorph Bomb
-    418589,
-
-    // Fiery Growth
-    424581,
-
-    // Firestorm
-    419060,
-
-    // Eternal Firestorm
-    425525,
-
-    // Weavers Burden
-    427722,
-
-    // Weavers Burden x2
-    427721,
+    // Queen - Concentraded Toxin - Poison Explosion
+    451278,
 ];
 
+// Silken Court Charge Webs, Requires Burrowed Eruption (460360)
+export const BindingWebs = 440001;
+
+export const Impaled = 449857;
+
+export const Infest = 442257;
+
+// TODO: Remove
 export const PolyMorphBomb = 418720;
 export const PolyMorphBomb2 = 418589;
-
 export const ZskarnBomb = 404955;
 
 export const PowerInfusion = 10060;
