@@ -162,9 +162,7 @@ export const mostNameChanges: Award = {
     name: 'A Girl Has No Name',
     description: 'Total Number Of Name Changes During The Season',
     stat: (p) => p.damageDone('Boss'),
-
-    // TODO: Figure out Kieshon's ID
-    playerFilter: (p) => p.id == 250133977,
+    playerFilter: (p) => p.id == 247286065,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }
@@ -173,8 +171,6 @@ export const mostAggroStrips: Award = {
     name: 'So Anyways, I Started Blasting',
     description: 'Total Number Of Times Aggro Was Stripped Due To Lack Of Threat Meters',
     stat: (p) => p.damageDone('Boss'),
-
-    // TODO: Figure out Ryan's ID
     playerFilter: (p) => p.id == 163879647,
     supportsAveraging: false,
     background: 'Raszageth.png',
@@ -194,9 +190,7 @@ export const mostIntentionalEarlyPulls: Award = {
     name: 'Well... I Was Ready',
     description: 'Total Number Of Intentional Early Pulls',
     stat: (p) => p.damageDone('Boss'),
-
-    // TODO: Figure out Sio's ID
-    playerFilter: (p) => p.id == 163879647 || p.id == 247519581,
+    playerFilter: (p) => p.id == 247981764 || p.id == 252513154,
     supportsAveraging: false,
     background: 'Raszageth.png',
 }

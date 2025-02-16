@@ -65,7 +65,7 @@ export default function AwardSlides(props: AwardSlidesProps) {
 };
 
 function generateTitleSlide(team: Team) {
-    return generateTextSlide(team.name, ["Dragonflight Season 4 Award Ceremony"]);
+    return generateTextSlide(team.name, ["The War Within", "Season 1 Award Ceremony"]);
 }
 
 function generateDisclaimerSlide() {
@@ -74,7 +74,6 @@ function generateDisclaimerSlide() {
             "and meant to be taken in as a light-hearted and humorous recap of the season. The stats shown should not be interpreted as a " +
             "measurement of player skill or overall contribution to the raid team. Players not meeting an attendance threshold are excluded " +
             "and alts are not currently being tracked which can skew some of the data.",
-        "PS: I also rushed making this so parsing logic may not be the best :)"
     ]);
 }
 

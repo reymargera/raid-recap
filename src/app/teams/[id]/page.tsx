@@ -34,11 +34,7 @@ export async function generateStaticParams(): Promise<TeamPageParams[]> {
 }
 
 async function getTeam(teamConfig: TeamConfig): Promise<Team> {
-    const teamStats = await fetchTeamStats({
-        guildId: teamConfig.guildId,
-        reportFilter: teamConfig.reportFilter,
-        attendancePercent: teamConfig.attendancePercent,
-    });
+    const teamStats = await fetchTeamStats(teamConfig);
 
     return {
         id: teamConfig.id,

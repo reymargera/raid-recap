@@ -1,8 +1,9 @@
 import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
-import {DpsLossDebuffs, FloorFireAbilities, PolyMorphBomb, PolyMorphBomb2, PowerInfusion, TrackedDebuffs, ZskarnBomb} from "@/app/_config/auras";
+import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/auras";
 import { NerubarPalaceEncounters } from "@/app/_config/encounters";
+import { TeamConfig } from "@/app/_config/teams";
 
 const SEASON_START_TIME = new Date("2024-09-10T22:00:00Z").getTime();
 
@@ -17,7 +18,14 @@ export interface FightSegmentation {
     trashFightIds: number[];
 }
 
-export async function fetchTeamStats({guildId, reportFilter, attendancePercent, alts }: { guildId: number, reportFilter?: ReportFilter, attendancePercent?: number, alts?: { [key: string]: string[] } }) {
+export async function fetchTeamStats({
+    guildId,
+    reportFilter,
+    attendancePercent,
+    alts,
+    attendanceExcludeOverride,
+    attendanceIncludeOverride }: TeamConfig
+) {
     const warcraftLogs = new WarcraftLogsClient();
 
     // Pulling all logs for the given guild from the current season, optionally filter reports
@@ -58,10 +66,17 @@ export async function fetchTeamStats({guildId, reportFilter, attendancePercent, 
 
     const allStats = Array.from(playerStats.values());
     const altMergedStats = mergeAlts(allStats, alts);
+    const explicitlyIncludedStats = altMergedStats.filter(p => !attendanceExcludeOverride?.includes(p.id));
 
     return attendancePercent
-        ? altMergedStats.filter(p => p.appearances() / filteredReports.length >= attendancePercent)
-        : altMergedStats;
+        ? explicitlyIncludedStats.filter(p => {
+            if (attendanceIncludeOverride?.includes(p.id)) {
+                return true;
+            }
+
+            return p.appearances() / filteredReports.length >= attendancePercent;
+        })
+        : explicitlyIncludedStats;
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
