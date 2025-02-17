@@ -130,6 +130,36 @@ const mostMechanicsGiven: Award = {
     background: 'Raszageth.png',
 }
 
+const mostInfests: Award = {
+    name: 'Patient Zero',
+    description: 'Most Times Infested During Ovinax',
+
+    //TODO: Add infest counter
+    stat: (p) => p.deaths(),
+    supportsAveraging: false,
+    background: 'Ovinax.png',
+}
+
+const mostImpales: Award = {
+    name: 'Kebab King',
+    description: 'Most Impales During Silken Court',
+
+    //TODO: Add impale counter
+    stat: (p) => p.deaths(),
+    supportsAveraging: false,
+    background: 'SilkenCourt.png',
+}
+
+const mostChargeStoppingWebBindings: Award = {
+    name: 'Safety Net',
+    description: 'Most Anub\'arash Charges Stopped By Web Bindings',
+
+    // TODO: Add web binding counter
+    stat: (p) => p.damageDone('Boss'),
+    supportsAveraging: false,
+    background: 'SilkenCourt.png',
+}
+
 // Awards not tied to any seasonal encounters and can be leveraged any time
 export const StaticAwards: Award[] = [
     attendance,

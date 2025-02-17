@@ -21,81 +21,27 @@ export const DpsLossDebuffs = [
     451278,
 ];
 
-// Silken Court Charge Webs, Requires Burrowed Eruption (460360)
-export const BindingWebs = 440001;
+// Ulgrax Debuffs
+export const ChunkyViscera = 438657;
+export const StalkersNetting = 439419;
+export const HardenedNetting = 455831;
+export const Devour = 440904;
 
-export const Impaled = 449857;
+// Sikran Debuffs
+// type = 'applydebuffstack' and ability.id = '434860'
+export const PhaseBlades = 434860;
 
+// Rashanan Debuffs
+export const EnvelopingWebs = 454991;
+
+// Ovinax Debuffs
 export const Infest = 442257;
 
-// TODO: Remove
-export const PolyMorphBomb = 418720;
-export const PolyMorphBomb2 = 418589;
-export const ZskarnBomb = 404955;
+// Silken Court Debuffs
+export const BindingWebs = 440001;
+export const BurrowedEruption = 460360;
+export const Impaled = 449857;
 
 export const PowerInfusion = 10060;
 
-export const FloorFireAbilities = [
-
-    // Molten Scar
-    402420,
-
-    // Rift Burn
-    406530,
-
-    // Dread Rift
-    406526,
-
-    // Engulfing Heat
-    405645,
-
-    // Lava Vortex
-    406321,
-
-    // Dragon Fire Traps
-    405462,
-
-    // Dragon Fire Traps x2
-    417229,
-
-    // Searing Heat
-    411400,
-
-    // Scorching Bomb
-    401621,
-
-    // Burning Ground
-    406989,
-
-    // Lava Flow
-    370648,
-
-    // Scorched Ground
-    371514,
-
-    // Magma Pool
-    374554,
-
-    // Shadow Scorched Earth
-    422023,
-
-    // Blistering Torment
-    414770,
-
-    // Hellboil
-    421082,
-
-    // Burning Ground
-    429265,
-
-    //Smoldering Ground
-    421532,
-
-    // Scorching Ground
-    425451,
-
-    // Raging Flames
-    419504,
-];
-
-export const TrackedDebuffs = [...DpsLossDebuffs, PolyMorphBomb, PolyMorphBomb2, ZskarnBomb];
+export const TrackedDebuffs = [...DpsLossDebuffs];
