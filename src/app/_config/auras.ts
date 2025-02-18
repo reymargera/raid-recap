@@ -44,4 +44,20 @@ export const Impaled = 449857;
 
 export const PowerInfusion = 10060;
 
-export const TrackedDebuffs = [...DpsLossDebuffs];
+export const WebbingDebuffs = [
+    StalkersNetting,
+    HardenedNetting,
+    EnvelopingWebs,
+];
+
+export const TrackedDebuffs = [
+    ...DpsLossDebuffs,
+    ChunkyViscera,
+    StalkersNetting,
+    HardenedNetting,
+    Devour,
+    EnvelopingWebs,
+    Infest,
+    Impaled,
+    PowerInfusion,
+];

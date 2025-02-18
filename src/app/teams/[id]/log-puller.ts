@@ -1,7 +1,7 @@
 import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
-import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/auras";
+import {ChunkyViscera, Devour, DpsLossDebuffs, Impaled, Infest, PowerInfusion, TrackedDebuffs, WebbingDebuffs } from "@/app/_config/auras";
 import { NerubarPalaceEncounters } from "@/app/_config/encounters";
 import { TeamConfig } from "@/app/_config/teams";
 
@@ -143,6 +143,13 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             mechanicsTaken: bossStats.mechanicsTaken[playerId] ?? 0,
             friendlyFireDamageDone: bossStats.friendlyFireDone[playerId] ?? 0,
             friendlyFireDamageTaken: bossStats.friendlyFireTakenByName[playerStat.name] ?? 0,
+            visceraFed: bossStats.visceraFed[playerId] ?? 0,
+            timesEaten: bossStats.timesEaten[playerId] ?? 0,
+            infests: bossStats.infests[playerId] ?? 0,
+            impales: bossStats.imaples[playerId] ?? 0,
+            webbed: bossStats.webbed[playerId] ?? 0,
+            doublePhaseBlades: bossStats.doublePhaseBlades[playerId] ?? 0,
+            chargeWebs: bossStats.chargeWebs[playerId] ?? 0,
         };
 
 
@@ -167,8 +174,9 @@ function extractPlayerStatsFromFightReport(report: {
     damageTaken?: any;
     trackedBuffs?: any;
     trackedDebuffs?: any;
-    fireDamage?: any;
     friendlyFire?: any;
+    chargeWebs?: any;
+    phaseBlades?: any;
 } | null | undefined) {
 
     const baseData = report?.baseData.data;
@@ -215,6 +223,40 @@ function extractPlayerStatsFromFightReport(report: {
         .flat()
         .reduce((map: PlayerAccumulator, player: any) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
 
+    const visceraFed = report?.trackedBuffs?.data
+        .filter((d: any) => d.abilityGameID === ChunkyViscera)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const timesEaten = report?.trackedDebuffs?.data
+        .filter((d: any) => d.abilityGameID === Devour)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const infests = report?.trackedDebuffs?.data
+        .filter((d: any) => d.abilityGameID === Infest)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const imaples = report?.trackedDebuffs?.data
+        .filter((d: any) => d.abilityGameID === Impaled)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const webbed = report?.trackedDebuffs?.data
+        .filter((d: any) => WebbingDebuffs.includes(d.abilityGameID))
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const doublePhaseBlades = report?.phaseBlades?.data
+        .filter((d: any) => d.stack > 1)
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const chargeWebs = report?.chargeWebs?.data
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
     return {
         damage,
         healing,
@@ -227,6 +269,15 @@ function extractPlayerStatsFromFightReport(report: {
         mechanicsTaken,
         friendlyFireDone,
         friendlyFireTakenByName,
+
+        // Seasonal
+        visceraFed,
+        timesEaten,
+        infests,
+        imaples,
+        webbed,
+        doublePhaseBlades,
+        chargeWebs,
     };
 
 }

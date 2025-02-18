@@ -16,6 +16,13 @@ export interface Stats {
     // Season Specific
     friendlyFireDamageDone: number;
     friendlyFireDamageTaken: number;
+    visceraFed: number;
+    timesEaten: number;
+    infests: number;
+    impales: number;
+    webbed: number;
+    doublePhaseBlades: number;
+    chargeWebs: number;
 }
 
 export function generateBlankStats(): Stats {
@@ -35,6 +42,13 @@ export function generateBlankStats(): Stats {
         mechanicsTaken: 0,
         friendlyFireDamageDone: 0,
         friendlyFireDamageTaken: 0,
+        visceraFed: 0,
+        timesEaten: 0,
+        infests: 0,
+        impales: 0,
+        webbed: 0,
+        doublePhaseBlades: 0,
+        chargeWebs: 0,
     };
 }
 
@@ -100,6 +114,13 @@ export class PlayerStats {
         currentStats.mechanicsTaken += newStats.mechanicsTaken;
         currentStats.friendlyFireDamageTaken += newStats.friendlyFireDamageTaken;
         currentStats.friendlyFireDamageDone += newStats.friendlyFireDamageDone;
+        currentStats.visceraFed += newStats.visceraFed;
+        currentStats.timesEaten += newStats.timesEaten;
+        currentStats.infests += newStats.infests;
+        currentStats.impales += newStats.impales;
+        currentStats.webbed += newStats.webbed;
+        currentStats.doublePhaseBlades += newStats.doublePhaseBlades;
+        currentStats.chargeWebs += newStats.chargeWebs;
     }
 
     public merge(playerStats: PlayerStats) {
@@ -189,6 +210,34 @@ export class PlayerStats {
 
     public friendlyFireDamageTaken(type?: 'Boss' | 'Trash'): number {
         return this.getStatValue('friendlyFireDamageTaken', type);
+    }
+
+    public visceraFed(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('visceraFed', type);
+    }
+
+    public timesEaten(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('timesEaten', type);
+    }
+
+    public infests(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('infests', type);
+    }
+
+    public impales(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('impales', type);
+    }
+
+    public webbed(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('webbed', type);
+    }
+
+    public doublePhaseBlades(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('doublePhaseBlades', type);
+    }
+
+    public chargeWebs(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('chargeWebs', type);
     }
 
 

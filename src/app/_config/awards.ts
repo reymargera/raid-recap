@@ -133,9 +133,7 @@ const mostMechanicsGiven: Award = {
 const mostInfests: Award = {
     name: 'Patient Zero',
     description: 'Most Times Infested During Ovinax',
-
-    //TODO: Add infest counter
-    stat: (p) => p.deaths(),
+    stat: (p) => p.infests('Boss'),
     supportsAveraging: false,
     background: 'Ovinax.png',
 }
@@ -143,9 +141,7 @@ const mostInfests: Award = {
 const mostImpales: Award = {
     name: 'Kebab King',
     description: 'Most Impales During Silken Court',
-
-    //TODO: Add impale counter
-    stat: (p) => p.deaths(),
+    stat: (p) => p.impales('Boss'),
     supportsAveraging: false,
     background: 'SilkenCourt.png',
 }
@@ -153,11 +149,41 @@ const mostImpales: Award = {
 const mostChargeStoppingWebBindings: Award = {
     name: 'Safety Net',
     description: 'Most Anub\'arash Charges Stopped By Web Bindings',
-
-    // TODO: Add web binding counter
-    stat: (p) => p.damageDone('Boss'),
+    stat: (p) => p.chargeWebs('Boss'),
     supportsAveraging: false,
     background: 'SilkenCourt.png',
+}
+
+const mostTimesFed: Award = {
+    name: 'Yes, Chef',
+    description: 'Most Visera Fed To Ulgrax',
+    stat: (p) => p.visceraFed('Boss'),
+    supportsAveraging: false,
+    background: 'Rashanan.png',
+}
+
+const mostTimesEaten: Award = {
+    name: 'Snack Time',
+    description: 'Most Times Eaten By Ulgrax',
+    stat: (p) => p.timesEaten('Boss'),
+    supportsAveraging: false,
+    background: 'Ulgrax.png',
+}
+
+const mostTimesDoubleBladed: Award = {
+    name: 'Double Trouble',
+    description: 'Most Times Hit By Sikaran\'s Phase Blades... A Second Time',
+    stat: (p) => p.doublePhaseBlades('Boss'),
+    supportsAveraging: false,
+    background: 'Sikran.png',
+}
+
+const mostTimesWebbed: Award = {
+    name: 'Sticky Situation',
+    description: 'Most Times Being Rooted By Web Abilities',
+    stat: (p) => p.webbed('Boss'),
+    supportsAveraging: false,
+    background: 'Rashanan.png',
 }
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -181,6 +207,13 @@ export const SeasonalAwards: Award[] = [
     // Somehow can still be relevant across seasons due to things like blessing of sacrifice
     mostFriendlyFire,
     mostFriendlyFireDamageTaken,
+    mostTimesFed,
+    mostTimesEaten,
+    mostTimesWebbed,
+    mostTimesDoubleBladed,
+    mostInfests,
+    mostImpales,
+    mostChargeStoppingWebBindings,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];

@@ -24,6 +24,12 @@ export const GetReport = gql`
                     data
                 }
                 friendlyFire: table(fightIDs: $bossFightIds, dataType: DamageDone, targetClass: "Player", viewBy: Source, filterExpression: "source.id != target.id")
+                chargeWebs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: "IN RANGE WHEN type = 'applydebuff' AND ability.id = '440001' FROM type = 'applydebuff' AND ability.id= '460360' TO type = 'removedebuff' AND ability.id= '460360' GROUP BY target END", useActorIDs: false) {
+                    data
+                }
+                phaseBlades: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: "type = 'applydebuffstack' AND ability.id = '434860'", useActorIDs: false) {
+                    data
+                }
             }
         }
     }
