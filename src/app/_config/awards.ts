@@ -14,7 +14,7 @@ const attendance: Award = {
     description: 'Total Number Of Appearances Across All Raid Nights',
     stat: (p) => p.appearances('Boss'),
     supportsAveraging: false,
-    background: 'Amirdrassil.jpg',
+    background: 'nerubar-broll-1.jpg',
 }
 
 const mostDeathsOnBoss: Award = {
@@ -22,7 +22,7 @@ const mostDeathsOnBoss: Award = {
     description: 'Most Deaths On Boss Fights Before Wipe Is Called',
     stat: (p) => p.deaths('Boss'),
     supportsAveraging: true,
-    background: 'Raszageth.png',
+    background: 'nerubar-broll-3.jpg',
 };
 
 const mostDamageOnBoss: Award = {
@@ -30,7 +30,7 @@ const mostDamageOnBoss: Award = {
     description: 'Most Damage Done To Bosses',
     stat: (p) => p.damageDone('Boss'),
     supportsAveraging: true,
-    background: 'Fyrakk.png'
+    background: 'bloodbound.jpg',
 };
 
 const mostHealingOnBoss: Award = {
@@ -38,7 +38,7 @@ const mostHealingOnBoss: Award = {
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
-    background: 'Nymue.png',
+    background: 'nerubar-broll-2.jpg',
 };
 
 const mostHealthStonesUsed: Award = {
@@ -46,7 +46,7 @@ const mostHealthStonesUsed: Award = {
     description: 'Most Health Stones Consumed Throughout All Encounters',
     stat: (p) => p.healthStonesUsed(),
     supportsAveraging: true,
-    background: 'Volcaross.png',
+    background: 'nerubar-broll-4.jpg',
 };
 
 const mostPotionsUsed: Award = {
@@ -54,7 +54,7 @@ const mostPotionsUsed: Award = {
     description: 'Most Potions Consumed Throughout All Encounters',
     stat: (p) => p.potionsUsed(),
     supportsAveraging: true,
-    background: 'Experiments.png',
+    background: 'nerubar-broll-5.jpg',
 };
 
 const mostCasts: Award = {
@@ -62,7 +62,7 @@ const mostCasts: Award = {
     description: 'Most Casts Throughout All Encounters',
     stat: (p) => p.casts(),
     supportsAveraging: true,
-    background: 'Volcaross.png',
+    background: 'nerubar-broll-1.jpg',
 };
 
 const mostInterrupts: Award = {
@@ -70,7 +70,7 @@ const mostInterrupts: Award = {
     description: 'Most Interrupts Throughout All Encounters',
     stat: (p) => p.interrupts(),
     supportsAveraging: true,
-    background: 'Golem.png',
+    background: 'nerubar-broll-2.jpg',
 };
 
 const mostDispels: Award = {
@@ -78,7 +78,7 @@ const mostDispels: Award = {
     description: 'Most Dispels Throughout All Encounters',
     stat: (p) => p.dispels(),
     supportsAveraging: true,
-    background: 'Fyrakk2.png'
+    background: 'nerubar-broll-3.jpg'
 };
 
 const mostDamageTaken: Award = {
@@ -86,7 +86,7 @@ const mostDamageTaken: Award = {
     description: 'Most Damage Taken On Boss Encounters',
     stat: (p) => p.damageTaken('Boss'),
     supportsAveraging: true,
-    background: 'Kazarra.png',
+    background: 'kyveza.jpg',
 };
 
 const mostDamageReduced: Award = {
@@ -94,7 +94,7 @@ const mostDamageReduced: Award = {
     description: 'Most Damage Reduced On Boss Encounters',
     stat: (p) => p.damageAbsorbed('Boss'),
     supportsAveraging: true,
-    background: 'Golem.png',
+    background: 'nerubar-broll-4.jpg',
 };
 
 const mostPowerInfusions: Award = {
@@ -103,7 +103,7 @@ const mostPowerInfusions: Award = {
     stat: (p) => p.powerInfusions('Boss'),
     playerFilter: (p) => p.playerClass.toLowerCase() !== 'priest',
     supportsAveraging: true,
-    background: 'Amirdrassil.jpg',
+    background: 'nerubar-broll-5.jpg',
 };
 
 const mostFriendlyFire: Award = {
@@ -111,7 +111,7 @@ const mostFriendlyFire: Award = {
     description: 'Most Friendly Fire Damage Done',
     stat: (p) => p.friendlyFireDamageDone('Boss'),
     supportsAveraging: false,
-    background: 'Neltharion2.png',
+    background: 'kyveza.jpg',
 };
 
 const mostFriendlyFireDamageTaken: Award = {
@@ -119,7 +119,7 @@ const mostFriendlyFireDamageTaken: Award = {
     description: 'Most Friendly Fire Damage Taken While Mind Controlled',
     stat: (p) => p.friendlyFireDamageTaken('Boss'),
     supportsAveraging: false,
-    background: 'Neltharion.png',
+    background: 'nerubar-broll-1.jpg',
 };
 
 const mostMechanicsGiven: Award = {
@@ -127,7 +127,7 @@ const mostMechanicsGiven: Award = {
     description: 'Target Of Mechanics That Result In DPS Loss',
     stat: (p) => p.mechanicsTaken('Boss'),
     supportsAveraging: true,
-    background: 'Raszageth.png',
+    background: 'rashanan.jpg',
 }
 
 const mostInfests: Award = {
@@ -135,7 +135,7 @@ const mostInfests: Award = {
     description: 'Most Times Infested During Ovinax',
     stat: (p) => p.infests('Boss'),
     supportsAveraging: false,
-    background: 'Ovinax.png',
+    background: 'ovinax.jpg',
 }
 
 const mostImpales: Award = {
@@ -143,7 +143,7 @@ const mostImpales: Award = {
     description: 'Most Impales During Silken Court',
     stat: (p) => p.impales('Boss'),
     supportsAveraging: false,
-    background: 'SilkenCourt.png',
+    background: 'silken-court.jpg',
 }
 
 const mostChargeStoppingWebBindings: Award = {
@@ -151,7 +151,7 @@ const mostChargeStoppingWebBindings: Award = {
     description: 'Most Anub\'arash Charges Stopped By Web Bindings',
     stat: (p) => p.chargeWebs('Boss'),
     supportsAveraging: false,
-    background: 'SilkenCourt.png',
+    background: 'silken-court.jpg',
 }
 
 const mostTimesFed: Award = {
@@ -159,7 +159,7 @@ const mostTimesFed: Award = {
     description: 'Most Visera Fed To Ulgrax',
     stat: (p) => p.visceraFed('Boss'),
     supportsAveraging: false,
-    background: 'Rashanan.png',
+    background: 'ulgrax.jpg',
 }
 
 const mostTimesEaten: Award = {
@@ -167,7 +167,7 @@ const mostTimesEaten: Award = {
     description: 'Most Times Eaten By Ulgrax',
     stat: (p) => p.timesEaten('Boss'),
     supportsAveraging: false,
-    background: 'Ulgrax.png',
+    background: 'ulgrax.jpg',
 }
 
 const mostTimesDoubleBladed: Award = {
@@ -175,7 +175,7 @@ const mostTimesDoubleBladed: Award = {
     description: 'Most Times Hit By Sikaran\'s Phase Blades... A Second Time',
     stat: (p) => p.doublePhaseBlades('Boss'),
     supportsAveraging: false,
-    background: 'Sikran.png',
+    background: 'sikran.jpg',
 }
 
 const mostTimesWebbed: Award = {
@@ -183,7 +183,7 @@ const mostTimesWebbed: Award = {
     description: 'Most Times Being Rooted By Web Abilities',
     stat: (p) => p.webbed('Boss'),
     supportsAveraging: false,
-    background: 'Rashanan.png',
+    background: 'rashanan.jpg',
 }
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -227,7 +227,7 @@ export const mostNameChanges: Award = {
     stat: (p) => p.damageDone('Boss'),
     playerFilter: (p) => p.id == 247286065,
     supportsAveraging: false,
-    background: 'Raszageth.png',
+    background: 'nerubar-broll-1.jpg',
 }
 
 export const mostAggroStrips: Award = {
@@ -236,7 +236,7 @@ export const mostAggroStrips: Award = {
     stat: (p) => p.damageDone('Boss'),
     playerFilter: (p) => p.id == 163879647,
     supportsAveraging: false,
-    background: 'Raszageth.png',
+    background: 'nerubar-broll-2.jpg',
 }
 
 // Shadow Hunters Green
@@ -246,7 +246,7 @@ export const mostReadyChecks: Award = {
     stat: (p) => p.damageDone('Boss'),
     playerFilter: (p) => p.id == 163879647 || p.id == 247519581,
     supportsAveraging: false,
-    background: 'Raszageth.png',
+    background: 'nerubar-broll-3.jpg',
 }
 
 export const mostIntentionalEarlyPulls: Award = {
@@ -255,7 +255,7 @@ export const mostIntentionalEarlyPulls: Award = {
     stat: (p) => p.damageDone('Boss'),
     playerFilter: (p) => p.id == 247981764 || p.id == 252513154,
     supportsAveraging: false,
-    background: 'Raszageth.png',
+    background: 'nerubar-broll-4.jpg',
 }
 
 export const TeamBits: { [key: string]: Award[]; } = {

@@ -223,7 +223,7 @@ function extractPlayerStatsFromFightReport(report: {
         .flat()
         .reduce((map: PlayerAccumulator, player: any) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
 
-    const visceraFed = report?.trackedBuffs?.data
+    const visceraFed = report?.trackedDebuffs?.data
         .filter((d: any) => d.abilityGameID === ChunkyViscera)
         .map((b: any) => b.target.guid)
         .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
