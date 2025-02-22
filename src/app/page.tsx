@@ -1,16 +1,41 @@
+"use client";
+
 import Image from "next/image";
 import { RaidTeams } from "./_config/teams";
 import {publicBase} from "@/app/_config/paths";
+import { useState, useEffect } from "react";
 
 const subTitles = [
-  "Because the real BIS are the friends we made along the way",
-  "We didn't wipe, we tactically retreated",
-  "Because loot is temporary, making numbers go up is forever",
   "Confirming your suspicions that you're the only one who knows what they're doing",
+  "The real BIS is the friends we made along the way",
+  "We didn't wipe, we tactically retreated",
+  "Loot is temporary, making numbers go up is forever",
+  "Validating your belief that you carry the team",
+  "Meters dont lie.. they're just heavily skewed due to attendance",
+  "Where your mistakes are immortalized forever",
+  "Because recouting the raid is more fun than actually raiding",
+  "Aggregating data so you can fuel the next round of drama",
+  "Because personal responsibility is not a trackable buff",
+  "Because it wassn't 'just one pull'",
 ];
 
 
 export default function Home() {
+  const [subtitleIndex, setSubtitleIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setSubtitleIndex(Math.floor(Math.random() * subTitles.length));
+        setFade(true);
+      }, 500);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [subtitleIndex]);
+
   return (
     <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 h-screen text-white overflow-hidden">
       <div className="absolute inset-0">
@@ -25,7 +50,9 @@ export default function Home() {
 
       <div className="relative z-10 flex flex-col justify-center items-center h-full text-center">
         <h1 className="text-5xl font-bold leading-tight mb-4">Raid Recap</h1>
-        <p className="text-lg text-gray-300 mb-8">{getSubTitle()}</p>
+        <p className={`text-lg text-gray-300 mb-8 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+          {subTitles[subtitleIndex]}
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {getTeamCards()}
