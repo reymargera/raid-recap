@@ -1,1 +1,1 @@
-export const publicBase: string = process.env.NEXT_PUBLIC_BASE_PATH || 'raid-recap';
+export const publicBase: string = process.env.NEXT_PUBLIC_BASE_PATH || '/raid-recap';

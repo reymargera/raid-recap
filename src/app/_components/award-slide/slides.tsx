@@ -31,6 +31,16 @@ function generateViewToggle(value: boolean, updateValue: Dispatch<SetStateAction
     );
 }
 
+function generateHomeButton() {
+    return (
+        <div className={"fixed top-4 left-4 z-50"}>
+            <a href={`${publicBase}`}>
+                <button type="button" className={"text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"}>Return Home</button>
+            </a>
+        </div>
+    );
+}
+
 export default function AwardSlides(props: AwardSlidesProps) {
     const [useOverall, setOverall] = useState(true);
 
@@ -42,10 +52,12 @@ export default function AwardSlides(props: AwardSlidesProps) {
     const awardSlides = generateAwardSlides(team, awards, useOverall);
     const disclaimerSlide = generateDisclaimerSlide();
     const viewToggle = generateViewToggle(useOverall, setOverall);
+    const homeButton = generateHomeButton();
 
     return (
         <>
             {viewToggle}
+            {homeButton}
             <Swiper
                 direction={'vertical'}
                 slidesPerView={1}
@@ -109,8 +121,8 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
             return (
                 <SwiperSlide key={a.name}>
                     <div className={"min-h-screen justify-center items-center"}>
-                        <Image src={`${publicBase}/backgrounds/${a.background ?? 'Fyrakk.png'}`}
-                               alt={a.background ?? 'Fyrakk'}
+                        <Image src={`${publicBase}/backgrounds/${a.background ?? 'nerubar-broll-1.jpg'}`}
+                               alt={a.background ?? 'nerubar-broll-1.jpg'}
                                className={"slide-background object-cover object-center"}
                                fill={true}
                         />

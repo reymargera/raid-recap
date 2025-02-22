@@ -43,7 +43,7 @@ const getSubTitle = () => {
 const getTeamCards = () => {
   return Object.values(RaidTeams).map((team) => {
     return (
-      <a key={team.id} href={`${publicBase}`} className="opacity-85 hover:opacity-100">
+      <a key={team.id} href={`${publicBase}/teams/${team.id}`} className="opacity-85 hover:opacity-100">
         <div className="bg-gray-500 rounded-lg shadow-lg p-8 flex flex-col justify-between items-center h-full transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
           <div className="flex-grow flex items-center justify-center">
             <Image
