@@ -59,7 +59,7 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         logo: 'blue-team.png',
         guildId: 44873,
         reportFilter: (report: Report) => report.title.includes("Blue"),
-        attendancePercent: 0.4,
+        attendancePercent: 0.25,
     },
     'shadow-hunters-green-team': {
         id: 'shadow-hunters-green-team',
