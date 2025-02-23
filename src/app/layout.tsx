@@ -22,7 +22,7 @@ export default function RootLayout({
           src="https://www.googletagmanager.com/gtag/js?id=G-D4FYZT7LT3"
           strategy="afterInteractive"
         />
-        <Script strategy="afterInteractive">
+        <Script id="gtag" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag() {

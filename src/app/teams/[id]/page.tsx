@@ -18,8 +18,9 @@ export interface Team {
 // Don't fall back to runtime rendering when a path was not pre-rendered
 export const dynamicParams = false;
 
-export default async function Team({params}: { params: TeamPageParams }) {
-    const teamConfig = RaidTeams[params.id];
+export default async function Team({ params }: { params: Promise<TeamPageParams> }) {
+    const teamId = (await params).id;
+    const teamConfig = RaidTeams[teamId];
     const team = await getTeam(teamConfig);
 
     return (
