@@ -19,7 +19,46 @@ export class WarcraftLogsClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${process.env.TOKEN}`,
             },
-            cache: new InMemoryCache(),
+            cache: new InMemoryCache({
+                typePolicies: {
+                    ReportPagination: {
+                        fields: {
+                            data: {
+                                keyArgs: false,
+                                merge(existing = [], incoming) {
+                                    return [...existing, ...incoming];
+                                }
+                            }
+                        }
+                    },
+                    Report: {
+                        keyFields: ["code"],
+                        fields: {
+                            fights: {
+                                keyArgs: false, // Prevent fights from being cached separately per query args
+                            }
+                        }
+                    },
+                    ReportFight: {
+                        keyFields: false
+                    },
+                    ReportData: {
+                        keyFields: false,
+                        fields: {
+                            reports: {
+                                keyArgs: ["guildId", "startTime", "page", "limit"],
+                            }
+                        }
+                    },
+                    Query: {
+                        fields: {
+                            reportData: {
+                                keyArgs: false,
+                            }
+                        }
+                    }
+                }
+              })
         });
     }
 

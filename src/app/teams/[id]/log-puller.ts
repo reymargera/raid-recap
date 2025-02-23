@@ -83,7 +83,6 @@ function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegm
     const seasonalEncounters = NerubarPalaceEncounters.map(e => e.id);
 
     const reportEntries = reports.map(r => {
-        // Fights has a Maybe<ReportType>[] value which we need to make sure that items are not null
         const fights: ReportFight[] = r?.fights
             ?.filter(mrf => mrf != null) || [];
 
