@@ -118,6 +118,11 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
         content = awards.map(a => {
             const playerStats: PlayerStats[] = team.stats.map(PlayerStats.fromJson);
 
+            let hasNonZeroStat = playerStats.some(p => a.stat(p) > 0);
+            if (!hasNonZeroStat) {
+                return null;
+            }
+
             return (
                 <SwiperSlide key={a.name}>
                     <div className={"min-h-screen justify-center items-center"}>
@@ -147,7 +152,7 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                     </div>
                 </SwiperSlide>
             );
-        });
+        }).filter(a => a !== null);
     }
 
     return content;
