@@ -7,6 +7,15 @@ import {
     GetReportsForGuildQueryVariables,
     Report
 } from "@/__generated__/graphql";
+import Bottleneck from "bottleneck";
+
+
+const useRateLimiter = process.env.NODE_ENV === 'production';
+
+const limiter = new Bottleneck({
+    maxConcurrent: 1,
+    minTime: 500,
+});
 
 export class WarcraftLogsClient {
 
@@ -58,7 +67,7 @@ export class WarcraftLogsClient {
                         }
                     }
                 }
-              })
+            })
         });
     }
 
@@ -94,18 +103,26 @@ export class WarcraftLogsClient {
         return allReports;
     }
 
+    private async scheduleQuery<T>(query: () => Promise<T>): Promise<T> {
+        if (useRateLimiter) {
+            return limiter.schedule(query);
+        } else {
+            return query();
+        }
+    }
+
     public async getReport({reportCode, bossFightIds, debuffFilter, buffFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
-        let buffStart = null;
-        let debuffStart = null;
+        let buffStart: any = null;
+        let debuffStart: any = null;
 
         const allBuffData: any[] = [];
         const allDebuffData: any[] = [];
         let coreReport: GetReportQuery | null = null;
 
         do {
-            const result: ApolloQueryResult<GetReportQuery> = await this.client.query({
+            const result: ApolloQueryResult<GetReportQuery> = await this.scheduleQuery(() => this.client.query({
                 query: GetReportDocument,
                 variables: {
                     reportCode,
@@ -115,7 +132,7 @@ export class WarcraftLogsClient {
                     buffStart,
                     debuffStart,
                 }
-            });
+            }));
 
             const buffData = result.data.bossFights?.report?.trackedBuffs?.data || [];
             const debuffData = result.data.bossFights?.report?.trackedDebuffs?.data || [];
