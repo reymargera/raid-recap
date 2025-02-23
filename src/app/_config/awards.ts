@@ -34,7 +34,7 @@ const mostDamageOnBoss: Award = {
 };
 
 const mostHealingOnBoss: Award = {
-    name: 'Stand In My... - Boss Encounters',
+    name: 'Tenderest Tender',
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
@@ -116,7 +116,7 @@ const mostFriendlyFire: Award = {
 
 const mostFriendlyFireDamageTaken: Award = {
     name: 'I Cant Believe You\'ve Done This',
-    description: 'Most Friendly Fire Damage Taken While Mind Controlled',
+    description: 'Most Friendly Fire Damage Taken',
     stat: (p) => p.friendlyFireDamageTaken('Boss'),
     supportsAveraging: false,
     background: 'nerubar-broll-1.jpg',
@@ -224,7 +224,7 @@ export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
 export const mostNameChanges: Award = {
     name: 'A Girl Has No Name',
     description: 'Total Number Of Name Changes During The Season',
-    stat: (p) => p.damageDone('Boss'),
+    stat: (p) => p.id == 247286065 ? 3 : 0,
     playerFilter: (p) => p.id == 247286065,
     supportsAveraging: false,
     background: 'nerubar-broll-1.jpg',
@@ -233,32 +233,40 @@ export const mostNameChanges: Award = {
 export const mostAggroStrips: Award = {
     name: 'So Anyways, I Started Blasting',
     description: 'Total Number Of Times Aggro Was Stripped Due To Lack Of Threat Meters',
-    stat: (p) => p.damageDone('Boss'),
+    stat: (p) => p.appearances('Boss'),
     playerFilter: (p) => p.id == 163879647,
     supportsAveraging: false,
     background: 'nerubar-broll-2.jpg',
 }
 
-// Shadow Hunters Green
-export const mostReadyChecks: Award = {
-    name: 'Gas Pedal',
-    description: 'Total Number Of Ready Checks Spammed During Fight Explanations',
-    stat: (p) => p.damageDone('Boss'),
-    playerFilter: (p) => p.id == 163879647 || p.id == 247519581,
+export const mostRollsOfTheEdges: Award = {
+    name: 'Living On The Edge',
+    description: 'Total Number Of Times Player Rolled Off The Edge On The Last Pull Of The Night',
+    stat: (p) => p.id == 163879647 ? 1 : 0,
+    playerFilter: (p) => p.id == 163879647,
     supportsAveraging: false,
-    background: 'nerubar-broll-3.jpg',
+    background: 'nerubar-broll-4.jpg',
 }
 
+export const mostDaggerDamageTaken: Award = {
+    name: 'All You Can Eat Dagger Buffet',
+    description: 'Total Damage Taken From Nexus Daggers',
+    stat: (p) => p.daggerDamageTaken('Boss'),
+    supportsAveraging: true,
+    background: 'kyveza.jpg',
+}
+
+// Shadow Hunters Green
 export const mostIntentionalEarlyPulls: Award = {
     name: 'Well... I Was Ready',
     description: 'Total Number Of Intentional Early Pulls',
-    stat: (p) => p.damageDone('Boss'),
+    stat: (p) => p.appearances('Boss'),
     playerFilter: (p) => p.id == 247981764 || p.id == 252513154,
     supportsAveraging: false,
     background: 'nerubar-broll-4.jpg',
 }
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostNameChanges, mostAggroStrips],
-    'shadow-hunters-green-team': [mostReadyChecks, mostIntentionalEarlyPulls],
+    'shadow-hunters-gold-team': [mostDaggerDamageTaken, mostNameChanges, mostAggroStrips, mostRollsOfTheEdges],
+    'shadow-hunters-green-team': [mostIntentionalEarlyPulls],
 };

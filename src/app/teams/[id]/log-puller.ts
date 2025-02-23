@@ -136,6 +136,7 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             casts: bossStats.casts[playerId] ?? 0,
             interrupts: bossStats.interrupts[playerId] ?? 0,
             damageTaken: bossStats.damageTaken[playerId]?.taken ?? 0,
+            daggerDamageTaken: bossStats.daggerDamageTaken[playerId] ?? 0,
             damageAbsorbed: bossStats.damageTaken[playerId]?.reduced ?? 0,
             deaths: bossStats.deaths[playerId] ?? 0,
             powerInfusions: bossStats.powerInfusions[playerId] ?? 0,
@@ -171,6 +172,7 @@ function extractPlayerStatsFromFightReport(report: {
     dispels?: any;
     interupts?: any;
     damageTaken?: any;
+    daggerDamageTaken?: any;
     trackedBuffs?: any;
     trackedDebuffs?: any;
     friendlyFire?: any;
@@ -199,6 +201,9 @@ function extractPlayerStatsFromFightReport(report: {
             taken: player.total,
             reduced: player.totalReduced,
         }, map), {});
+
+    const daggerDamageTaken = report?.daggerDamageTaken.data.entries
+        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
 
     const deaths = report?.preWipeDeaths
         ? report.preWipeDeaths.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
@@ -263,6 +268,7 @@ function extractPlayerStatsFromFightReport(report: {
         dispels,
         interrupts,
         damageTaken,
+        daggerDamageTaken,
         deaths,
         powerInfusions,
         mechanicsTaken,

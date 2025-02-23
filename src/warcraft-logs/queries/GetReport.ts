@@ -15,6 +15,7 @@ export const GetReport = gql`
                 dispels: table(fightIDs: $bossFightIds, dataType: Dispels)
                 interupts: table(fightIDs: $bossFightIds, dataType: Interrupts)
                 damageTaken: table(fightIDs: $bossFightIds, dataType: DamageTaken)
+                daggerDamageTaken: table(fightIDs: $bossFightIds, dataType: DamageTaken, abilityID: 440149)
                 trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
                     nextPageTimestamp
                     data

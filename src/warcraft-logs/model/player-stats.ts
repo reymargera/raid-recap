@@ -23,6 +23,7 @@ export interface Stats {
     webbed: number;
     doublePhaseBlades: number;
     chargeWebs: number;
+    daggerDamageTaken: number;
 }
 
 export function generateBlankStats(): Stats {
@@ -49,6 +50,7 @@ export function generateBlankStats(): Stats {
         webbed: 0,
         doublePhaseBlades: 0,
         chargeWebs: 0,
+        daggerDamageTaken: 0,
     };
 }
 
@@ -121,6 +123,7 @@ export class PlayerStats {
         currentStats.webbed += newStats.webbed;
         currentStats.doublePhaseBlades += newStats.doublePhaseBlades;
         currentStats.chargeWebs += newStats.chargeWebs;
+        currentStats.daggerDamageTaken += newStats.daggerDamageTaken;
     }
 
     public merge(playerStats: PlayerStats) {
@@ -238,6 +241,10 @@ export class PlayerStats {
 
     public chargeWebs(type?: 'Boss' | 'Trash'): number {
         return this.getStatValue('chargeWebs', type);
+    }
+
+    public daggerDamageTaken(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('daggerDamageTaken', type);
     }
 
 
