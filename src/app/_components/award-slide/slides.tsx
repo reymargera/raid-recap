@@ -94,9 +94,9 @@ function generateTextSlide(heading: string, subtext: string[]) {
         <SwiperSlide>
             <div className={"min-h-screen justify-center items-center"}>
                 <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
-                    <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{heading}</h1>
+                    <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2"}>{heading}</h1>
                     {subtext.map((text, index) => (
-                        <p key={index} className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{text}</p>
+                        <p key={index} className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48"}>{text}</p>
                     ))}
                     {/*<p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{subtext}</p>*/}
                 </div>
@@ -133,8 +133,8 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                         />
                         <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
                             <div className={"award-heading"}>
-                                <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white p-2"}>{a.name}</h1>
-                                <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{a.description}</p>
+                                <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2"}>{a.name}</h1>
+                                <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48"}>{a.description}</p>
                             </div>
                             <div className={"ranking-chart"}>
                                 <RankingChart

@@ -69,9 +69,9 @@ export default function RankingChart(props: RankingChartProps) {
     };
 
     return (
-      <>
+      <div className={"chart-container"} style={{position: "relative", height: "70dvh"}}>
         <Bar data={data} options={options} className={""} />
-      </>
+      </div>
     );
 };
 
@@ -81,6 +81,7 @@ function getChartGlobalOptions() {
 
     return {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             classImage: {
                 padding: 8,
