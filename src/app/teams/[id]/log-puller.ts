@@ -49,6 +49,7 @@ export async function fetchTeamStats({
         const reportData = await warcraftLogs.getReport({
             reportCode,
             bossFightIds: reportsSplitByFightType[reportCode].bossFightIds,
+            trashFightIds: reportsSplitByFightType[reportCode].trashFightIds,
             buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
             debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
         });
@@ -150,6 +151,8 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             webbed: bossStats.webbed[playerId] ?? 0,
             doublePhaseBlades: bossStats.doublePhaseBlades[playerId] ?? 0,
             chargeWebs: bossStats.chargeWebs[playerId] ?? 0,
+            bombsHit: bossStats.bombsHit[playerId] ?? 0,
+            bombsThrown: bossStats.bombsThrown[playerId] ?? 0,
         };
 
 
@@ -178,6 +181,7 @@ function extractPlayerStatsFromFightReport(report: {
     friendlyFire?: any;
     chargeWebs?: any;
     phaseBlades?: any;
+    bombsThrown?: any;
 } | null | undefined) {
 
     const baseData = report?.baseData.data;
@@ -261,6 +265,14 @@ function extractPlayerStatsFromFightReport(report: {
         .map((b: any) => b.target.guid)
         .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
 
+    const bombsThrown = report?.bombsThrown?.data
+        .map((b: any) => b.source.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
+    const bombsHit = report?.bombsThrown?.data
+        .map((b: any) => b.target.guid)
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+
     return {
         damage,
         healing,
@@ -283,6 +295,8 @@ function extractPlayerStatsFromFightReport(report: {
         webbed,
         doublePhaseBlades,
         chargeWebs,
+        bombsThrown,
+        bombsHit,
     };
 
 }

@@ -24,6 +24,8 @@ export interface Stats {
     doublePhaseBlades: number;
     chargeWebs: number;
     daggerDamageTaken: number;
+    bombsThrown: number;
+    bombsHit: number;
 }
 
 export function generateBlankStats(): Stats {
@@ -51,6 +53,8 @@ export function generateBlankStats(): Stats {
         doublePhaseBlades: 0,
         chargeWebs: 0,
         daggerDamageTaken: 0,
+        bombsThrown: 0,
+        bombsHit: 0,
     };
 }
 
@@ -124,6 +128,8 @@ export class PlayerStats {
         currentStats.doublePhaseBlades += newStats.doublePhaseBlades;
         currentStats.chargeWebs += newStats.chargeWebs;
         currentStats.daggerDamageTaken += newStats.daggerDamageTaken;
+        currentStats.bombsThrown += newStats.bombsThrown;
+        currentStats.bombsHit += newStats.bombsHit;
     }
 
     public merge(playerStats: PlayerStats) {
@@ -247,6 +253,13 @@ export class PlayerStats {
         return this.getStatValue('daggerDamageTaken', type);
     }
 
+    public bombsThrown(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('bombsThrown', type);
+    }
+
+    public bombsHit(type?: 'Boss' | 'Trash'): number {
+        return this.getStatValue('bombsHit', type);
+    }
 
     private getStatValue(field: keyof Stats, type?: FightTypes): number {
         return type

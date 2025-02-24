@@ -256,6 +256,22 @@ export const mostDaggerDamageTaken: Award = {
     background: 'kyveza.jpg',
 }
 
+export const mostTimesBombed: Award = {
+    name: 'Theramore\'d',
+    description: 'Number Of Times Hit By Caustic Bombs During Trash Clears',
+    stat: (p) => p.bombsHit('Boss'),
+    supportsAveraging: false,
+    background: 'nerubar-broll-5.jpg',
+}
+
+export const mostBombsThrown: Award = {
+    name: 'Fire In The Hole',
+    description: 'Number Of Bombs Thrown During Trash Clears That Hit Players',
+    stat: (p) => p.bombsThrown('Boss'),
+    supportsAveraging: false,
+    background: 'nerubar-broll-1.jpg',
+}
+
 // Shadow Hunters Green
 export const mostIntentionalEarlyPulls: Award = {
     name: 'Well... I Was Ready',
@@ -267,6 +283,7 @@ export const mostIntentionalEarlyPulls: Award = {
 }
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostDaggerDamageTaken, mostNameChanges, mostAggroStrips, mostRollsOfTheEdges],
-    'shadow-hunters-green-team': [mostIntentionalEarlyPulls],
+    'shadow-hunters-gold-team': [mostDaggerDamageTaken, mostNameChanges, mostAggroStrips, mostRollsOfTheEdges, mostTimesBombed, mostBombsThrown],
+    'shadow-hunters-green-team': [mostIntentionalEarlyPulls, mostTimesBombed, mostBombsThrown],
+    'shadow-hunters-blue-team': [mostTimesBombed, mostBombsThrown],
 };
