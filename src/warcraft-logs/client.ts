@@ -111,7 +111,7 @@ export class WarcraftLogsClient {
         }
     }
 
-    public async getReport({reportCode, bossFightIds, trashFightIds, debuffFilter, buffFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
+    public async getReport({reportCode, bossFightIds, trashFightIds, debuffFilter, buffFilter}: Omit<GetReportQueryVariables, 'skipTrashFights'>): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
         let buffStart: any = null;
