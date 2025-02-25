@@ -121,6 +121,8 @@ export class WarcraftLogsClient {
         const allDebuffData: any[] = [];
         let coreReport: GetReportQuery | null = null;
 
+        // Possible that there are no trash fights due to lockouts directly at boss
+        const skipTrashFights = trashFightIds === null || trashFightIds === undefined || (Array.isArray(trashFightIds) && trashFightIds.length === 0);
         do {
             const result: ApolloQueryResult<GetReportQuery> = await this.scheduleQuery(() => this.client.query({
                 query: GetReportDocument,
@@ -132,6 +134,7 @@ export class WarcraftLogsClient {
                     buffFilter,
                     buffStart,
                     debuffStart,
+                    skipTrashFights,
                 }
             }));
 

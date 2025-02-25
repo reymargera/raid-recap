@@ -2,7 +2,7 @@ import { gql } from '@apollo/client/core';
 
 // @ts-ignore
 export const GetReport = gql`
-    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float) {
+    query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float, $skipTrashFights: Boolean!) {
         bossFights: reportData {
             report(code: $reportCode) {
                 code
@@ -31,7 +31,7 @@ export const GetReport = gql`
                 phaseBlades: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: "type = 'applydebuffstack' AND ability.id = '434860'", useActorIDs: false) {
                     data
                 }
-                bombsThrown: events(fightIDs: $trashFightIds, filterExpression: "type = 'applydebuff' AND ability.id = '459504' AND target.type != 'NPC'", useActorIDs: false) {
+                bombsThrown: events(fightIDs: $trashFightIds, filterExpression: "type = 'applydebuff' AND ability.id = '459504' AND target.type != 'NPC'", useActorIDs: false) @skip(if: $skipTrashFights) {
                     data
                 }
             }
