@@ -267,11 +267,11 @@ function extractPlayerStatsFromFightReport(report: {
 
     const bombsThrown = report?.bombsThrown?.data
         .map((b: any) => b.source.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {}) ?? {};
 
     const bombsHit = report?.bombsThrown?.data
         .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {}) ?? {};
 
     return {
         damage,
