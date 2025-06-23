@@ -1,4 +1,22 @@
-export interface Stats {
+export const TWWSeason2StatKeys = [
+    'timesStoodInTrash',
+    'timesRolledOver',
+    'timesScrewed',
+    'footbombsDetonated',
+    'highRollerUptime',
+] as const;
+
+export const SeasonalStatKeys = [...TWWSeason2StatKeys];
+
+// This is the list of seasonal stats for the TWW Season 2.
+export type TWWSeason2Stats = typeof TWWSeason2StatKeys[number];
+
+// This is a generic type for seasonal stats so that it can be used without needing to know the specific season.
+export type SeasonalStatKey = typeof SeasonalStatKeys[number];
+
+export type SeasonalStats = Record<SeasonalStatKey, number>;
+
+export interface CoreStats {
     damageDone: number;
     healingDone: number;
     deaths: number;
@@ -12,23 +30,20 @@ export interface Stats {
     damageAbsorbed: number;
     powerInfusions: number;
     mechanicsTaken: number;
-
-    // Season Specific
     friendlyFireDamageDone: number;
     friendlyFireDamageTaken: number;
-    visceraFed: number;
-    timesEaten: number;
-    infests: number;
-    impales: number;
-    webbed: number;
-    doublePhaseBlades: number;
-    chargeWebs: number;
-    daggerDamageTaken: number;
-    bombsThrown: number;
-    bombsHit: number;
+};
+
+export interface Stats extends CoreStats {
+    seasonalStats: SeasonalStats;
 }
 
 export function generateBlankStats(): Stats {
+    const seasonalStats: SeasonalStats = {} as SeasonalStats;
+    for (const key of TWWSeason2StatKeys) {
+        seasonalStats[key] = 0;
+    }
+
     return {
         appearances: 0,
         casts: 0,
@@ -45,16 +60,7 @@ export function generateBlankStats(): Stats {
         mechanicsTaken: 0,
         friendlyFireDamageDone: 0,
         friendlyFireDamageTaken: 0,
-        visceraFed: 0,
-        timesEaten: 0,
-        infests: 0,
-        impales: 0,
-        webbed: 0,
-        doublePhaseBlades: 0,
-        chargeWebs: 0,
-        daggerDamageTaken: 0,
-        bombsThrown: 0,
-        bombsHit: 0,
+        seasonalStats,
     };
 }
 
@@ -120,16 +126,11 @@ export class PlayerStats {
         currentStats.mechanicsTaken += newStats.mechanicsTaken;
         currentStats.friendlyFireDamageTaken += newStats.friendlyFireDamageTaken;
         currentStats.friendlyFireDamageDone += newStats.friendlyFireDamageDone;
-        currentStats.visceraFed += newStats.visceraFed;
-        currentStats.timesEaten += newStats.timesEaten;
-        currentStats.infests += newStats.infests;
-        currentStats.impales += newStats.impales;
-        currentStats.webbed += newStats.webbed;
-        currentStats.doublePhaseBlades += newStats.doublePhaseBlades;
-        currentStats.chargeWebs += newStats.chargeWebs;
-        currentStats.daggerDamageTaken += newStats.daggerDamageTaken;
-        currentStats.bombsThrown += newStats.bombsThrown;
-        currentStats.bombsHit += newStats.bombsHit;
+
+        // Merge seasonal stats, the current stats is build from the blank stats, so we can safely add the new stats to it.
+        for (const key of SeasonalStatKeys) {
+            currentStats.seasonalStats[key] += newStats.seasonalStats[key];
+        }
     }
 
     public merge(playerStats: PlayerStats) {
@@ -221,47 +222,13 @@ export class PlayerStats {
         return this.getStatValue('friendlyFireDamageTaken', type);
     }
 
-    public visceraFed(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('visceraFed', type);
+    public getSeaontalStat(seasonalKey: SeasonalStatKey, type?: 'Boss' | 'Trash'): number {
+        return type
+            ? this._statBreakDown[type].seasonalStats[seasonalKey]
+            : this._statBreakDown['Boss'].seasonalStats[seasonalKey] + this._statBreakDown['Trash'].seasonalStats[seasonalKey];
     }
 
-    public timesEaten(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('timesEaten', type);
-    }
-
-    public infests(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('infests', type);
-    }
-
-    public impales(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('impales', type);
-    }
-
-    public webbed(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('webbed', type);
-    }
-
-    public doublePhaseBlades(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('doublePhaseBlades', type);
-    }
-
-    public chargeWebs(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('chargeWebs', type);
-    }
-
-    public daggerDamageTaken(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('daggerDamageTaken', type);
-    }
-
-    public bombsThrown(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('bombsThrown', type);
-    }
-
-    public bombsHit(type?: 'Boss' | 'Trash'): number {
-        return this.getStatValue('bombsHit', type);
-    }
-
-    private getStatValue(field: keyof Stats, type?: FightTypes): number {
+    private getStatValue(field: keyof Omit<Stats, 'seasonalStats'>, type?: FightTypes): number {
         return type
             ? this._statBreakDown[type][field]
             : this._statBreakDown['Boss'][field] + this._statBreakDown['Trash'][field];

@@ -32,3 +32,38 @@ export const NerubarPalaceEncounters = [
         "name": "Queen Ansurek"
     }
 ];
+
+export const LiberationHoldEncounters = [
+    {
+        "id": 3009,
+        "name": "Vexie and the Geargrinders"
+    },
+    {
+        "id": 3010,
+        "name": "Cauldron of Carnage"
+    },
+    {
+        "id": 3011,
+        "name": "Rik Reverb"
+    },
+    {
+        "id": 3012,
+        "name": "Stix Bunkjunker"
+    },
+    {
+        "id": 3013,
+        "name": "Sprocketmonger Lockenstock"
+    },
+    {
+        "id": 3014,
+        "name": "One-Armed Bandit"
+    },
+    {
+        "id": 3015,
+        "name": "Mug'Zee, Heads of Security"
+    },
+    {
+        "id": 3016,
+        "name": "Chrome King Gallywix"
+    }
+];

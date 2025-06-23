@@ -1,11 +1,11 @@
 import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
-import {ChunkyViscera, Devour, DpsLossDebuffs, Impaled, Infest, PowerInfusion, TrackedDebuffs, WebbingDebuffs } from "@/app/_config/auras";
-import { NerubarPalaceEncounters } from "@/app/_config/encounters";
+import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/auras";
+import { LiberationHoldEncounters, NerubarPalaceEncounters } from "@/app/_config/encounters";
 import { TeamConfig } from "@/app/_config/teams";
 
-const SEASON_START_TIME = new Date("2024-09-10T22:00:00Z").getTime();
+const SEASON_START_TIME = new Date("2025-03-04T22:00:00Z").getTime();
 
 export type ReportFilter =  (r: Report) => boolean;
 
@@ -81,7 +81,7 @@ export async function fetchTeamStats({
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
-    const seasonalEncounters = NerubarPalaceEncounters.map(e => e.id);
+    const seasonalEncounters = LiberationHoldEncounters.map(e => e.id);
 
     const reportEntries = reports.map(r => {
         const fights: ReportFight[] = r?.fights
@@ -137,22 +137,21 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             casts: bossStats.casts[playerId] ?? 0,
             interrupts: bossStats.interrupts[playerId] ?? 0,
             damageTaken: bossStats.damageTaken[playerId]?.taken ?? 0,
-            daggerDamageTaken: bossStats.daggerDamageTaken[playerId] ?? 0,
             damageAbsorbed: bossStats.damageTaken[playerId]?.reduced ?? 0,
             deaths: bossStats.deaths[playerId] ?? 0,
             powerInfusions: bossStats.powerInfusions[playerId] ?? 0,
             mechanicsTaken: bossStats.mechanicsTaken[playerId] ?? 0,
             friendlyFireDamageDone: bossStats.friendlyFireDone[playerId] ?? 0,
             friendlyFireDamageTaken: bossStats.friendlyFireTakenByName[playerStat.name] ?? 0,
-            visceraFed: bossStats.visceraFed[playerId] ?? 0,
-            timesEaten: bossStats.timesEaten[playerId] ?? 0,
-            infests: bossStats.infests[playerId] ?? 0,
-            impales: bossStats.imaples[playerId] ?? 0,
-            webbed: bossStats.webbed[playerId] ?? 0,
-            doublePhaseBlades: bossStats.doublePhaseBlades[playerId] ?? 0,
-            chargeWebs: bossStats.chargeWebs[playerId] ?? 0,
-            bombsHit: bossStats.bombsHit[playerId] ?? 0,
-            bombsThrown: bossStats.bombsThrown[playerId] ?? 0,
+
+            // TODO: Fix placehodlers
+            seasonalStats: {
+                timesStoodInTrash: 1,
+                timesRolledOver: 1,
+                timesScrewed: 1,
+                footbombsDetonated: 1,
+                highRollerUptime: 1
+            }
         };
 
 
@@ -179,9 +178,6 @@ function extractPlayerStatsFromFightReport(report: {
     trackedBuffs?: any;
     trackedDebuffs?: any;
     friendlyFire?: any;
-    chargeWebs?: any;
-    phaseBlades?: any;
-    bombsThrown?: any;
 } | null | undefined) {
 
     const baseData = report?.baseData.data;
@@ -206,9 +202,6 @@ function extractPlayerStatsFromFightReport(report: {
             reduced: player.totalReduced,
         }, map), {});
 
-    const daggerDamageTaken = report?.daggerDamageTaken.data.entries
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
-
     const deaths = report?.preWipeDeaths
         ? report.preWipeDeaths.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
         : baseData.deathEvents.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {});
@@ -231,48 +224,6 @@ function extractPlayerStatsFromFightReport(report: {
         .flat()
         .reduce((map: PlayerAccumulator, player: any) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
 
-    const visceraFed = report?.trackedDebuffs?.data
-        .filter((d: any) => d.abilityGameID === ChunkyViscera)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const timesEaten = report?.trackedDebuffs?.data
-        .filter((d: any) => d.abilityGameID === Devour)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const infests = report?.trackedDebuffs?.data
-        .filter((d: any) => d.abilityGameID === Infest)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const imaples = report?.trackedDebuffs?.data
-        .filter((d: any) => d.abilityGameID === Impaled)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const webbed = report?.trackedDebuffs?.data
-        .filter((d: any) => WebbingDebuffs.includes(d.abilityGameID))
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const doublePhaseBlades = report?.phaseBlades?.data
-        .filter((d: any) => d.stack > 1)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const chargeWebs = report?.chargeWebs?.data
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
-
-    const bombsThrown = report?.bombsThrown?.data
-        .map((b: any) => b.source.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {}) ?? {};
-
-    const bombsHit = report?.bombsThrown?.data
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {}) ?? {};
-
     return {
         damage,
         healing,
@@ -280,23 +231,11 @@ function extractPlayerStatsFromFightReport(report: {
         dispels,
         interrupts,
         damageTaken,
-        daggerDamageTaken,
         deaths,
         powerInfusions,
         mechanicsTaken,
         friendlyFireDone,
         friendlyFireTakenByName,
-
-        // Seasonal
-        visceraFed,
-        timesEaten,
-        infests,
-        imaples,
-        webbed,
-        doublePhaseBlades,
-        chargeWebs,
-        bombsThrown,
-        bombsHit,
     };
 
 }

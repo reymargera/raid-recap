@@ -128,63 +128,7 @@ const mostMechanicsGiven: Award = {
     stat: (p) => p.mechanicsTaken('Boss'),
     supportsAveraging: true,
     background: 'rashanan.jpg',
-}
-
-const mostInfests: Award = {
-    name: 'Patient Zero',
-    description: 'Most Times Infested During Ovinax',
-    stat: (p) => p.infests('Boss'),
-    supportsAveraging: false,
-    background: 'ovinax.jpg',
-}
-
-const mostImpales: Award = {
-    name: 'Kebab King',
-    description: 'Most Impales During Silken Court',
-    stat: (p) => p.impales('Boss'),
-    supportsAveraging: false,
-    background: 'silken-court.jpg',
-}
-
-const mostChargeStoppingWebBindings: Award = {
-    name: 'Safety Net',
-    description: 'Most Anub\'arash Charges Stopped By Web Bindings',
-    stat: (p) => p.chargeWebs('Boss'),
-    supportsAveraging: false,
-    background: 'silken-court.jpg',
-}
-
-const mostTimesFed: Award = {
-    name: 'Yes, Chef',
-    description: 'Most Visera Fed To Ulgrax',
-    stat: (p) => p.visceraFed('Boss'),
-    supportsAveraging: false,
-    background: 'ulgrax.jpg',
-}
-
-const mostTimesEaten: Award = {
-    name: 'Snack Time',
-    description: 'Most Times Eaten By Ulgrax',
-    stat: (p) => p.timesEaten('Boss'),
-    supportsAveraging: false,
-    background: 'ulgrax.jpg',
-}
-
-const mostTimesDoubleBladed: Award = {
-    name: 'Double Trouble',
-    description: 'Most Times Hit By Sikaran\'s Phase Blades... A Second Time',
-    stat: (p) => p.doublePhaseBlades('Boss'),
-    supportsAveraging: false,
-    background: 'sikran.jpg',
-}
-
-const mostTimesWebbed: Award = {
-    name: 'Sticky Situation',
-    description: 'Most Times Being Rooted By Web Abilities',
-    stat: (p) => p.webbed('Boss'),
-    supportsAveraging: false,
-    background: 'rashanan.jpg',
-}
+};
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
 export const StaticAwards: Award[] = [
@@ -201,19 +145,12 @@ export const StaticAwards: Award[] = [
     mostDamageReduced,
     mostPowerInfusions,
     mostMechanicsGiven,
+    mostFriendlyFire,
+    mostFriendlyFireDamageTaken,
 ];
 
 export const SeasonalAwards: Award[] = [
-    // Somehow can still be relevant across seasons due to things like blessing of sacrifice
-    mostFriendlyFire,
-    mostFriendlyFireDamageTaken,
-    mostTimesFed,
-    mostTimesEaten,
-    mostTimesWebbed,
-    mostTimesDoubleBladed,
-    mostInfests,
-    mostImpales,
-    mostChargeStoppingWebBindings,
+
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
@@ -248,30 +185,6 @@ export const mostRollsOfTheEdges: Award = {
     background: 'nerubar-broll-4.jpg',
 }
 
-export const mostDaggerDamageTaken: Award = {
-    name: 'All You Can Eat Dagger Buffet',
-    description: 'Total Damage Taken From Nexus Daggers',
-    stat: (p) => p.daggerDamageTaken('Boss'),
-    supportsAveraging: true,
-    background: 'kyveza.jpg',
-}
-
-export const mostTimesBombed: Award = {
-    name: 'Theramore\'d',
-    description: 'Number Of Times Hit By Caustic Bombs During Trash Clears',
-    stat: (p) => p.bombsHit('Boss'),
-    supportsAveraging: false,
-    background: 'nerubar-broll-5.jpg',
-}
-
-export const mostBombsThrown: Award = {
-    name: 'Fire In The Hole',
-    description: 'Number Of Bombs Thrown During Trash Clears That Hit Players',
-    stat: (p) => p.bombsThrown('Boss'),
-    supportsAveraging: false,
-    background: 'nerubar-broll-1.jpg',
-}
-
 // Shadow Hunters Green
 export const mostIntentionalEarlyPulls: Award = {
     name: 'Well... I Was Ready',
@@ -283,7 +196,7 @@ export const mostIntentionalEarlyPulls: Award = {
 }
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostDaggerDamageTaken, mostNameChanges, mostAggroStrips, mostRollsOfTheEdges, mostTimesBombed, mostBombsThrown],
-    'shadow-hunters-green-team': [mostIntentionalEarlyPulls, mostTimesBombed, mostBombsThrown],
-    'shadow-hunters-blue-team': [mostTimesBombed, mostBombsThrown],
+    'shadow-hunters-gold-team': [mostNameChanges, mostAggroStrips, mostRollsOfTheEdges],
+    'shadow-hunters-green-team': [mostIntentionalEarlyPulls],
+    'shadow-hunters-blue-team': [],
 };
