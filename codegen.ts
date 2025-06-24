@@ -14,10 +14,12 @@ const config: CodegenConfig = {
             preset: "client",
             presetConfig: {
                 gqlTagName: "gql",
+                fragmentMasking: false,
             },
         },
     },
     ignoreNoDocuments: true,
+
 };
 
 export default config;

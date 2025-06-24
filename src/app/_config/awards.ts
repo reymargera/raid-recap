@@ -130,6 +130,69 @@ const mostMechanicsGiven: Award = {
     background: 'rashanan.jpg',
 };
 
+const mostTimeStoodInTrash: Award = {
+    name: 'You are where you stand',
+    description: 'Number Of Times Stood On Trash',
+    stat: (p) => p.getSeaontalStat('timesStoodInTrash', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostTimesRolledOver: Award = {
+    name: 'Road Kill',
+    description: 'Number Of Times Rolled Over By Rolling Rubbish',
+    stat: (p) => p.getSeaontalStat('timesRolledOver', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostTimesRollingOver: Award = {
+    name: 'I Merge Now.. GL Everyone Else',
+    description: 'Number Of Times Rolling Someone Over With Rolling Rubbish',
+    stat: (p) => p.getSeaontalStat('timesRollingOver', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostTimesScrewed: Award = {
+    name: 'Screwed Up',
+    description: 'Number Of Times Screwed Up',
+    stat: (p) => p.getSeaontalStat('timesScrewed', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostHighRollerUptime: Award = {
+    name: 'Buffy The Slot Machine Slayer',
+    description: 'Total Time With High Roller Debuff',
+    stat: (p) => p.getSeaontalStat('highRollerUptime', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostTimesCrushed: Award = {
+    name: 'Bank Rolled',
+    description: 'Number Of Times Ran Over By A Payline',
+    stat: (p) => p.getSeaontalStat('timesCrushed', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostCoinsPushed: Award = {
+    name: 'Penny Pusher',
+    description: 'Number Of Paylines Kicked Off',
+    stat: (p) => p.getSeaontalStat('coinsPushed', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostBombsTossed: Award = {
+    name: 'Bomb Voyage',
+    description: 'Number Of Bombs Tossed Off Gally\'s Platform',
+    stat: (p) => p.getSeaontalStat('bombsTossed', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostCoilsDestroyed: Award = {
+    name: 'The Conductor',
+    description: 'Number Of Giga Coils Destroyed With Bombs',
+    stat: (p) => p.getSeaontalStat('timesScrewed', 'Boss'),
+    supportsAveraging: false,
+};
+
 // Awards not tied to any seasonal encounters and can be leveraged any time
 export const StaticAwards: Award[] = [
     attendance,
@@ -150,7 +213,15 @@ export const StaticAwards: Award[] = [
 ];
 
 export const SeasonalAwards: Award[] = [
-
+    mostTimeStoodInTrash,
+    mostTimesRolledOver,
+    mostTimesRollingOver,
+    mostTimesScrewed,
+    mostHighRollerUptime,
+    mostTimesCrushed,
+    mostCoinsPushed,
+    mostBombsTossed,
+    mostCoilsDestroyed,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];

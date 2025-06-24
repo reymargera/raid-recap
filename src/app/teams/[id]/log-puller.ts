@@ -18,6 +18,8 @@ export interface FightSegmentation {
     trashFightIds: number[];
 }
 
+export type MaybeReportType = NonNullable<NonNullable<GetReportQuery['bossFights']>['report']> | null | undefined
+
 export async function fetchTeamStats({
     guildId,
     reportFilter,
@@ -141,16 +143,21 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             deaths: bossStats.deaths[playerId] ?? 0,
             powerInfusions: bossStats.powerInfusions[playerId] ?? 0,
             mechanicsTaken: bossStats.mechanicsTaken[playerId] ?? 0,
-            friendlyFireDamageDone: bossStats.friendlyFireDone[playerId] ?? 0,
-            friendlyFireDamageTaken: bossStats.friendlyFireTakenByName[playerStat.name] ?? 0,
+            friendlyFireDamageDone: bossStats.friendlyFireDoneByName[playerStat.name] ?? 0,
+            friendlyFireDamageTaken: bossStats.friendlyFireTaken[playerId] ?? 0,
 
             // TODO: Fix placehodlers
             seasonalStats: {
-                timesStoodInTrash: 1,
-                timesRolledOver: 1,
-                timesScrewed: 1,
-                footbombsDetonated: 1,
-                highRollerUptime: 1
+                timesStoodInTrash: bossStats.garbagePileApplications[playerId] ?? 0,
+                timesRolledOver: bossStats.rolledOver[playerId] ?? 0,
+                timesRollingOver: bossStats.rollingOver[playerId] ?? 0,
+                timesScrewed: bossStats.screwed[playerId] ?? 0,
+                footbombsDetonated: 0,
+                highRollerUptime: bossStats.highRollerUptime[playerId] ?? 0,
+                timesCrushed: bossStats.crushes[playerId] ?? 0,
+                coinsPushed: bossStats.coinsPushed[playerId] ?? 0,
+                bombsTossed: bossStats.bombsTossed[playerId] ?? 0,
+                coilsDestroyed: bossStats.coilsDestroyed[playerId] ?? 0,
             }
         };
 
@@ -162,40 +169,15 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
     return playerStats;
 }
 
-function extractPlayerStatsFromFightReport(report: {
-    __typename?: "Report";
-    code: string;
-    title: string;
-    startTime: number;
-    endTime: number;
-    baseData?: any;
-    preWipeDeaths?: any;
-    casts?: any;
-    dispels?: any;
-    interupts?: any;
-    damageTaken?: any;
-    daggerDamageTaken?: any;
-    trackedBuffs?: any;
-    trackedDebuffs?: any;
-    friendlyFire?: any;
-} | null | undefined) {
+function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
 
     const baseData = report?.baseData.data;
-    const damage = baseData.damageDone.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
-    const healing = baseData.healingDone.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
-    const casts = report?.casts.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
-    const dispels = report?.dispels.data.entries
-        .map((e: any) => e.entries)
-        .flat()
-        .map((e: any) => e.details)
-        .flat()
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
-    const interrupts = report?.interupts.data.entries
-        .map((e: any)=> e.entries)
-        .flat()
-        .map((e: any) => e.details)
-        .flat()
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? map[player.guid] += player.total : map[player.guid] = player.total, map), {});
+    const damage = sumByPlayer(baseData.damageDone);
+    const healing = sumByPlayer(baseData.healingDone);
+    const casts = sumByPlayer(getTableDataEntries(report?.casts));
+    const dispels = sumByPlayer(getTableSubEntryDetails(report?.dispels));
+    const interrupts = sumByPlayer(getTableSubEntryDetails(report?.interupts));
+
     const damageTaken = report?.damageTaken.data.entries
         .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = {
             taken: player.total,
@@ -203,26 +185,33 @@ function extractPlayerStatsFromFightReport(report: {
         }, map), {});
 
     const deaths = report?.preWipeDeaths
-        ? report.preWipeDeaths.data.entries.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {})
-        : baseData.deathEvents.reduce((map: PlayerAccumulator, player: any) => (map[player.guid] ? ++map[player.guid] : map[player.guid] = 1, map), {});
+        // We are counting occurances rather than summing a specific stat, so data selecting is hardcoded to 1
+        ? sumByPlayer(getTableDataEntries(report.preWipeDeaths), (d: any) => 1)
+        : sumByPlayer(baseData.deathEvents, (d: any) => 1);
 
-    const powerInfusions = report?.trackedBuffs?.data
-        .filter((b: any)=> b.abilityGameID === PowerInfusion)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any)=> (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const powerInfusionEvents = (report?.trackedBuffs?.data ?? []).filter((b: any) => b.abilityGameID === PowerInfusion);
+    const powerInfusions = sumByPlayer(powerInfusionEvents, (d: any) => 1, (p: any) => p.target.guid);
 
-    const mechanicsTaken = report?.trackedDebuffs?.data
-        .filter((d: any) => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0)
-        .map((b: any) => b.target.guid)
-        .reduce((map: PlayerAccumulator, player: any) => (map[player] ? ++map[player] : map[player] = 1, map), {});
+    const dpsLossMechanicEvents = (report?.trackedDebuffs?.data ?? []).filter((d: any) => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0);
+    const mechanicsTaken = sumByPlayer(dpsLossMechanicEvents, (d: any) => 1, (p: any) => p.target.guid);
 
-    const friendlyFireDone = report?.friendlyFire?.data.entries
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.guid] = player.total, map), {});
+    const friendlyFireDoneByName = sumByPlayer(
+        getTableDataEntries(report?.friendlyFire).flatMap((ff: any) => ff.sources),
+        (d: any) => d.total,
+        (p: any) => p.name
+    );
+    const friendlyFireTaken = sumByPlayer(getTableDataEntries(report?.friendlyFire));
 
-    const friendlyFireTakenByName = report?.friendlyFire?.data.entries
-        .map((ff: any) => ff.targets)
-        .flat()
-        .reduce((map: PlayerAccumulator, player: any) => (map[player.name] ? map[player.name] += player.total : map[player.name] = player.total, map), {});
+    // Seaonal Stats
+    const garbagePileApplications = sumByPlayer(getTableDataAuras(report?.garbagePileApplications), (d: any) => d.totalUses);
+    const rolledOver = sumByPlayer(report?.rolledApplications?.data, (d: any) => 1, (p: any) => p.target.guid);
+    const rollingOver = sumByPlayer(report?.rolledApplications?.data, (d: any) => 1, (p: any) => p.source.guid);
+    const screwed = sumByPlayer(getTableDataAuras(report?.screwedApplications), (d: any) => d.totalUses);
+    const highRollerUptime = sumByPlayer(getTableDataAuras(report?.highRollerUptime), (d: any) => d.totalUptime);
+    const crushes = sumByPlayer(getTableDataAuras(report?.crushedApplications), (d: any) => d.totalUses);
+    const coinsPushed = sumByPlayer(getTableDataEntries(report?.paylineCasts));
+    const bombsTossed = sumByPlayer(getTableDataEntries(report?.gigaBombTosses));
+    const coilsDestroyed = sumByPlayer(getTableDataAuras(report?.coilsDestroyed), (d: any) => d.totalUses);
 
     return {
         damage,
@@ -234,10 +223,50 @@ function extractPlayerStatsFromFightReport(report: {
         deaths,
         powerInfusions,
         mechanicsTaken,
-        friendlyFireDone,
-        friendlyFireTakenByName,
-    };
+        friendlyFireDoneByName,
+        friendlyFireTaken,
 
+        // Seasonal
+        garbagePileApplications,
+        rolledOver,
+        rollingOver,
+        screwed,
+        highRollerUptime,
+        crushes,
+        coinsPushed,
+        bombsTossed,
+        coilsDestroyed,
+    };
+}
+
+function getTableDataEntries(reportTable: any) {
+    return reportTable?.data?.entries ?? [];
+}
+
+function getTableDataAuras(reportTable: any) {
+    return reportTable?.data?.auras ?? [];
+}
+
+function getTableSubEntryDetails(reportTable: any) {
+    return (reportTable?.data?.entries ?? [])
+        .flatMap((e: any) => e.entries)
+        .flatMap((e: any) => e.details);
+}
+
+function sumByPlayer(playerData: any[], dataSelector = (d: any) => d.total, playerSelector = (p: any) => p.guid) {
+    return playerData.reduce((map: PlayerAccumulator, playerData: any) => {
+        const playerIdentifier = playerSelector(playerData);
+
+        if (playerIdentifier === null || playerIdentifier === undefined) {
+            return map;
+        }
+
+        const currentPlayerValue = map[playerIdentifier] ?? 0;
+        const incomingPlayerValue = dataSelector(playerData);
+        map[playerIdentifier] = currentPlayerValue + incomingPlayerValue;
+
+        return map;
+    }, {});
 }
 
 function mergeAlts(playerStats: PlayerStats[], alts?: { [key: string]: string[]; }) {

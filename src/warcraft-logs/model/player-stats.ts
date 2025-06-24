@@ -1,9 +1,14 @@
 export const TWWSeason2StatKeys = [
     'timesStoodInTrash',
     'timesRolledOver',
+    'timesRollingOver',
     'timesScrewed',
     'footbombsDetonated',
     'highRollerUptime',
+    'timesCrushed',
+    'coinsPushed',
+    'bombsTossed',
+    'coilsDestroyed',
 ] as const;
 
 export const SeasonalStatKeys = [...TWWSeason2StatKeys];
