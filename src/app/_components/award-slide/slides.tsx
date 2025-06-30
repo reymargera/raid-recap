@@ -143,11 +143,9 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                                     filter={a.playerFilter}
                                     useOverall={a.supportsAveraging ? userOverall : true}/>
                             </div>
-                            {!a.supportsAveraging && !userOverall && (
-                                <div>
-                                    <p className={"text-sm font-normal text-white"}>*Stat does not support per raid night averaging</p>
-                                </div>
-                            )}
+                            <div>
+                                <p className={`text-sm font-normal text-white ${!a.supportsAveraging && !userOverall ? 'visible' : 'invisible'}`}>*Stat does not support per raid night averaging</p>
+                            </div>
                         </div>
                     </div>
                 </SwiperSlide>
