@@ -35,6 +35,8 @@ export const ChargedGigaBomb = 469360;
 export const PowerInfusion = 10060;
 export const HitAndRun = 462797;
 
+export const RedAsphalt = 468872;
+
 export const TrackedDebuffs = [
     ...DpsLossDebuffs,
     PowerInfusion,

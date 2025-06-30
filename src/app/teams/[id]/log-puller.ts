@@ -158,6 +158,7 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
                 coinsPushed: bossStats.coinsPushed[playerId] ?? 0,
                 bombsTossed: bossStats.bombsTossed[playerId] ?? 0,
                 coilsDestroyed: bossStats.coilsDestroyed[playerId] ?? 0,
+                timesFlattened: bossStats.timesFlattened[playerId] ?? 0,
             }
         };
 
@@ -212,6 +213,7 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
     const coinsPushed = sumByPlayer(getTableDataEntries(report?.paylineCasts));
     const bombsTossed = sumByPlayer(getTableDataEntries(report?.gigaBombTosses));
     const coilsDestroyed = sumByPlayer(getTableDataAuras(report?.coilsDestroyed), (d: any) => d.totalUses);
+    const timesFlattened = sumByPlayer(getTableDataEntries(report?.redAsphaltDeaths), (d: any) => 1);
 
     return {
         damage,
@@ -236,6 +238,7 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
         coinsPushed,
         bombsTossed,
         coilsDestroyed,
+        timesFlattened,
     };
 }
 

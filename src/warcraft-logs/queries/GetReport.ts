@@ -1,4 +1,4 @@
-import { ChargedGigaBomb, Crushed, GarbagePile, GigaBombDetonation, HighRoller, Payline, Rolled, RollingRubbish, Screwed } from '@/app/_config/auras';
+import { ChargedGigaBomb, Crushed, GarbagePile, GigaBombDetonation, HighRoller, Payline, RedAsphalt, Rolled, RollingRubbish, Screwed } from '@/app/_config/auras';
 import { gql } from '@apollo/client/core';
 
 
@@ -125,6 +125,16 @@ export const HitAndRunFragment = gql`
     }
 `;
 
+export const RedAsphaltFragment = gql`
+    fragment RedAsphaltFragment on Report {
+        redAsphaltDeaths: table(
+            fightIDs: $trashFightIds
+            dataType: Deaths
+            abilityID: 468872
+        ) @skip(if: $skipTrashFights)
+    }
+`;
+
 // @ts-ignore
 export const GetReport = gql`
     query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float, $skipTrashFights: Boolean!) {
@@ -141,6 +151,7 @@ export const GetReport = gql`
                 ...GallyBombFragment
                 ...GallyCoilFragment
                 ...HitAndRunFragment
+                ...RedAsphaltFragment
                 trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
                     nextPageTimestamp
                     data
@@ -163,4 +174,5 @@ export const GetReport = gql`
     ${GallyBombFragment}
     ${GallyCoilFragment}
     ${HitAndRunFragment}
+    ${RedAsphaltFragment}
 `;

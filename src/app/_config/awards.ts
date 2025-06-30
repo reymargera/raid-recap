@@ -189,7 +189,14 @@ const mostBombsTossed: Award = {
 const mostCoilsDestroyed: Award = {
     name: 'The Conductor',
     description: 'Number Of Giga Coils Destroyed With Bombs',
-    stat: (p) => p.getSeaontalStat('timesScrewed', 'Boss'),
+    stat: (p) => p.getSeaontalStat('coilsDestroyed', 'Boss'),
+    supportsAveraging: false,
+};
+
+const mostTimesFlattened: Award = {
+    name: 'Everyone Gets One But Somehow You Got Many',
+    description: 'Number of times flattened by Vexie',
+    stat: (p) => p.getSeaontalStat('timesFlattened', 'Boss'),
     supportsAveraging: false,
 };
 
@@ -222,6 +229,7 @@ export const SeasonalAwards: Award[] = [
     mostCoinsPushed,
     mostBombsTossed,
     mostCoilsDestroyed,
+    mostTimesFlattened,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
