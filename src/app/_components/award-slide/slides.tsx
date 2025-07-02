@@ -31,6 +31,18 @@ function generateViewToggle(value: boolean, updateValue: Dispatch<SetStateAction
     );
 }
 
+function generateGuessModeToggle(value: boolean, updateValue: Dispatch<SetStateAction<boolean>>) {
+    return (
+        <div className={"fixed top-16 right-4 z-50"}>
+            <label className="inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" onClick={() => updateValue(value => !value)}/>
+                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Guess Mode</span>
+            </label>
+        </div>
+    );
+}
+
 function generateHomeButton() {
     return (
         <div className={"fixed top-4 left-4 z-50"}>
@@ -43,20 +55,24 @@ function generateHomeButton() {
 
 export default function AwardSlides(props: AwardSlidesProps) {
     const [useOverall, setOverall] = useState(true);
+    const [guessMode, setGuessMode] = useState(false);
+    const [revealedSlides, setRevealedSlides] = useState<Set<string>>(new Set());
 
     const {team} = props;
     const teamBits = TeamBits[team.id] ?? [];
     const awards = [...CurrentAwards, ...teamBits];
 
     const titleSlide = generateTitleSlide(team);
-    const awardSlides = generateAwardSlides(team, awards, useOverall);
+    const awardSlides = generateAwardSlides(team, awards, useOverall, guessMode, revealedSlides, setRevealedSlides);
     const disclaimerSlide = generateDisclaimerSlide();
     const viewToggle = generateViewToggle(useOverall, setOverall);
+    const guessModeToggle = generateGuessModeToggle(guessMode, setGuessMode);
     const homeButton = generateHomeButton();
 
     return (
         <>
             {viewToggle}
+            {guessModeToggle}
             {homeButton}
             <Swiper
                 direction={'vertical'}
@@ -105,7 +121,7 @@ function generateTextSlide(heading: string, subtext: string[]) {
     );
 }
 
-function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) {
+function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, guessMode: boolean, revealedSlides: Set<string>, setRevealedSlides: Dispatch<SetStateAction<Set<string>>>) {
     let content;
 
     if (team.stats?.length === 0 || awards.length === 0) {
@@ -123,9 +139,17 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                 return null;
             }
 
+            const isRevealed = !guessMode || revealedSlides.has(a.name);
+
+            const handleReveal = () => {
+                if (guessMode && !revealedSlides.has(a.name)) {
+                    setRevealedSlides(prev => new Set([...prev, a.name]));
+                }
+            };
+
             return (
                 <SwiperSlide key={a.name}>
-                    <div className={"min-h-screen justify-center items-center"}>
+                    <div className={`min-h-screen justify-center items-center ${!isRevealed ? 'cursor-pointer' : ''}`} onClick={handleReveal}>
                         <Image src={`${publicBase}/backgrounds/${a.background ?? 'nerubar-broll-1.jpg'}`}
                                alt={a.background ?? 'nerubar-broll-1.jpg'}
                                className={"slide-background object-cover object-center"}
@@ -136,12 +160,22 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean) 
                                 <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2"}>{a.name}</h1>
                                 <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48"}>{a.description}</p>
                             </div>
-                            <div className={"ranking-chart"}>
-                                <RankingChart
-                                    playerStats={playerStats}
-                                    statSelection={a.stat}
-                                    filter={a.playerFilter}
-                                    useOverall={a.supportsAveraging ? userOverall : true}/>
+                            <div className={"ranking-chart relative overflow-hidden"}>
+                                <div className={`absolute inset-0 flex justify-center items-center transition-all duration-500 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:opacity-90'}`}>
+                                    <div className={"text-center"}>
+                                        <div className={"text-6xl mb-4"}>🤔</div>
+                                        <h2 className={"text-2xl font-bold text-white mb-2"}>Make Your Guess!</h2>
+                                        <p className={"text-lg text-white-400"}>Who do you think won this award?</p>
+                                        <p className={"text-sm text-white-300 mt-4"}>Click to reveal the winner</p>
+                                    </div>
+                                </div>
+                                <div className={`transition-all duration-500 ${isRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                                    <RankingChart
+                                        playerStats={playerStats}
+                                        statSelection={a.stat}
+                                        filter={a.playerFilter}
+                                        useOverall={a.supportsAveraging ? userOverall : true}/>
+                                </div>
                             </div>
                             <div>
                                 <p className={`text-sm font-normal text-white ${!a.supportsAveraging && !userOverall ? 'visible' : 'invisible'}`}>*Stat does not support per raid night averaging</p>
