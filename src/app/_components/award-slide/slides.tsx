@@ -14,6 +14,7 @@ import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
 import Image from "next/image";
 import {Dispatch, SetStateAction, useState} from "react";
 import {publicBase} from "@/app/_config/paths";
+import {ClassColors} from "@/app/_components/ranking-chart/class-colors";
 
 export interface AwardSlidesProps {
     team: Team;
@@ -162,11 +163,35 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, 
                             </div>
                             <div className={"ranking-chart relative overflow-hidden"}>
                                 <div className={`absolute inset-0 flex justify-center items-center transition-all duration-500 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:opacity-90'}`}>
-                                    <div className={"text-center"}>
+                                    <div className={"text-center max-w-4xl px-4"}>
                                         <div className={"text-6xl mb-4"}>🤔</div>
                                         <h2 className={"text-2xl font-bold text-white mb-2"}>Make Your Guess!</h2>
-                                        <p className={"text-lg text-white-400"}>Who do you think won this award?</p>
-                                        <p className={"text-sm text-white-300 mt-4"}>Click to reveal the winner</p>
+                                        <p className={"text-lg text-white-400 mb-6"}>Who do you think won this award?</p>
+                                        <div className={"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6"}>
+                                            {playerStats
+                                                .sort((a, b) => a.name.localeCompare(b.name))
+                                                .map(player => {
+                                                    const classColor = ClassColors[player.playerClass] || '#FFFFFF';
+                                                    return (
+                                                        <button
+                                                            key={player.name}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleReveal();
+                                                            }}
+                                                            className={"hover:scale-105 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border-2 hover:border-opacity-80"}
+                                                            style={{
+                                                                backgroundColor: `${classColor}40`,
+                                                                borderColor: classColor,
+                                                            }}
+                                                        >
+                                                            {player.name}
+                                                        </button>
+                                                    );
+                                                })
+                                            }
+                                        </div>
+                                        <p className={"text-sm text-white-300"}>Click any player name to reveal the winner</p>
                                     </div>
                                 </div>
                                 <div className={`transition-all duration-500 ${isRevealed ? 'opacity-100' : 'opacity-0'}`}>
