@@ -12,7 +12,7 @@ import {Award, CurrentAwards, TeamBits} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
 import Image from "next/image";
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, SetStateAction, useState, useRef} from "react";
 import {publicBase} from "@/app/_config/paths";
 import {ClassColors} from "@/app/_components/ranking-chart/class-colors";
 
@@ -20,26 +20,34 @@ export interface AwardSlidesProps {
     team: Team;
 }
 
-function generateViewToggle(value: boolean, updateValue: Dispatch<SetStateAction<boolean>>) {
+function generateControlButtons(useOverallRef: React.MutableRefObject<boolean>, guessMode: boolean, setGuessMode: Dispatch<SetStateAction<boolean>>, forceUpdate: () => void) {
     return (
-        <div className={"fixed top-4 right-4 z-50"}>
-            <label className="inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" onClick={() => updateValue(value => !value)}/>
-                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gray-500"></div>
-                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Avg. Per Night</span>
-            </label>
-        </div>
-    );
-}
-
-function generateGuessModeToggle(value: boolean, updateValue: Dispatch<SetStateAction<boolean>>) {
-    return (
-        <div className={"fixed top-16 right-4 z-50"}>
-            <label className="inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" onClick={() => updateValue(value => !value)}/>
-                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Guess Mode</span>
-            </label>
+        <div className={"fixed top-4 right-4 z-50 flex gap-2"}>
+            <button
+                type="button"
+                onClick={() => {
+                    useOverallRef.current = !useOverallRef.current;
+                    forceUpdate();
+                }}
+                className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ${
+                    useOverallRef.current
+                        ? "bg-gray-800 hover:bg-gray-900"
+                        : "bg-gray-800 hover:bg-gray-900 ring-2 ring-blue-400"
+                } dark:bg-gray-800 dark:hover:bg-gray-700`}
+            >
+                {useOverallRef.current ? "⚫ " : "🔵 "}Avg. Per Night
+            </button>
+            <button
+                type="button"
+                onClick={() => setGuessMode(value => !value)}
+                className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ${
+                    guessMode
+                        ? "bg-gray-800 hover:bg-gray-900 ring-2 ring-blue-400"
+                        : "bg-gray-800 hover:bg-gray-900"
+                } dark:bg-gray-800 dark:hover:bg-gray-700`}
+            >
+                {guessMode ? "🔵 " : "⚫ "}Guess Mode
+            </button>
         </div>
     );
 }
@@ -55,25 +63,24 @@ function generateHomeButton() {
 }
 
 export default function AwardSlides(props: AwardSlidesProps) {
-    const [useOverall, setOverall] = useState(true);
+    const useOverallRef = useRef(true);
     const [guessMode, setGuessMode] = useState(false);
     const [revealedSlides, setRevealedSlides] = useState<Set<string>>(new Set());
+    const [, forceUpdate] = useState({});
 
     const {team} = props;
     const teamBits = TeamBits[team.id] ?? [];
     const awards = [...CurrentAwards, ...teamBits];
 
     const titleSlide = generateTitleSlide(team);
-    const awardSlides = generateAwardSlides(team, awards, useOverall, guessMode, revealedSlides, setRevealedSlides);
+    const awardSlides = generateAwardSlides(team, awards, useOverallRef.current, guessMode, revealedSlides, setRevealedSlides);
     const disclaimerSlide = generateDisclaimerSlide();
-    const viewToggle = generateViewToggle(useOverall, setOverall);
-    const guessModeToggle = generateGuessModeToggle(guessMode, setGuessMode);
+    const controlButtons = generateControlButtons(useOverallRef, guessMode, setGuessMode, () => forceUpdate({}));
     const homeButton = generateHomeButton();
 
     return (
         <>
-            {viewToggle}
-            {guessModeToggle}
+            {controlButtons}
             {homeButton}
             <Swiper
                 direction={'vertical'}
