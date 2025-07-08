@@ -4,6 +4,7 @@ import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
 import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/auras";
 import { LiberationHoldEncounters, NerubarPalaceEncounters } from "@/app/_config/encounters";
 import { TeamConfig } from "@/app/_config/teams";
+import { TeamStats } from "@/warcraft-logs/model/team-stats";
 
 const SEASON_START_TIME = new Date("2025-03-04T22:00:00Z").getTime();
 
@@ -33,6 +34,9 @@ export async function fetchTeamStats({
     // Pulling all logs for the given guild from the current season, optionally filter reports
     const reports = await warcraftLogs.getReportsForGuild({guildId, seasonStartTime: SEASON_START_TIME});
     const filteredReports = reportFilter ? reports.filter(reportFilter) : reports;
+    const teamStats = new TeamStats();
+    teamStats.addRaidNights(filteredReports);
+
     console.log(`Retained a total of ${filteredReports.length} logs after applying filter`);
 
     // Once reports are available, we need to split the fights within the report
@@ -56,6 +60,7 @@ export async function fetchTeamStats({
             debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
         });
 
+        teamStats.addReport(reportData);
         const reportStats = extractPlayerStatsFromLog(reportData);
 
         reportStats.forEach((stats, playerId) => {

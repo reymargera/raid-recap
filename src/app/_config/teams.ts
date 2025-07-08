@@ -18,7 +18,10 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         name: 'Shadow Hunters Gold Team',
         logo: 'gold-team.png',
         guildId: 44873,
-        reportFilter: (report: Report) => report.title.includes("Gold"),
+        reportFilter: (report: Report) => {
+            const nonTeamLogs = ['rpQbYAkNVgynjH8K'];
+            return report.title.includes("Gold") && !nonTeamLogs.includes(report.code);
+        },
         attendancePercent: 0.4,
     },
     'shadow-hunters-blue-team': {
