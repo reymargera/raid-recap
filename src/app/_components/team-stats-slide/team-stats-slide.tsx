@@ -87,6 +87,24 @@ const BookIcon = () => (
     </svg>
 );
 
+const TrophyIcon = () => (
+    <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+    </svg>
+);
+
+const LightningIcon = () => (
+    <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+);
+
+const SkullIcon = () => (
+    <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zM9 11.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-3 2.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
+    </svg>
+);
+
 function formatTime(milliseconds: number): string {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -159,6 +177,81 @@ function AnimatedNumberCounter({ endValue, delay = 0, trigger = true }: { endVal
     return <span>{animatedValue}</span>;
 }
 
+// DPS Meter-style bar component
+function DPSMeterBar({
+    ability,
+    value,
+    maxValue,
+    index,
+    trigger = true,
+    isDeathCount = false
+}: {
+    ability: string;
+    value: number;
+    maxValue: number;
+    index: number;
+    trigger?: boolean;
+    isDeathCount?: boolean;
+}) {
+    const [animatedWidth, setAnimatedWidth] = useState(0);
+    const percentage = (value / maxValue) * 100;
+
+    useEffect(() => {
+        if (!trigger) return;
+
+        setAnimatedWidth(0);
+        const timer = setTimeout(() => {
+            const startTime = Date.now();
+            const duration = 1500;
+
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+
+                setAnimatedWidth(percentage * easeOutQuart);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+
+            animate();
+        }, index * 200); // Stagger animation
+
+        return () => clearTimeout(timer);
+    }, [percentage, index, trigger]);
+
+    const formatValue = (val: number) => {
+        if (isDeathCount) return val.toString();
+        return val >= 1000000 ? `${(val / 1000000).toFixed(1)}M` : `${(val / 1000).toFixed(0)}K`;
+    };
+
+    return (
+        <div className="relative mb-2">
+            <div className="relative h-6 bg-gray-800 rounded-full overflow-hidden border border-gray-600">
+                <div
+                    className={`absolute inset-y-0 left-0 rounded-full transition-all duration-300 ${
+                        isDeathCount
+                            ? 'bg-gradient-to-r from-red-600 to-red-700'
+                            : 'bg-gradient-to-r from-blue-600 to-blue-700'
+                    }`}
+                    style={{ width: `${animatedWidth}%` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                <div className="absolute inset-0 flex items-center justify-between px-3 text-sm">
+                    <span className="text-white font-medium truncate drop-shadow-lg">
+                        {index + 1}. {ability}
+                    </span>
+                    <span className="text-white font-mono font-bold drop-shadow-lg">
+                        {formatValue(value)}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlideProps) {
     const topDamageTaken = teamStats.getTopDamageTakenAbilities(5);
     const topDeathAbilities = teamStats.getTopDeathAbilities(5);
@@ -208,11 +301,8 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                 <div className="flex flex-col p-8 min-h-screen justify-center content-center relative z-10">
                     <div className="award-heading mb-8">
                         <h1 className="text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2 text-center">
-                            {teamName} Season Overview
+                            Season Overview
                         </h1>
-                        <p className="mb-6 text-lg font-normal text-white-400 lg:text-xl text-center">
-                            A comprehensive look at the team's performance this season
-                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
@@ -308,30 +398,42 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                             </h2>
                             <div className="space-y-4">
                                 {teamStats.longestBossFightKill.name !== 'Placeholder' && (
-                                    <div className="bg-white/10 rounded-lg p-3">
-                                        <div className="text-sm text-white-400">Longest Kill</div>
-                                        <div className="text-white font-semibold">{teamStats.longestBossFightKill.name}</div>
-                                        <div className="text-sm text-green-400">
-                                            {formatTime(teamStats.longestBossFightKill.duration)} • {teamStats.longestBossFightKill.difficulty}
+                                    <div className="text-center bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 p-4 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-2">
+                                            <TrophyIcon />
                                         </div>
+                                        <div className="text-sm text-yellow-200 font-medium uppercase tracking-wide">Longest Kill</div>
+                                        <div className="text-white font-semibold mb-2">{teamStats.longestBossFightKill.name}</div>
+                                        <div className="text-3xl font-extrabold text-yellow-400 mb-1">
+                                            <AnimatedTimeCounter endValue={teamStats.longestBossFightKill.duration} delay={1000} trigger={animationTrigger} />
+                                        </div>
+                                        <div className="text-sm text-yellow-200">{teamStats.longestBossFightKill.difficulty}</div>
                                     </div>
                                 )}
                                 {teamStats.shortestBossFightKill.name !== 'Placeholder' && teamStats.shortestBossFightKill.duration !== Number.MAX_VALUE && (
-                                    <div className="bg-white/10 rounded-lg p-3">
-                                        <div className="text-sm text-white-400">Shortest Kill</div>
-                                        <div className="text-white font-semibold">{teamStats.shortestBossFightKill.name}</div>
-                                        <div className="text-sm text-blue-400">
-                                            {formatTime(teamStats.shortestBossFightKill.duration)} • {teamStats.shortestBossFightKill.difficulty}
+                                    <div className="text-center bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-4 rounded-xl border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-2">
+                                            <LightningIcon />
                                         </div>
+                                        <div className="text-sm text-blue-200 font-medium uppercase tracking-wide">Shortest Kill</div>
+                                        <div className="text-white font-semibold mb-2">{teamStats.shortestBossFightKill.name}</div>
+                                        <div className="text-3xl font-extrabold text-blue-400 mb-1">
+                                            <AnimatedTimeCounter endValue={teamStats.shortestBossFightKill.duration} delay={1100} trigger={animationTrigger} />
+                                        </div>
+                                        <div className="text-sm text-blue-200">{teamStats.shortestBossFightKill.difficulty}</div>
                                     </div>
                                 )}
                                 {teamStats.lowestWipePercentage.name !== 'Placeholder' && teamStats.lowestWipePercentage.fightPercentage < 100 && (
-                                    <div className="bg-white/10 rounded-lg p-3">
-                                        <div className="text-sm text-white-400">Closest Wipe</div>
-                                        <div className="text-white font-semibold">{teamStats.lowestWipePercentage.name}</div>
-                                        <div className="text-sm text-orange-400">
-                                            {formatPercentage(teamStats.lowestWipePercentage.fightPercentage)} • {teamStats.lowestWipePercentage.difficulty}
+                                    <div className="text-center bg-gradient-to-br from-red-500/20 to-red-600/20 p-4 rounded-xl border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-2">
+                                            <SkullIcon />
                                         </div>
+                                        <div className="text-sm text-red-200 font-medium uppercase tracking-wide">Closest Wipe</div>
+                                        <div className="text-white font-semibold mb-2">{teamStats.lowestWipePercentage.name}</div>
+                                        <div className="text-3xl font-extrabold text-red-400 mb-1">
+                                            {formatPercentage(teamStats.lowestWipePercentage.fightPercentage)}
+                                        </div>
+                                        <div className="text-sm text-red-200">{teamStats.lowestWipePercentage.difficulty}</div>
                                     </div>
                                 )}
                             </div>
@@ -384,25 +486,41 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                         {/* Most Dangerous Abilities */}
                         <div className="bg-black/70 backdrop-blur-sm rounded-lg p-6 border border-white/20">
                             <h2 className="text-2xl font-bold text-white mb-4">
-                                Most Dangerous
+                                Damage Report
                             </h2>
-                            <div className="space-y-3">
+                            <div className="space-y-6">
                                 <div>
-                                    <div className="text-sm text-white-400 mb-2">Top Damage Sources</div>
+                                    <div className="text-sm text-white-400 mb-3 flex items-center">
+                                        <div className="w-3 h-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full mr-2"></div>
+                                        Top Damage Sources
+                                    </div>
                                     {topDamageTaken.slice(0, 3).map((ability, index) => (
-                                        <div key={`damage-${ability.guid}`} className="flex justify-between items-center text-sm">
-                                            <span className="text-white truncate">{index + 1}. {ability.name}</span>
-                                            <span className="text-red-400 font-mono">{(ability.total / 1000000).toFixed(1)}M</span>
-                                        </div>
+                                        <DPSMeterBar
+                                            key={`damage-${ability.guid}`}
+                                            ability={ability.name}
+                                            value={ability.total}
+                                            maxValue={topDamageTaken[0]?.total || 1}
+                                            index={index}
+                                            trigger={animationTrigger}
+                                            isDeathCount={false}
+                                        />
                                     ))}
                                 </div>
                                 <div>
-                                    <div className="text-sm text-white-400 mb-2">Top Death Causes</div>
-                                    {topDeathAbilities.slice(0, 3).map((ability, index) => (
-                                        <div key={`death-${ability.guid}`} className="flex justify-between items-center text-sm">
-                                            <span className="text-white truncate">{index + 1}. {ability.name}</span>
-                                            <span className="text-orange-400 font-mono">{ability.count}</span>
-                                        </div>
+                                    <div className="text-sm text-white-400 mb-3 flex items-center">
+                                        <div className="w-3 h-3 bg-gradient-to-r from-red-600 to-red-700 rounded-full mr-2"></div>
+                                        Top Death Causes
+                                    </div>
+                                    {topDeathAbilities.slice(0, 5).map((ability, index) => (
+                                        <DPSMeterBar
+                                            key={`death-${ability.guid}`}
+                                            ability={ability.name}
+                                            value={ability.count}
+                                            maxValue={topDeathAbilities[0]?.count || 1}
+                                            index={index}
+                                            trigger={animationTrigger}
+                                            isDeathCount={true}
+                                        />
                                     ))}
                                 </div>
                             </div>
