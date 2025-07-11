@@ -4,6 +4,28 @@ import { SwiperSlide } from "swiper/react";
 import { TeamStats } from "@/warcraft-logs/model/team-stats";
 import { publicBase } from "@/app/_config/paths";
 import Image from "next/image";
+import { useEffect, useState, useRef } from "react";
+
+// Tooltip component
+const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    return (
+        <div
+            className="relative inline-block"
+            onMouseEnter={() => setIsVisible(true)}
+            onMouseLeave={() => setIsVisible(false)}
+        >
+            {children}
+            {isVisible && (
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 w-64 text-center">
+                    <div>{content}</div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export interface TeamStatsSlideProps {
     teamStats: TeamStats;
@@ -83,12 +105,99 @@ function formatPercentage(percentage: number): string {
     return `${percentage.toFixed(1)}%`;
 }
 
+// Animated counter hook with trigger support
+function useAnimatedCounter(endValue: number, duration: number = 2000, delay: number = 0, trigger: boolean = true) {
+    const [currentValue, setCurrentValue] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        if (!trigger) return;
+
+        // Reset to 0 when trigger changes
+        setCurrentValue(0);
+
+        const timer = setTimeout(() => {
+            setIsAnimating(true);
+            let startTime: number | null = null;
+            const startValue = 0;
+
+            const animate = (timestamp: number) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const newValue = Math.round(startValue + (endValue - startValue) * easeOutQuart);
+
+                setCurrentValue(newValue);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    setIsAnimating(false);
+                }
+            };
+
+            requestAnimationFrame(animate);
+        }, delay);
+
+        return () => clearTimeout(timer);
+    }, [endValue, duration, delay, trigger]);
+
+    return currentValue;
+}
+
+// Animated time counter component
+function AnimatedTimeCounter({ endValue, delay = 0, trigger = true }: { endValue: number; delay?: number; trigger?: boolean }) {
+    const animatedValue = useAnimatedCounter(endValue, 2000, delay, trigger);
+    return <span>{formatTime(animatedValue)}</span>;
+}
+
+// Animated number counter component
+function AnimatedNumberCounter({ endValue, delay = 0, trigger = true }: { endValue: number; delay?: number; trigger?: boolean }) {
+    const animatedValue = useAnimatedCounter(endValue, 2000, delay, trigger);
+    return <span>{animatedValue}</span>;
+}
+
 export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlideProps) {
     const topDamageTaken = teamStats.getTopDamageTakenAbilities(5);
     const topDeathAbilities = teamStats.getTopDeathAbilities(5);
+    const [animationTrigger, setAnimationTrigger] = useState(false);
+    const slideRef = useRef<HTMLDivElement>(null);
+
+    // Trigger animation when slide becomes visible
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                        // Reset and trigger animation when slide becomes visible
+                        setAnimationTrigger(false);
+                        setTimeout(() => {
+                            setAnimationTrigger(true);
+                        }, 100);
+                    }
+                });
+            },
+            {
+                threshold: 0.5, // Trigger when 50% of slide is visible
+                rootMargin: '0px'
+            }
+        );
+
+        if (slideRef.current) {
+            observer.observe(slideRef.current);
+        }
+
+        return () => {
+            if (slideRef.current) {
+                observer.unobserve(slideRef.current);
+            }
+        };
+    }, []);
 
     return (
-        <div className="team-inforgraphic-container">
+        <div className="team-inforgraphic-container" ref={slideRef}>
             <div className="min-h-screen justify-center items-center relative">
                 <Image
                     src={`${publicBase}/backgrounds/nerubar-broll-1.jpg`}
@@ -113,49 +222,81 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                 Raid Summary
                             </h2>
                             <div className={`grid gap-6 ${teamStats.totalFailedResets > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                                <div className="text-center bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-6 rounded-xl border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <CalendarIcon />
+                                <Tooltip content="Only includes raid nights that were logged. If it's not logged, it doesn't exist!">
+                                    <div className="text-center bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-6 rounded-xl border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 cursor-help">
+                                        <div className="flex justify-center mb-3">
+                                            <CalendarIcon />
+                                        </div>
+                                        <div className="text-5xl font-extrabold text-blue-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedNumberCounter endValue={teamStats.totalRaidNights} delay={100} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-blue-200 font-medium uppercase tracking-wide">Raid Nights</div>
                                     </div>
-                                    <div className="text-5xl font-extrabold text-blue-400 mb-2">{teamStats.totalRaidNights}</div>
-                                    <div className="text-sm text-blue-200 font-medium uppercase tracking-wide">Raid Nights</div>
-                                </div>
-                                <div className="text-center bg-gradient-to-br from-green-500/20 to-green-600/20 p-6 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <ClockIcon />
+                                </Tooltip>
+                                <Tooltip content="Time calculated from first pull to last pull of each raid night. Includes breaks and downtime between pulls.">
+                                    <div className="text-center bg-gradient-to-br from-green-500/20 to-green-600/20 p-6 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300 cursor-help">
+                                        <div className="flex justify-center mb-3">
+                                            <ClockIcon />
+                                        </div>
+                                        <div className="text-5xl font-extrabold text-green-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedTimeCounter endValue={teamStats.totalTime} delay={200} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-green-200 font-medium uppercase tracking-wide">Total Time</div>
                                     </div>
-                                    <div className="text-5xl font-extrabold text-green-400 mb-2">{formatTime(teamStats.totalTime)}</div>
-                                    <div className="text-sm text-green-200 font-medium uppercase tracking-wide">Total Time</div>
-                                </div>
+                                </Tooltip>
                                 <div className="text-center bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 p-6 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
                                     <div className="flex justify-center mb-3">
                                         <SwordIcon />
                                     </div>
-                                    <div className="text-5xl font-extrabold text-yellow-400 mb-2">{formatTime(teamStats.timeSpentPullingBosses)}</div>
+                                    <div className="text-5xl font-extrabold text-yellow-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                        <div className="tabular-nums">
+                                            <AnimatedTimeCounter endValue={teamStats.timeSpentPullingBosses} delay={300} trigger={animationTrigger} />
+                                        </div>
+                                    </div>
                                     <div className="text-sm text-yellow-200 font-medium uppercase tracking-wide">Boss Pull Time</div>
                                 </div>
-                                <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <TargetIcon />
+                                <Tooltip content="Only counts boss pulls. Does not include resets or trash mob encounters.">
+                                    <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-help">
+                                        <div className="flex justify-center mb-3">
+                                            <TargetIcon />
+                                        </div>
+                                        <div className="text-5xl font-extrabold text-purple-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedNumberCounter endValue={teamStats.totalPulls} delay={400} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Total Pulls</div>
                                     </div>
-                                    <div className="text-5xl font-extrabold text-purple-400 mb-2">{teamStats.totalPulls}</div>
-                                    <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Total Pulls</div>
-                                </div>
+                                </Tooltip>
                                 <div className="text-center bg-gradient-to-br from-red-500/20 to-red-600/20 p-6 rounded-xl border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
                                     <div className="flex justify-center mb-3">
                                         <RefreshIcon />
                                     </div>
-                                    <div className="text-5xl font-extrabold text-red-400 mb-2">{teamStats.totalResets}</div>
+                                    <div className="text-5xl font-extrabold text-red-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                        <div className="tabular-nums">
+                                            <AnimatedNumberCounter endValue={teamStats.totalResets} delay={500} trigger={animationTrigger} />
+                                        </div>
+                                    </div>
                                     <div className="text-sm text-red-200 font-medium uppercase tracking-wide">Resets</div>
                                 </div>
                                 {teamStats.totalFailedResets > 0 && (
-                                    <div className="text-center bg-gradient-to-br from-orange-500/20 to-orange-600/20 p-6 rounded-xl border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300">
-                                        <div className="flex justify-center mb-3">
-                                            <AlertIcon />
+                                    <Tooltip content="Attempted resets that resulted in raid deaths. Boss fights under 1 minute with boss at 98%+ health that ended in a wipe.">
+                                        <div className="text-center bg-gradient-to-br from-orange-500/20 to-orange-600/20 p-6 rounded-xl border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 cursor-help">
+                                            <div className="flex justify-center mb-3">
+                                                <AlertIcon />
+                                            </div>
+                                            <div className="text-5xl font-extrabold text-orange-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                                <div className="tabular-nums">
+                                                    <AnimatedNumberCounter endValue={teamStats.totalFailedResets} delay={600} trigger={animationTrigger} />
+                                                </div>
+                                            </div>
+                                            <div className="text-sm text-orange-200 font-medium uppercase tracking-wide">Failed Resets</div>
                                         </div>
-                                        <div className="text-5xl font-extrabold text-orange-400 mb-2">{teamStats.totalFailedResets}</div>
-                                        <div className="text-sm text-orange-200 font-medium uppercase tracking-wide">Failed Resets</div>
-                                    </div>
+                                    </Tooltip>
                                 )}
                             </div>
                         </div>
@@ -202,25 +343,39 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                 Team Composition
                             </h2>
                             <div className="grid grid-cols-3 gap-6">
-                                <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <UsersIcon />
+                                <Tooltip content="Anyone who participated in any pull. Includes core team members and friendly pugs who joined raids.">
+                                    <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-6 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-help">
+                                        <div className="flex justify-center mb-3">
+                                            <UsersIcon />
+                                        </div>
+                                        <div className="text-5xl font-extrabold text-purple-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedNumberCounter endValue={teamStats.uniqueCharacters.size} delay={700} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Unique Players</div>
                                     </div>
-                                    <div className="text-5xl font-extrabold text-purple-400 mb-2">{teamStats.uniqueCharacters.size}</div>
-                                    <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Unique Players</div>
-                                </div>
+                                </Tooltip>
                                 <div className="text-center bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 p-6 rounded-xl border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300">
                                     <div className="flex justify-center mb-3">
                                         <StarIcon />
                                     </div>
-                                    <div className="text-5xl font-extrabold text-cyan-400 mb-2">{teamStats.uniqueSpecs.size}</div>
+                                    <div className="text-5xl font-extrabold text-cyan-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                        <div className="tabular-nums">
+                                            <AnimatedNumberCounter endValue={teamStats.uniqueSpecs.size} delay={800} trigger={animationTrigger} />
+                                        </div>
+                                    </div>
                                     <div className="text-sm text-cyan-200 font-medium uppercase tracking-wide">Unique Specs</div>
                                 </div>
                                 <div className="text-center bg-gradient-to-br from-pink-500/20 to-pink-600/20 p-6 rounded-xl border border-pink-400/30 hover:border-pink-400/50 transition-all duration-300">
                                     <div className="flex justify-center mb-3">
                                         <BookIcon />
                                     </div>
-                                    <div className="text-5xl font-extrabold text-pink-400 mb-2">{teamStats.uniqueTalentLoadouts.size}</div>
+                                    <div className="text-5xl font-extrabold text-pink-400 mb-2 min-h-[4rem] flex items-center justify-center">
+                                        <div className="tabular-nums">
+                                            <AnimatedNumberCounter endValue={teamStats.uniqueTalentLoadouts.size} delay={900} trigger={animationTrigger} />
+                                        </div>
+                                    </div>
                                     <div className="text-sm text-pink-200 font-medium uppercase tracking-wide">Talent Builds</div>
                                 </div>
                             </div>
