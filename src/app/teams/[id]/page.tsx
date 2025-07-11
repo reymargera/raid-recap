@@ -13,6 +13,7 @@ export interface Team {
     readonly id: string;
     readonly name: string;
     readonly stats: string[];
+    readonly teamStats: string;
 }
 
 // Don't fall back to runtime rendering when a path was not pre-rendered
@@ -35,13 +36,14 @@ export async function generateStaticParams(): Promise<TeamPageParams[]> {
 }
 
 async function getTeam(teamConfig: TeamConfig): Promise<Team> {
-    const teamStats = await fetchTeamStats(teamConfig);
+    const { playerStats, teamStats } = await fetchTeamStats(teamConfig);
 
     return {
         id: teamConfig.id,
         name: teamConfig.name,
 
         // Need to serialize stats since you cant pass classes between client/server components
-        stats: teamStats.map(ps => JSON.stringify(ps)),
+        stats: playerStats.map(ps => JSON.stringify(ps)),
+        teamStats: teamStats.toJson(),
     };
 }

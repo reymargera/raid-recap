@@ -10,7 +10,9 @@ import './slides.css';
 import {Team} from "@/app/teams/[id]/page";
 import {Award, CurrentAwards, TeamBits} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
+import {TeamStats} from "@/warcraft-logs/model/team-stats";
 import RankingChart from "@/app/_components/ranking-chart/ranking-chart";
+import TeamStatsSlide from "@/app/_components/team-stats-slide/team-stats-slide";
 import Image from "next/image";
 import {Dispatch, SetStateAction, useState, useRef, useEffect} from "react";
 import {publicBase} from "@/app/_config/paths";
@@ -97,22 +99,22 @@ function generateWalkthroughOverlay(step: number, onNext: () => void, onSkip: ()
         <div className="fixed inset-0 z-[100]">
             {/* Backdrop */}
             <div className="absolute inset-0 bg-black bg-opacity-75" />
-            
+
             {/* Highlight specific elements */}
             {currentStep.highlight && (
-                <div 
+                <div
                     className="absolute pointer-events-none"
                     style={{
                         top: '16px',
-                        right: currentStep.highlight === 'avg-per-night' ? '170px' : 
+                        right: currentStep.highlight === 'avg-per-night' ? '170px' :
                                currentStep.highlight === 'guess-mode' ? '16px' : 'auto',
                         left: currentStep.highlight === 'return-home' ? '16px' : 'auto',
                         zIndex: 101
                     }}
                 >
-                    <div className="ring-4 ring-blue-400 ring-opacity-75 rounded-lg animate-pulse" 
+                    <div className="ring-4 ring-blue-400 ring-opacity-75 rounded-lg animate-pulse"
                          style={{
-                             width: currentStep.highlight === 'avg-per-night' ? '150px' : 
+                             width: currentStep.highlight === 'avg-per-night' ? '150px' :
                                     currentStep.highlight === 'guess-mode' ? '130px' : '120px',
                              height: '45px'
                          }}
@@ -121,7 +123,7 @@ function generateWalkthroughOverlay(step: number, onNext: () => void, onSkip: ()
             )}
 
             {/* Explanation card */}
-            <div 
+            <div
                 className="absolute bg-white rounded-lg shadow-2xl p-6 max-w-sm z-[102]"
                 style={currentStep.position}
             >
@@ -131,9 +133,9 @@ function generateWalkthroughOverlay(step: number, onNext: () => void, onSkip: ()
                         {step + 1} of {walkthroughSteps.length}
                     </div>
                 </div>
-                
+
                 <p className="text-gray-700 mb-6">{currentStep.description}</p>
-                
+
                 <div className="flex justify-between gap-3">
                     <button
                         onClick={onSkip}
@@ -173,6 +175,7 @@ export default function AwardSlides(props: AwardSlidesProps) {
     const awards = [...CurrentAwards, ...teamBits];
 
     const titleSlide = generateTitleSlide(team);
+    const teamStatsSlide = generateTeamStatsSlide(team);
     const awardSlides = generateAwardSlides(team, awards, useOverallRef.current, guessMode, revealedSlides, setRevealedSlides);
     const disclaimerSlide = generateDisclaimerSlide();
     const controlButtons = generateControlButtons(useOverallRef, guessMode, setGuessMode, () => forceUpdate({}));
@@ -211,6 +214,7 @@ export default function AwardSlides(props: AwardSlidesProps) {
             >
                 {titleSlide}
                 {disclaimerSlide}
+                {teamStatsSlide}
                 {awardSlides}
             </Swiper>
         </>
@@ -219,6 +223,30 @@ export default function AwardSlides(props: AwardSlidesProps) {
 
 function generateTitleSlide(team: Team) {
     return generateTextSlide(team.name, ["The War Within", "Season 1 Award Ceremony"]);
+}
+
+function generateTeamStatsSlide(team: Team) {
+    try {
+        // Create a new TeamStats instance and copy the data
+        const stats = new TeamStats().fromJson(team.teamStats);
+        return (
+            <SwiperSlide>
+                <TeamStatsSlide key="team-stats" teamStats={stats} teamName={team.name} />
+            </SwiperSlide>
+        );
+    } catch (error) {
+        console.error('Error generating team stats slide:', error);
+        return (
+            <SwiperSlide key="team-stats-error">
+                <div className="min-h-screen flex justify-center items-center">
+                    <div className="text-white text-center">
+                        <h2 className="text-2xl font-bold mb-4">Team Stats Unavailable</h2>
+                        <p>Unable to load team statistics data.</p>
+                    </div>
+                </div>
+            </SwiperSlide>
+        );
+    }
 }
 
 function generateDisclaimerSlide() {

@@ -76,7 +76,7 @@ export async function fetchTeamStats({
     const altMergedStats = mergeAlts(allStats, alts);
     const explicitlyIncludedStats = altMergedStats.filter(p => !attendanceExcludeOverride?.includes(p.id));
 
-    return attendancePercent
+    const finalPlayerStats = attendancePercent
         ? explicitlyIncludedStats.filter(p => {
             if (attendanceIncludeOverride?.includes(p.id)) {
                 return true;
@@ -85,6 +85,11 @@ export async function fetchTeamStats({
             return p.appearances() / filteredReports.length >= attendancePercent;
         })
         : explicitlyIncludedStats;
+
+    return {
+        playerStats: finalPlayerStats,
+        teamStats: teamStats
+    };
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {

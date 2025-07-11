@@ -1,5 +1,5 @@
 import { GetReportQuery, Report } from "@/__generated__/graphql";
-import { NerubarPalaceEncounters, LiberationHoldEncounters } from "@/app/_config/encounters";
+import { LiberationHoldEncounters } from "@/app/_config/encounters";
 import crypto from "crypto";
 
 interface DamageTakenAbility {
@@ -14,11 +14,6 @@ interface DeathAbility {
     count: number;
 }
 
-interface PlayerSpec {
-    class: string;
-    spec: string;
-    role: string;
-}
 
 interface FightOverview {
     name: string;
@@ -33,10 +28,12 @@ export class TeamStats {
     public totalRaidNights: number = 0;
     public timeSpentPullingBosses: number = 0; // in milliseconds
     public totalTime: number = 0; // in milliseconds
-    public longestBossFightKill: FightOverview = { name: 'Placeholder', difficulty: 0, duration: 0, kill: true, fightPercentage: 0 };
-    public shortestBossFightKill: FightOverview = { name: 'Placeholder', difficulty: 0, duration: Number.MAX_VALUE, kill: true, fightPercentage: 0 };
-    public lowestWipePercentage: FightOverview = { name: 'Placeholder', difficulty: 0, duration: 0, kill: false, fightPercentage: 100 };
+    public longestBossFightKill: FightOverview = { name: 'Placeholder', difficulty: 'Unknown', duration: 0, kill: true, fightPercentage: 0 };
+    public shortestBossFightKill: FightOverview = { name: 'Placeholder', difficulty: 'Unknown', duration: Number.MAX_VALUE, kill: true, fightPercentage: 0 };
+    public lowestWipePercentage: FightOverview = { name: 'Placeholder', difficulty: 'Unknown', duration: 0, kill: false, fightPercentage: 100 };
     public totalResets: number = 0;
+    public totalPulls: number = 0;
+    public totalFailedResets: number = 0;
 
     // Report specific stats
     public uniqueCharacters: Set<string> = new Set();
@@ -66,6 +63,7 @@ export class TeamStats {
 
                     const isReset = this.isReset(fight);
                     const isBossFight = this.isBossFight(fight);
+                    const isFailedReset = this.isFailedReset(fight);
 
                     if (isReset) {
                         firstPull = Math.min(firstPull, fight.startTime);
@@ -74,7 +72,16 @@ export class TeamStats {
                         continue;
                     }
 
+                    if (isFailedReset) {
+                        firstPull = Math.min(firstPull, fight.startTime);
+                        lastPull = Math.max(lastPull, fight.endTime);
+                        this.totalFailedResets++;
+                        this.totalPulls++;
+                        continue;
+                    }
+
                     if (isBossFight) {
+                        this.totalPulls++;
                         firstPull = Math.min(firstPull, fight.startTime);
                         lastPull = Math.max(lastPull, fight.endTime);
                         const fightDuration = fight.endTime - fight.startTime;
@@ -215,6 +222,17 @@ export class TeamStats {
         return isBossName && fightDuration < 3000; // Less than 3 seconds
     }
 
+    private isFailedReset(fight: any): boolean {
+        // Failed reset: boss fight that ends in wipe, under 1 minute, boss at 98%+
+        const fightDuration = fight.endTime - fight.startTime;
+        const isBossFight = this.isBossFight(fight);
+        const isWipe = !fight.kill;
+        const isUnderMinute = fightDuration < 60000; // Less than 1 minute
+        const isBossHighHealth = fight.fightPercentage >= 98;
+
+        return isBossFight && isWipe && isUnderMinute && isBossHighHealth;
+    }
+
     private hashTalentTree(talentTree: any[]): string {
         // Sort talents by nodeID to ensure consistent hashing
         const sortedTalents = talentTree
@@ -265,5 +283,59 @@ export class TeamStats {
         return Array.from(this.topDeathAbilities.values())
             .sort((a, b) => b.count - a.count)
             .slice(0, limit);
+    }
+
+    public toJson() {
+        return JSON.stringify(
+            this,
+            (k, v) => {
+                if (v instanceof Set) {
+                    return {
+                        __type: 'Set',
+                        value: [...v],
+                    }
+                } else if (v instanceof Map) {
+                    return {
+                        __type: 'Map',
+                        value: Array.from(v.entries()),
+                    }
+                } else {
+                   return v;
+                }
+            }
+        );
+    }
+
+    public fromJson(json: string) {
+        const parsedStats = JSON.parse(json,
+            (k, v) => {
+                if (typeof v === 'object' && v !== null && v.__type === 'Set') {
+                    return new Set(v.value);
+                }
+
+                if (typeof v === 'object' && v !== null && v.__type === 'Map') {
+                    return new Map(v.value);
+                }
+
+                return v;
+            }
+        );
+
+        this.totalRaidNights = parsedStats.totalRaidNights || 0;
+        this.timeSpentPullingBosses = parsedStats.timeSpentPullingBosses || 0;
+        this.totalTime = parsedStats.totalTime || 0;
+        this.longestBossFightKill = parsedStats.longestBossFightKill;
+        this.shortestBossFightKill = parsedStats.shortestBossFightKill;
+        this.lowestWipePercentage = parsedStats.lowestWipePercentage;
+        this.totalResets = parsedStats.totalResets || 0;
+        this.totalPulls = parsedStats.totalPulls || 0;
+        this.totalFailedResets = parsedStats.totalFailedResets || 0;
+        this.uniqueCharacters = parsedStats.uniqueCharacters;
+        this.uniqueSpecs = parsedStats.uniqueSpecs;
+        this.topDamageTakenAbilities = parsedStats.topDamageTakenAbilities;
+        this.topDeathAbilities = parsedStats.topDeathAbilities;
+        this.uniqueTalentLoadouts = parsedStats.uniqueTalentLoadouts;
+
+        return this;
     }
 }
