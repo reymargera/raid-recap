@@ -169,6 +169,10 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
                 bombsTossed: bossStats.bombsTossed[playerId] ?? 0,
                 coilsDestroyed: bossStats.coilsDestroyed[playerId] ?? 0,
                 timesFlattened: bossStats.timesFlattened[playerId] ?? 0,
+                blazeOfGloryCasts: bossStats.blazeOfGloryCasts[playerId] ?? 0,
+                staticDischargeApplications: bossStats.staticDischargeApplications[playerId] ?? 0,
+                blastburnRoarcannonDeaths: bossStats.blastburnRoarcannonDeaths[playerId] ?? 0,
+                unstableShrapnelApplications: bossStats.unstableShrapnelApplications[playerId] ?? 0,
             }
         };
 
@@ -224,6 +228,10 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
     const bombsTossed = sumByPlayer(getTableDataEntries(report?.gigaBombTosses));
     const coilsDestroyed = sumByPlayer(getTableDataAuras(report?.coilsDestroyed), (d: any) => d.totalUses);
     const timesFlattened = sumByPlayer(getTableDataEntries(report?.redAsphaltDeaths), (d: any) => 1);
+    const blazeOfGloryCasts = sumByPlayer(getTableDataEntries(report?.blazeOfGloryCasts));
+    const staticDischargeApplications = sumByPlayer(getTableDataAuras(report?.staticDischargeApplications), (d: any) => d.totalUses);
+    const blastburnRoarcannonDeaths = sumByPlayer(getTableDataEntries(report?.blastburnRoarcannonDeaths), (d: any) => 1);
+    const unstableShrapnelApplications = sumByPlayer(getTableDataAuras(report?.unstableShrapnelApplications), (d: any) => d.totalUses);
 
     return {
         damage,
@@ -249,6 +257,10 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
         bombsTossed,
         coilsDestroyed,
         timesFlattened,
+        blazeOfGloryCasts,
+        staticDischargeApplications,
+        blastburnRoarcannonDeaths,
+        unstableShrapnelApplications,
     };
 }
 

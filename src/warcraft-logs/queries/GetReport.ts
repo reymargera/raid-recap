@@ -1,4 +1,4 @@
-import { ChargedGigaBomb, Crushed, GarbagePile, GigaBombDetonation, HighRoller, Payline, RedAsphalt, Rolled, RollingRubbish, Screwed } from '@/app/_config/auras';
+import { BlazeOfGlory, BlastburnRoarcannon, ChargedGigaBomb, Crushed, GarbagePile, GigaBombDetonation, HighRoller, Payline, RedAsphalt, Rolled, RollingRubbish, Screwed, StaticDischarge, UnstableShrapnel } from '@/app/_config/auras';
 import { gql } from '@apollo/client/core';
 
 
@@ -135,6 +135,46 @@ export const RedAsphaltFragment = gql`
     }
 `;
 
+export const VexieBlazeOfGloryFragment = gql`
+    fragment VexieBlazeOfGloryFragment on Report {
+        blazeOfGloryCasts: table(
+            fightIDs: $bossFightIds
+            dataType: Casts
+            abilityID: 466040
+        )
+    }
+`;
+
+export const CauldronStaticDischargeFragment = gql`
+    fragment CauldronStaticDischargeFragment on Report {
+        staticDischargeApplications: table(
+            fightIDs: $bossFightIds
+            dataType: Debuffs
+            abilityID: 473983
+        )
+    }
+`;
+
+export const CauldronBlastburnRoarcannonFragment = gql`
+    fragment CauldronBlastburnRoarcannonFragment on Report {
+        blastburnRoarcannonDeaths: table(
+            fightIDs: $bossFightIds
+            dataType: Deaths
+            abilityID: 472242
+        )
+    }
+`;
+
+export const LockenstockUnstableShrapnelFragment = gql`
+    fragment LockenstockUnstableShrapnelFragment on Report {
+        unstableShrapnelApplications: table(
+            fightIDs: $bossFightIds
+            dataType: Debuffs
+            abilityID: 1218342
+        )
+    }
+`;
+
 // @ts-ignore
 export const GetReport = gql`
     query getReport($reportCode: String, $bossFightIds: [Int], $trashFightIds: [Int], $buffFilter: String, $debuffFilter: String, $buffStart: Float, $debuffStart: Float, $skipTrashFights: Boolean!) {
@@ -152,6 +192,10 @@ export const GetReport = gql`
                 ...GallyCoilFragment
                 ...HitAndRunFragment
                 ...RedAsphaltFragment
+                ...VexieBlazeOfGloryFragment
+                ...CauldronStaticDischargeFragment
+                ...CauldronBlastburnRoarcannonFragment
+                ...LockenstockUnstableShrapnelFragment
                 trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
                     nextPageTimestamp
                     data
@@ -175,4 +219,8 @@ export const GetReport = gql`
     ${GallyCoilFragment}
     ${HitAndRunFragment}
     ${RedAsphaltFragment}
+    ${VexieBlazeOfGloryFragment}
+    ${CauldronStaticDischargeFragment}
+    ${CauldronBlastburnRoarcannonFragment}
+    ${LockenstockUnstableShrapnelFragment}
 `;

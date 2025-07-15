@@ -14,7 +14,7 @@ const attendance: Award = {
     description: 'Total Number Of Appearances Across All Raid Nights',
     stat: (p) => p.appearances('Boss'),
     supportsAveraging: false,
-    background: 'nerubar-broll-1.jpg',
+    background: 'undermine/undermine-broll-1.webp',
 }
 
 const mostDeathsOnBoss: Award = {
@@ -22,7 +22,7 @@ const mostDeathsOnBoss: Award = {
     description: 'Most Deaths On Boss Fights Before Wipe Is Called',
     stat: (p) => p.deaths('Boss'),
     supportsAveraging: true,
-    background: 'nerubar-broll-3.jpg',
+    background: 'undermine/undermine-broll-2.webp',
 };
 
 const mostDamageOnBoss: Award = {
@@ -30,15 +30,15 @@ const mostDamageOnBoss: Award = {
     description: 'Most Damage Done To Bosses',
     stat: (p) => p.damageDone('Boss'),
     supportsAveraging: true,
-    background: 'bloodbound.jpg',
+    background: 'undermine/undermine-broll-4.webp',
 };
 
 const mostHealingOnBoss: Award = {
-    name: 'Tenderest Tender',
+    name: 'Lifebinder',
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
-    background: 'nerubar-broll-2.jpg',
+    background: 'undermine/undermine-broll-5.webp',
 };
 
 const mostHealthStonesUsed: Award = {
@@ -46,7 +46,7 @@ const mostHealthStonesUsed: Award = {
     description: 'Most Health Stones Consumed Throughout All Encounters',
     stat: (p) => p.healthStonesUsed(),
     supportsAveraging: true,
-    background: 'nerubar-broll-4.jpg',
+    background: 'undermine/undermine-broll-3.webp',
 };
 
 const mostPotionsUsed: Award = {
@@ -54,7 +54,7 @@ const mostPotionsUsed: Award = {
     description: 'Most Potions Consumed Throughout All Encounters',
     stat: (p) => p.potionsUsed(),
     supportsAveraging: true,
-    background: 'nerubar-broll-5.jpg',
+    background: 'undermine/undermine-broll-1.webp',
 };
 
 const mostCasts: Award = {
@@ -62,7 +62,7 @@ const mostCasts: Award = {
     description: 'Most Casts Throughout All Encounters',
     stat: (p) => p.casts(),
     supportsAveraging: true,
-    background: 'nerubar-broll-1.jpg',
+    background: 'undermine/undermine-broll-2.webp',
 };
 
 const mostInterrupts: Award = {
@@ -70,7 +70,7 @@ const mostInterrupts: Award = {
     description: 'Most Interrupts Throughout All Encounters',
     stat: (p) => p.interrupts(),
     supportsAveraging: true,
-    background: 'nerubar-broll-2.jpg',
+    background: 'undermine/stix-1.webp',
 };
 
 const mostDispels: Award = {
@@ -78,7 +78,7 @@ const mostDispels: Award = {
     description: 'Most Dispels Throughout All Encounters',
     stat: (p) => p.dispels(),
     supportsAveraging: true,
-    background: 'nerubar-broll-3.jpg'
+    background: 'undermine/oab-1.webp'
 };
 
 const mostDamageTaken: Award = {
@@ -86,7 +86,7 @@ const mostDamageTaken: Award = {
     description: 'Most Damage Taken On Boss Encounters',
     stat: (p) => p.damageTaken('Boss'),
     supportsAveraging: true,
-    background: 'kyveza.jpg',
+    background: 'undermine/mugzee-1.webp',
 };
 
 const mostDamageReduced: Award = {
@@ -94,7 +94,7 @@ const mostDamageReduced: Award = {
     description: 'Most Damage Reduced On Boss Encounters',
     stat: (p) => p.damageAbsorbed('Boss'),
     supportsAveraging: true,
-    background: 'nerubar-broll-4.jpg',
+    background: 'undermine/undermine-broll-1.webp',
 };
 
 const mostPowerInfusions: Award = {
@@ -103,7 +103,7 @@ const mostPowerInfusions: Award = {
     stat: (p) => p.powerInfusions('Boss'),
     playerFilter: (p) => p.playerClass.toLowerCase() !== 'priest',
     supportsAveraging: true,
-    background: 'nerubar-broll-5.jpg',
+    background: 'undermine/undermine-broll-2.webp',
 };
 
 const mostFriendlyFire: Award = {
@@ -111,15 +111,15 @@ const mostFriendlyFire: Award = {
     description: 'Most Friendly Fire Damage Done',
     stat: (p) => p.friendlyFireDamageDone('Boss'),
     supportsAveraging: false,
-    background: 'kyveza.jpg',
+    background: 'undermine/rik-1.webp',
 };
 
 const mostFriendlyFireDamageTaken: Award = {
-    name: 'I Cant Believe You\'ve Done This',
+    name: 'I Can\'t Believe You\'ve Done This',
     description: 'Most Friendly Fire Damage Taken',
     stat: (p) => p.friendlyFireDamageTaken('Boss'),
     supportsAveraging: false,
-    background: 'nerubar-broll-1.jpg',
+    background: 'undermine/rik-2.webp',
 };
 
 const mostMechanicsGiven: Award = {
@@ -127,14 +127,15 @@ const mostMechanicsGiven: Award = {
     description: 'Target Of Mechanics That Result In DPS Loss',
     stat: (p) => p.mechanicsTaken('Boss'),
     supportsAveraging: true,
-    background: 'rashanan.jpg',
+    background: 'undermine/undermine-broll-4.webp',
 };
 
 const mostTimeStoodInTrash: Award = {
-    name: 'You are where you stand',
+    name: 'You Are Where You Stand',
     description: 'Number Of Times Stood On Trash',
     stat: (p) => p.getSeaontalStat('timesStoodInTrash', 'Boss'),
     supportsAveraging: false,
+    background: 'undermine/stix-1.webp'
 };
 
 const mostTimesRolledOver: Award = {
@@ -142,12 +143,14 @@ const mostTimesRolledOver: Award = {
     description: 'Number Of Times Rolled Over By Rolling Rubbish',
     stat: (p) => p.getSeaontalStat('timesRolledOver', 'Boss'),
     supportsAveraging: false,
+    background: 'undermine/stix-1.webp'
 };
 
 const mostTimesRollingOver: Award = {
     name: 'I Merge Now.. GL Everyone Else',
     description: 'Number Of Times Rolling Someone Over With Rolling Rubbish',
     stat: (p) => p.getSeaontalStat('timesRollingOver', 'Boss'),
+    background: 'undermine/stix-1.webp',
     supportsAveraging: false,
 };
 
@@ -155,6 +158,7 @@ const mostTimesScrewed: Award = {
     name: 'Screwed Up',
     description: 'Number Of Times Screwed Up',
     stat: (p) => p.getSeaontalStat('timesScrewed', 'Boss'),
+    background: 'undermine/sprocket-1.webp',
     supportsAveraging: false,
 };
 
@@ -162,6 +166,7 @@ const mostHighRollerUptime: Award = {
     name: 'Buffy The Slot Machine Slayer',
     description: 'Total Time With High Roller Debuff',
     stat: (p) => p.getSeaontalStat('highRollerUptime', 'Boss'),
+    background: 'undermine/oab-1.webp',
     supportsAveraging: false,
 };
 
@@ -169,6 +174,7 @@ const mostTimesCrushed: Award = {
     name: 'Bank Rolled',
     description: 'Number Of Times Ran Over By A Payline',
     stat: (p) => p.getSeaontalStat('timesCrushed', 'Boss'),
+    background: 'undermine/oab-1.webp',
     supportsAveraging: false,
 };
 
@@ -176,6 +182,7 @@ const mostCoinsPushed: Award = {
     name: 'Penny Pusher',
     description: 'Number Of Paylines Kicked Off',
     stat: (p) => p.getSeaontalStat('coinsPushed', 'Boss'),
+    background: 'undermine/oab-1.webp',
     supportsAveraging: false,
 };
 
@@ -184,6 +191,7 @@ const mostBombsTossed: Award = {
     description: 'Number Of Bombs Tossed Off Gally\'s Platform',
     stat: (p) => p.getSeaontalStat('bombsTossed', 'Boss'),
     supportsAveraging: false,
+    background: 'undermine/undermine-broll-2.webp',
 };
 
 const mostCoilsDestroyed: Award = {
@@ -191,13 +199,47 @@ const mostCoilsDestroyed: Award = {
     description: 'Number Of Giga Coils Destroyed With Bombs',
     stat: (p) => p.getSeaontalStat('coilsDestroyed', 'Boss'),
     supportsAveraging: false,
+    background: 'undermine/undermine-broll-2.webp',
 };
 
 const mostTimesFlattened: Award = {
     name: 'Everyone Gets One But Somehow You Got Many',
-    description: 'Number of times flattened by Vexie',
+    description: 'Number Of Times Flattened By Vexie',
     stat: (p) => p.getSeaontalStat('timesFlattened', 'Boss'),
     supportsAveraging: false,
+    background: 'undermine/vexie-gear-grind-2.webp',
+};
+
+const mostBlazeOfGloryCasts: Award = {
+    name: 'Born To Be Wild',
+    description: 'Number Of Motorcycles Crashed Into The Boss',
+    stat: (p) => p.getSeaontalStat('blazeOfGloryCasts', 'Boss'),
+    supportsAveraging: false,
+    background: 'undermine/vexie-gear-grind-2.webp',
+};
+
+const mostStaticDischargeApplications: Award = {
+    name: 'Energizer Bunny',
+    description: 'Number Of Times Stunned By Static Discharge From Moving Too Much',
+    stat: (p) => p.getSeaontalStat('staticDischargeApplications', 'Boss'),
+    supportsAveraging: false,
+    background: 'undermine/cauldron-1.webp',
+};
+
+const mostBlastburnRoarcannonDeaths: Award = {
+    name: 'Deer In The Headlights',
+    description: 'Number Of Times Stood In Florendo\'s Lazer',
+    stat: (p) => p.getSeaontalStat('blastburnRoarcannonDeaths', 'Boss'),
+    supportsAveraging: false,
+    background: 'undermine/cauldron-1.webp',
+};
+
+const mostUnstableShrapnelApplications: Award = {
+    name: 'Demolition Expert',
+    description: 'Number Of Mines Popped While Fighting Lockenstock',
+    stat: (p) => p.getSeaontalStat('unstableShrapnelApplications', 'Boss'),
+    supportsAveraging: false,
+    background: 'undermine/sprocket-1.webp',
 };
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -230,6 +272,10 @@ export const SeasonalAwards: Award[] = [
     mostBombsTossed,
     mostCoilsDestroyed,
     mostTimesFlattened,
+    mostBlazeOfGloryCasts,
+    mostStaticDischargeApplications,
+    mostBlastburnRoarcannonDeaths,
+    mostUnstableShrapnelApplications,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
