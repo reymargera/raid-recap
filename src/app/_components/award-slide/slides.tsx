@@ -303,8 +303,8 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, 
             return (
                 <SwiperSlide key={a.name}>
                     <div className={`min-h-screen justify-center items-center ${!isRevealed ? 'cursor-pointer' : ''}`} onClick={handleReveal}>
-                        <Image src={`${publicBase}/backgrounds/${a.background ?? 'nerubar-broll-1.jpg'}`}
-                               alt={a.background ?? 'nerubar-broll-1.jpg'}
+                        <Image src={`${publicBase}/backgrounds/${a.background ?? 'undermine/undermine-broll-1.webp'}`}
+                               alt={a.background ?? 'undermine/undermine-broll-1.webp'}
                                className={"slide-background object-cover object-center"}
                                fill={true}
                         />

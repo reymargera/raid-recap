@@ -293,7 +293,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
         <div className="team-inforgraphic-container" ref={slideRef}>
             <div className="min-h-screen justify-center items-center relative">
                 <Image
-                    src={`${publicBase}/backgrounds/nerubar-broll-1.jpg`}
+                    src={`${publicBase}/backgrounds/undermine/undermine-broll-1.webp`}
                     alt="Team Stats Background"
                     className="slide-background object-cover object-center"
                     fill={true}

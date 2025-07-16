@@ -14,6 +14,7 @@ export const TWWSeason2StatKeys = [
     'staticDischargeApplications',
     'blastburnRoarcannonDeaths',
     'unstableShrapnelApplications',
+    'hitAndRuns',
 ] as const;
 
 export const SeasonalStatKeys = [...TWWSeason2StatKeys];

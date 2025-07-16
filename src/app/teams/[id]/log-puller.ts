@@ -173,6 +173,7 @@ function extractPlayerStatsFromLog(reportData: GetReportQuery) {
                 staticDischargeApplications: bossStats.staticDischargeApplications[playerId] ?? 0,
                 blastburnRoarcannonDeaths: bossStats.blastburnRoarcannonDeaths[playerId] ?? 0,
                 unstableShrapnelApplications: bossStats.unstableShrapnelApplications[playerId] ?? 0,
+                hitAndRuns: bossStats.hitAndRuns[playerId] ?? 0,
             }
         };
 
@@ -232,6 +233,7 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
     const staticDischargeApplications = sumByPlayer(getTableDataAuras(report?.staticDischargeApplications), (d: any) => d.totalUses);
     const blastburnRoarcannonDeaths = sumByPlayer(getTableDataEntries(report?.blastburnRoarcannonDeaths), (d: any) => 1);
     const unstableShrapnelApplications = sumByPlayer(getTableDataAuras(report?.unstableShrapnelApplications), (d: any) => d.totalUses);
+    const hitAndRuns = sumByPlayer(getTableDataEntries(report?.hitAndRuns), (d: any) => 1);
 
     return {
         damage,
@@ -261,6 +263,7 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
         staticDischargeApplications,
         blastburnRoarcannonDeaths,
         unstableShrapnelApplications,
+        hitAndRuns,
     };
 }
 

@@ -242,6 +242,14 @@ const mostUnstableShrapnelApplications: Award = {
     background: 'undermine/sprocket-1.webp',
 };
 
+const mostHitAndRuns: Award = {
+    name: 'Why Did The Raider Cross The Road...',
+    description: 'Number Of Times Killed In Undermine Traffic',
+    stat: (p) => p.getSeaontalStat('hitAndRuns', 'Boss'),
+    supportsAveraging: false,
+    background: 'undermine/stix-1.webp',
+};
+
 // Awards not tied to any seasonal encounters and can be leveraged any time
 export const StaticAwards: Award[] = [
     attendance,
@@ -276,6 +284,7 @@ export const SeasonalAwards: Award[] = [
     mostStaticDischargeApplications,
     mostBlastburnRoarcannonDeaths,
     mostUnstableShrapnelApplications,
+    mostHitAndRuns,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
@@ -283,32 +292,31 @@ export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
 // Team related bits, data needs to be manually passed, defaulted to damage done
 
 // Shadow Hunters Gold
-export const mostNameChanges: Award = {
-    name: 'A Girl Has No Name',
-    description: 'Total Number Of Name Changes During The Season',
-    stat: (p) => p.id == 247286065 ? 3 : 0,
-    playerFilter: (p) => p.id == 247286065,
+export const mostWeakAuraOutdates: Award = {
+    name: 'Yep, Im Up To Date',
+    description: 'Number Of WeakAura Versions Behind When They Swore They Had The Latest Version',
+    stat: (p) => p.id == 129928572 ? 11 : 0,
+    playerFilter: (p) => p.id == 129928572,
     supportsAveraging: false,
-    background: 'nerubar-broll-1.jpg',
+};
+
+export const mostSabatoges: Award = {
+    name: 'Not Today',
+    description: 'Number Of Parses Ruined By Gripping Tad Into Danger',
+    stat: (p) => p.id == 252346432 ? 1 : 0,
+    playerFilter: (p) => p.id == 252346432,
+    supportsAveraging: false,
+    background: 'undermine/rik-1.webp',
 }
 
-export const mostAggroStrips: Award = {
-    name: 'So Anyways, I Started Blasting',
-    description: 'Total Number Of Times Aggro Was Stripped Due To Lack Of Threat Meters',
-    stat: (p) => p.appearances('Boss'),
-    playerFilter: (p) => p.id == 163879647,
+// Shadow Blue Team
+export const mostBaddlyTimedInterupts: Award = {
+    name: 'Cast Bar Enthusiast',
+    description: 'Number Of Interupts On Gallywix When Explictly Told Not To',
+    stat: (p) => p.id == 165314240 ? 2 : 0,
+    playerFilter: (p) => p.id == 165314240,
     supportsAveraging: false,
-    background: 'nerubar-broll-2.jpg',
-}
-
-export const mostRollsOfTheEdges: Award = {
-    name: 'Living On The Edge',
-    description: 'Total Number Of Times Player Rolled Off The Edge On The Last Pull Of The Night',
-    stat: (p) => p.id == 163879647 ? 1 : 0,
-    playerFilter: (p) => p.id == 163879647,
-    supportsAveraging: false,
-    background: 'nerubar-broll-4.jpg',
-}
+};
 
 // Shadow Hunters Green
 export const mostIntentionalEarlyPulls: Award = {
@@ -321,7 +329,7 @@ export const mostIntentionalEarlyPulls: Award = {
 }
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostNameChanges, mostAggroStrips, mostRollsOfTheEdges],
+    'shadow-hunters-gold-team': [mostWeakAuraOutdates, mostSabatoges],
     'shadow-hunters-green-team': [mostIntentionalEarlyPulls],
-    'shadow-hunters-blue-team': [],
+    'shadow-hunters-blue-team': [mostBaddlyTimedInterupts],
 };
