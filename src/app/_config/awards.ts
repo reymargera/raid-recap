@@ -330,6 +330,5 @@ export const mostIntentionalEarlyPulls: Award = {
 
 export const TeamBits: { [key: string]: Award[]; } = {
     'shadow-hunters-gold-team': [mostWeakAuraOutdates, mostSabatoges],
-    'shadow-hunters-green-team': [mostIntentionalEarlyPulls],
     'shadow-hunters-blue-team': [mostBaddlyTimedInterupts],
 };

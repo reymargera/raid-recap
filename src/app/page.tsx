@@ -54,7 +54,7 @@ export default function Home() {
           {subTitles[subtitleIndex]}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8 max-w-4xl">
           {getTeamCards()}
         </div>
       </div>
@@ -71,7 +71,7 @@ const getTeamCards = () => {
   return Object.values(RaidTeams).map((team) => {
     return (
       <a key={team.id} href={`${publicBase}/teams/${team.id}`} className="opacity-85 hover:opacity-100">
-        <div className="bg-gray-500 rounded-lg shadow-lg p-8 flex flex-col justify-between items-center h-full transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
+        <div className="bg-gray-500 rounded-lg shadow-lg p-8 flex flex-col justify-between items-center h-full w-64 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
           <div className="flex-grow flex items-center justify-center">
             <Image
               src={`${publicBase}/logos/${team.logo}`}
