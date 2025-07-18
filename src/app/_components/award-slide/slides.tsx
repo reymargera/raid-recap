@@ -326,7 +326,7 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, 
                                                     const classColor = ClassColors[player.playerClass] || '#FFFFFF';
                                                     return (
                                                         <button
-                                                            key={player.name}
+                                                            key={`${player.name}-${player.id}`}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 handleReveal();
