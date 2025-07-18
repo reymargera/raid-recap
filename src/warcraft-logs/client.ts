@@ -14,7 +14,7 @@ const useRateLimiter = process.env.NODE_ENV === 'production';
 
 const limiter = new Bottleneck({
     maxConcurrent: 1,
-    minTime: 500,
+    minTime: 2000,
 });
 
 export class WarcraftLogsClient {
