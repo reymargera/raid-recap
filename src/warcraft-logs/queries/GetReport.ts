@@ -183,7 +183,6 @@ export const GetReport = gql`
                 ...CoreReportFragment
                 ...StixGarbagePileFragment
                 ...StixRolledFragment
-                ...StixRollingRubbishFragment
                 ...SprocketScrewedFragment
                 ...OABHighRollerFragment
                 ...OABCrushedFragment
@@ -210,7 +209,6 @@ export const GetReport = gql`
     ${CoreReportFragment}
     ${StixGarbagePileFragment}
     ${StixRolledFragment}
-    ${StixRollingRubbishFragment}
     ${SprocketScrewedFragment}
     ${OABHighRollerFragment}
     ${OABCrushedFragment}
