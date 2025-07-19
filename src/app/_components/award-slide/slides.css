@@ -6,6 +6,8 @@
 .swiper-slide {
     text-align: center;
     font-size: 18px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .swiper-slide img {
