@@ -34,6 +34,7 @@ export class TeamStats {
     public totalResets: number = 0;
     public totalPulls: number = 0;
     public totalFailedResets: number = 0;
+    public totalBossKills: number = 0;
 
     // Report specific stats
     public uniqueCharacters: Set<string> = new Set();
@@ -87,8 +88,9 @@ export class TeamStats {
                         const fightDuration = fight.endTime - fight.startTime;
                         this.timeSpentPullingBosses += fightDuration;
 
-                        // Track longest/shortest kills
+                        // Track longest/shortest kills and total boss kills
                         if (fight.kill) {
+                            this.totalBossKills++;
                             if (fightDuration > this.longestBossFightKill.duration) {
                                 this.longestBossFightKill = this.captureFightOverview(fight);
                             }
@@ -330,6 +332,7 @@ export class TeamStats {
         this.totalResets = parsedStats.totalResets || 0;
         this.totalPulls = parsedStats.totalPulls || 0;
         this.totalFailedResets = parsedStats.totalFailedResets || 0;
+        this.totalBossKills = parsedStats.totalBossKills || 0;
         this.uniqueCharacters = parsedStats.uniqueCharacters;
         this.uniqueSpecs = parsedStats.uniqueSpecs;
         this.topDamageTakenAbilities = parsedStats.topDamageTakenAbilities;

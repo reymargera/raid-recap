@@ -105,6 +105,12 @@ const SkullIcon = () => (
     </svg>
 );
 
+const CheckCircleIcon = () => (
+    <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
 function formatTime(milliseconds: number): string {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -311,83 +317,105 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                             <h2 className="text-2xl font-bold text-white mb-2">
                                 Raid Summary
                             </h2>
-                            <div className={`grid gap-3 ${teamStats.totalFailedResets > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                                <Tooltip content="Only includes raid nights that were logged. If it's not logged, it doesn't exist!">
-                                    <div className="text-center bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-3 rounded-xl border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 cursor-help">
-                                        <div className="flex justify-center mb-3">
-                                            <CalendarIcon />
-                                        </div>
-                                        <div className="text-4xl font-extrabold text-blue-400 mb-1 min-h-[3rem] flex items-center justify-center">
-                                            <div className="tabular-nums">
-                                                <AnimatedNumberCounter endValue={teamStats.totalRaidNights} delay={100} trigger={animationTrigger} />
-                                            </div>
-                                        </div>
-                                        <div className="text-xs text-blue-200 font-medium uppercase tracking-wide">Raid Nights</div>
-                                    </div>
-                                </Tooltip>
-                                <Tooltip content="Time calculated from first pull to last pull of each raid night. Includes breaks and downtime between pulls.">
-                                    <div className="text-center bg-gradient-to-br from-green-500/20 to-green-600/20 p-3 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300 cursor-help">
-                                        <div className="flex justify-center mb-3">
-                                            <ClockIcon />
-                                        </div>
-                                        <div className="text-4xl font-extrabold text-green-400 mb-1 min-h-[3rem] flex items-center justify-center">
-                                            <div className="tabular-nums">
-                                                <AnimatedTimeCounter endValue={teamStats.totalTime} delay={200} trigger={animationTrigger} />
-                                            </div>
-                                        </div>
-                                        <div className="text-sm text-green-200 font-medium uppercase tracking-wide">Total Time</div>
-                                    </div>
-                                </Tooltip>
-                                <div className="text-center bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 p-3 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <SwordIcon />
-                                    </div>
-                                    <div className="text-4xl font-extrabold text-yellow-400 mb-1 min-h-[3rem] flex items-center justify-center">
-                                        <div className="tabular-nums">
-                                            <AnimatedTimeCounter endValue={teamStats.timeSpentPullingBosses} delay={300} trigger={animationTrigger} />
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-yellow-200 font-medium uppercase tracking-wide">Boss Pull Time</div>
-                                </div>
-                                <Tooltip content="Only counts boss pulls. Does not include resets or trash mob encounters.">
-                                    <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-3 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-help">
-                                        <div className="flex justify-center mb-3">
-                                            <TargetIcon />
-                                        </div>
-                                        <div className="text-4xl font-extrabold text-purple-400 mb-1 min-h-[3rem] flex items-center justify-center">
-                                            <div className="tabular-nums">
-                                                <AnimatedNumberCounter endValue={teamStats.totalPulls} delay={400} trigger={animationTrigger} />
-                                            </div>
-                                        </div>
-                                        <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Total Pulls</div>
-                                    </div>
-                                </Tooltip>
-                                <div className="text-center bg-gradient-to-br from-red-500/20 to-red-600/20 p-3 rounded-xl border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
-                                    <div className="flex justify-center mb-3">
-                                        <RefreshIcon />
-                                    </div>
-                                    <div className="text-4xl font-extrabold text-red-400 mb-1 min-h-[3rem] flex items-center justify-center">
-                                        <div className="tabular-nums">
-                                            <AnimatedNumberCounter endValue={teamStats.totalResets} delay={500} trigger={animationTrigger} />
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-red-200 font-medium uppercase tracking-wide">Resets</div>
-                                </div>
-                                {teamStats.totalFailedResets > 0 && (
-                                    <Tooltip content="Attempted resets that resulted in raid deaths. Boss fights under 1 minute with boss at 98%+ health that ended in a wipe.">
-                                        <div className="text-center bg-gradient-to-br from-orange-500/20 to-orange-600/20 p-3 rounded-xl border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 cursor-help">
+                            <div className="space-y-3">
+                                {/* First row: Raid Nights, Total Pulls, Boss Kills */}
+                                <div className="grid grid-cols-3 gap-3">
+                                    <Tooltip content="Only includes raid nights that were logged. If it's not logged, it doesn't exist!">
+                                        <div className="text-center bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-3 rounded-xl border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 cursor-help">
                                             <div className="flex justify-center mb-3">
-                                                <AlertIcon />
+                                                <CalendarIcon />
                                             </div>
-                                            <div className="text-4xl font-extrabold text-orange-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                            <div className="text-4xl font-extrabold text-blue-400 mb-1 min-h-[3rem] flex items-center justify-center">
                                                 <div className="tabular-nums">
-                                                    <AnimatedNumberCounter endValue={teamStats.totalFailedResets} delay={600} trigger={animationTrigger} />
+                                                    <AnimatedNumberCounter endValue={teamStats.totalRaidNights} delay={100} trigger={animationTrigger} />
                                                 </div>
                                             </div>
-                                            <div className="text-sm text-orange-200 font-medium uppercase tracking-wide">Failed Resets</div>
+                                            <div className="text-xs text-blue-200 font-medium uppercase tracking-wide">Raid Nights</div>
                                         </div>
                                     </Tooltip>
-                                )}
+                                    <Tooltip content="Only counts boss pulls. Does not include resets or trash mob encounters.">
+                                        <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-3 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-help">
+                                            <div className="flex justify-center mb-3">
+                                                <TargetIcon />
+                                            </div>
+                                            <div className="text-4xl font-extrabold text-purple-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                                <div className="tabular-nums">
+                                                    <AnimatedNumberCounter endValue={teamStats.totalPulls} delay={200} trigger={animationTrigger} />
+                                                </div>
+                                            </div>
+                                            <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Total Pulls</div>
+                                        </div>
+                                    </Tooltip>
+                                    <div className="text-center bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 p-3 rounded-xl border border-emerald-400/30 hover:border-emerald-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-3">
+                                            <CheckCircleIcon />
+                                        </div>
+                                        <div className="text-4xl font-extrabold text-emerald-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedNumberCounter endValue={teamStats.totalBossKills} delay={300} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-emerald-200 font-medium uppercase tracking-wide">Boss Kills</div>
+                                    </div>
+                                </div>
+
+                                {/* Second row: Resets, Failed Resets */}
+                                <div className={`grid gap-3 ${teamStats.totalFailedResets > 0 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                                    <div className="text-center bg-gradient-to-br from-red-500/20 to-red-600/20 p-3 rounded-xl border border-red-400/30 hover:border-red-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-3">
+                                            <RefreshIcon />
+                                        </div>
+                                        <div className="text-4xl font-extrabold text-red-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedNumberCounter endValue={teamStats.totalResets} delay={400} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-red-200 font-medium uppercase tracking-wide">Resets</div>
+                                    </div>
+                                    {teamStats.totalFailedResets > 0 && (
+                                        <Tooltip content="Attempted resets that resulted in raid deaths. Boss fights under 1 minute with boss at 98%+ health that ended in a wipe.">
+                                            <div className="text-center bg-gradient-to-br from-orange-500/20 to-orange-600/20 p-3 rounded-xl border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 cursor-help">
+                                                <div className="flex justify-center mb-3">
+                                                    <AlertIcon />
+                                                </div>
+                                                <div className="text-4xl font-extrabold text-orange-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                                    <div className="tabular-nums">
+                                                        <AnimatedNumberCounter endValue={teamStats.totalFailedResets} delay={500} trigger={animationTrigger} />
+                                                    </div>
+                                                </div>
+                                                <div className="text-sm text-orange-200 font-medium uppercase tracking-wide">Failed Resets</div>
+                                            </div>
+                                        </Tooltip>
+                                    )}
+                                </div>
+
+                                {/* Third row: Total Time, Boss Pull Time */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Tooltip content="Time calculated from first pull to last pull of each raid night. Includes breaks and downtime between pulls.">
+                                        <div className="text-center bg-gradient-to-br from-green-500/20 to-green-600/20 p-3 rounded-xl border border-green-400/30 hover:border-green-400/50 transition-all duration-300 cursor-help">
+                                            <div className="flex justify-center mb-3">
+                                                <ClockIcon />
+                                            </div>
+                                            <div className="text-4xl font-extrabold text-green-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                                <div className="tabular-nums">
+                                                    <AnimatedTimeCounter endValue={teamStats.totalTime} delay={600} trigger={animationTrigger} />
+                                                </div>
+                                            </div>
+                                            <div className="text-sm text-green-200 font-medium uppercase tracking-wide">Total Time</div>
+                                        </div>
+                                    </Tooltip>
+                                    <div className="text-center bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 p-3 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
+                                        <div className="flex justify-center mb-3">
+                                            <SwordIcon />
+                                        </div>
+                                        <div className="text-4xl font-extrabold text-yellow-400 mb-1 min-h-[3rem] flex items-center justify-center">
+                                            <div className="tabular-nums">
+                                                <AnimatedTimeCounter endValue={teamStats.timeSpentPullingBosses} delay={700} trigger={animationTrigger} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-yellow-200 font-medium uppercase tracking-wide">Boss Pull Time</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -405,7 +433,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                         <div className="text-sm text-yellow-200 font-medium uppercase tracking-wide">Longest Kill</div>
                                         <div className="text-white font-semibold mb-1">{teamStats.longestBossFightKill.name}</div>
                                         <div className="text-3xl font-extrabold text-yellow-400 mb-1">
-                                            <AnimatedTimeCounter endValue={teamStats.longestBossFightKill.duration} delay={1000} trigger={animationTrigger} />
+                                            <AnimatedTimeCounter endValue={teamStats.longestBossFightKill.duration} delay={1100} trigger={animationTrigger} />
                                         </div>
                                         <div className="text-sm text-yellow-200">{teamStats.longestBossFightKill.difficulty}</div>
                                     </div>
@@ -418,7 +446,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                         <div className="text-sm text-blue-200 font-medium uppercase tracking-wide">Shortest Kill</div>
                                         <div className="text-white font-semibold mb-1">{teamStats.shortestBossFightKill.name}</div>
                                         <div className="text-3xl font-extrabold text-blue-400 mb-1">
-                                            <AnimatedTimeCounter endValue={teamStats.shortestBossFightKill.duration} delay={1100} trigger={animationTrigger} />
+                                            <AnimatedTimeCounter endValue={teamStats.shortestBossFightKill.duration} delay={1200} trigger={animationTrigger} />
                                         </div>
                                         <div className="text-sm text-blue-200">{teamStats.shortestBossFightKill.difficulty}</div>
                                     </div>
@@ -452,7 +480,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                         </div>
                                         <div className="text-4xl font-extrabold text-purple-400 mb-1 min-h-[3rem] flex items-center justify-center">
                                             <div className="tabular-nums">
-                                                <AnimatedNumberCounter endValue={teamStats.uniqueCharacters.size} delay={700} trigger={animationTrigger} />
+                                                <AnimatedNumberCounter endValue={teamStats.uniqueCharacters.size} delay={800} trigger={animationTrigger} />
                                             </div>
                                         </div>
                                         <div className="text-sm text-purple-200 font-medium uppercase tracking-wide">Unique Players</div>
@@ -464,7 +492,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                     </div>
                                     <div className="text-4xl font-extrabold text-cyan-400 mb-1 min-h-[3rem] flex items-center justify-center">
                                         <div className="tabular-nums">
-                                            <AnimatedNumberCounter endValue={teamStats.uniqueSpecs.size} delay={800} trigger={animationTrigger} />
+                                            <AnimatedNumberCounter endValue={teamStats.uniqueSpecs.size} delay={900} trigger={animationTrigger} />
                                         </div>
                                     </div>
                                     <div className="text-sm text-cyan-200 font-medium uppercase tracking-wide">Unique Specs</div>
@@ -475,7 +503,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                                     </div>
                                     <div className="text-4xl font-extrabold text-pink-400 mb-1 min-h-[3rem] flex items-center justify-center">
                                         <div className="tabular-nums">
-                                            <AnimatedNumberCounter endValue={teamStats.uniqueTalentLoadouts.size} delay={900} trigger={animationTrigger} />
+                                            <AnimatedNumberCounter endValue={teamStats.uniqueTalentLoadouts.size} delay={1000} trigger={animationTrigger} />
                                         </div>
                                     </div>
                                     <div className="text-sm text-pink-200 font-medium uppercase tracking-wide">Talent Builds</div>
