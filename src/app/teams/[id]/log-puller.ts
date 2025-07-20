@@ -5,6 +5,7 @@ import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/aura
 import { LiberationHoldEncounters, NerubarPalaceEncounters } from "@/app/_config/encounters";
 import { TeamConfig } from "@/app/_config/teams";
 import { TeamStats } from "@/warcraft-logs/model/team-stats";
+import { DuplicateDetector } from "@/warcraft-logs/duplicate-detector";
 
 const SEASON_START_TIME = new Date("2025-03-04T22:00:00Z").getTime();
 
@@ -34,14 +35,19 @@ export async function fetchTeamStats({
     // Pulling all logs for the given guild from the current season, optionally filter reports
     const reports = await warcraftLogs.getReportsForGuild({guildId, seasonStartTime: SEASON_START_TIME});
     const filteredReports = reportFilter ? reports.filter(reportFilter) : reports;
-    const teamStats = new TeamStats();
-    teamStats.addRaidNights(filteredReports);
 
-    console.log(`Retained a total of ${filteredReports.length} logs after applying filter`);
+    // Detect and remove duplicate reports to prevent double-counting stats
+    const duplicateDetector = new DuplicateDetector();
+    const deduplicatedReports = duplicateDetector.detectDuplicates(filteredReports);
+
+    const teamStats = new TeamStats();
+    teamStats.addRaidNights(deduplicatedReports);
+
+    console.log(`Retained a total of ${deduplicatedReports.length} logs after applying filter and duplicate detection (${filteredReports.length - deduplicatedReports.length} duplicates removed)`);
 
     // Once reports are available, we need to split the fights within the report
     // into boss fights and trash fights to segregate stats by fight type
-    const reportsSplitByFightType = splitReportFights(filteredReports);
+    const reportsSplitByFightType = splitReportFights(deduplicatedReports);
     const playerStats = new Map<number | string, PlayerStats>();
 
     for (const reportCode of Object.keys(reportsSplitByFightType)) {
@@ -82,7 +88,7 @@ export async function fetchTeamStats({
                 return true;
             }
 
-            return p.appearances() / filteredReports.length >= attendancePercent;
+            return p.appearances() / deduplicatedReports.length >= attendancePercent;
         })
         : explicitlyIncludedStats;
 
