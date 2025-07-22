@@ -164,8 +164,8 @@ const mostTimesScrewed: Award = {
 
 const mostHighRollerUptime: Award = {
     name: 'Buffy The Slot Machine Slayer',
-    description: 'Total Time With High Roller Debuff',
-    stat: (p) => p.getSeaontalStat('highRollerUptime', 'Boss'),
+    description: 'Total Time With High Roller Debuff (Seconds)',
+    stat: (p) => Math.round(p.getSeaontalStat('highRollerUptime', 'Boss') / 1000),
     background: 'undermine/oab-1.webp',
     supportsAveraging: false,
 };
