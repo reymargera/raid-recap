@@ -85,7 +85,8 @@ export class WarcraftLogsClient {
                     guildId,
                     seasonStartTime,
                     page,
-                }
+                },
+                fetchPolicy: process.env.NODE_ENV === 'production' ? 'no-cache' : 'cache-first',
             });
 
             const reports: Report[] = (result.data.reportData?.reports?.data ?? []) as Report[];
