@@ -135,6 +135,7 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
             241861743,
             259033446,
             252513154,
+            263345095,
         ]
     },
     'shadow-hunters-pink-team': {
