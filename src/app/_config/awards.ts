@@ -130,124 +130,76 @@ const mostMechanicsGiven: Award = {
     background: 'undermine/undermine-broll-4.webp',
 };
 
-const mostTimeStoodInTrash: Award = {
-    name: 'You Are Where You Stand',
-    description: 'Number Of Times Stood On Trash',
-    stat: (p) => p.getSeaontalStat('timesStoodInTrash', 'Boss'),
+const disenchanted: Award = {
+    name: 'Disenchanted',
+    description: 'Number Of Deaths From Arcano-Matrix Atomizer Energy Field',
+    stat: (p) => p.getSeaontalStat('atomizerDeaths', 'Boss'),
     supportsAveraging: false,
-    background: 'undermine/stix-1.webp'
+    background: 'manaforge/plexus-1.webp',
 };
 
-const mostTimesRolledOver: Award = {
-    name: 'Road Kill',
-    description: 'Number Of Times Rolled Over By Rolling Rubbish',
-    stat: (p) => p.getSeaontalStat('timesRolledOver', 'Boss'),
+const trapCardActivated: Award = {
+    name: 'Trap Card Activated',
+    description: 'Number Of Times Stepped On Displacement Matrix Traps',
+    stat: (p) => p.getSeaontalStat('displacementMatrixApplications', 'Boss'),
     supportsAveraging: false,
-    background: 'undermine/stix-1.webp'
+    background: 'manaforge/plexus-2.webp',
 };
 
-const mostTimesRollingOver: Award = {
-    name: 'I Merge Now.. GL Everyone Else',
-    description: 'Number Of Times Rolling Someone Over With Rolling Rubbish',
-    stat: (p) => p.getSeaontalStat('timesRollingOver', 'Boss'),
-    background: 'undermine/stix-1.webp',
+const tangledUp: Award = {
+    name: 'Tangled Up',
+    description: 'Number Of Times Caught In Lair Weaving',
+    stat: (p) => p.getSeaontalStat('lairWeavingApplications', 'Boss'),
     supportsAveraging: false,
+    background: 'manaforge/loomithar-1.webp',
 };
 
-const mostTimesScrewed: Award = {
-    name: 'Screwed Up',
-    description: 'Number Of Times Screwed Up',
-    stat: (p) => p.getSeaontalStat('timesScrewed', 'Boss'),
-    background: 'undermine/sprocket-1.webp',
+const hungryHungryIre: Award = {
+    name: 'Hungry, Hungry, Ire',
+    description: 'Number Of Devourer\'s Ire Debuff Applications',
+    stat: (p) => p.getSeaontalStat('devourersIreApplications', 'Boss'),
     supportsAveraging: false,
+    background: 'manaforge/soul-hunters-1.webp',
 };
 
-const mostHighRollerUptime: Award = {
-    name: 'Buffy The Slot Machine Slayer',
-    description: 'Total Time With High Roller Debuff (Seconds)',
-    stat: (p) => Math.round(p.getSeaontalStat('highRollerUptime', 'Boss') / 1000),
-    background: 'undermine/oab-1.webp',
+const nomNomNom: Award = {
+    name: 'Nom Nom Nom',
+    description: 'Number Of Soulrend Orbs And Prime Sequence Hits Eaten',
+    stat: (p) => p.getSeaontalStat('soulrendOrbApplications', 'Boss') + p.getSeaontalStat('primeSequenceHits', 'Boss'),
     supportsAveraging: false,
+    background: 'manaforge/combined-1.webp',
 };
 
-const mostTimesCrushed: Award = {
-    name: 'Bank Rolled',
-    description: 'Number Of Times Ran Over By A Payline',
-    stat: (p) => p.getSeaontalStat('timesCrushed', 'Boss'),
-    background: 'undermine/oab-1.webp',
+const soulMate: Award = {
+    name: 'Soul Mate',
+    description: 'Number Of Frailty Soul Fragments Collected',
+    stat: (p) => p.getSeaontalStat('frailtyApplications', 'Boss'),
     supportsAveraging: false,
+    background: 'manaforge/soul-hunters-2.webp',
 };
 
-const mostCoinsPushed: Award = {
-    name: 'Penny Pusher',
-    description: 'Number Of Paylines Kicked Off',
-    stat: (p) => p.getSeaontalStat('coinsPushed', 'Boss'),
-    background: 'undermine/oab-1.webp',
+const beamMeDownScotty: Award = {
+    name: 'Beam Me Down, Scotty',
+    description: 'Total Damage Taken From Refracted Entropy Beams',
+    stat: (p) => p.getSeaontalStat('refractedEntropyDamage', 'Boss'),
     supportsAveraging: false,
+    background: 'manaforge/fractillus-1.webp',
 };
 
-const mostBombsTossed: Award = {
-    name: 'Bomb Voyage',
-    description: 'Number Of Bombs Tossed Off Gally\'s Platform',
-    stat: (p) => p.getSeaontalStat('bombsTossed', 'Boss'),
+const intoTheVoid: Award = {
+    name: 'Into the Void',
+    description: 'Number Of Deaths From Walking Into Dimensius',
+    stat: (p) => p.getSeaontalStat('oblivionDeaths', 'Boss'),
     supportsAveraging: false,
-    background: 'undermine/undermine-broll-2.webp',
+    background: 'manaforge/dimensius-1.webp',
 };
 
-const mostCoilsDestroyed: Award = {
-    name: 'The Conductor',
-    description: 'Number Of Giga Coils Destroyed With Bombs',
-    stat: (p) => p.getSeaontalStat('coilsDestroyed', 'Boss'),
+const zapped: Award = {
+    name: 'Zapped',
+    description: 'Number Of Deaths From Overcharged Mana On Trash',
+    stat: (p) => p.getSeaontalStat('overchargedManaDeaths', 'Boss'),
     supportsAveraging: false,
-    background: 'undermine/undermine-broll-2.webp',
-};
-
-const mostTimesFlattened: Award = {
-    name: 'Everyone Gets One But Somehow You Got Many',
-    description: 'Number Of Times Flattened By Vexie',
-    stat: (p) => p.getSeaontalStat('timesFlattened', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/vexie-gear-grind-2.webp',
-};
-
-const mostBlazeOfGloryCasts: Award = {
-    name: 'Born To Be Wild',
-    description: 'Number Of Motorcycles Crashed Into The Boss',
-    stat: (p) => p.getSeaontalStat('blazeOfGloryCasts', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/vexie-gear-grind-2.webp',
-};
-
-const mostStaticDischargeApplications: Award = {
-    name: 'Energizer Bunny',
-    description: 'Number Of Times Stunned By Static Discharge From Moving Too Much',
-    stat: (p) => p.getSeaontalStat('staticDischargeApplications', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/cauldron-1.webp',
-};
-
-const mostBlastburnRoarcannonDeaths: Award = {
-    name: 'Deer In The Headlights',
-    description: 'Number Of Times Stood In Florendo\'s Lazer',
-    stat: (p) => p.getSeaontalStat('blastburnRoarcannonDeaths', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/cauldron-1.webp',
-};
-
-const mostUnstableShrapnelApplications: Award = {
-    name: 'Demolition Expert',
-    description: 'Number Of Mines Popped While Fighting Lockenstock',
-    stat: (p) => p.getSeaontalStat('unstableShrapnelApplications', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/sprocket-1.webp',
-};
-
-const mostHitAndRuns: Award = {
-    name: 'Why Did The Raider Cross The Road...',
-    description: 'Number Of Times Killed In Undermine Traffic',
-    stat: (p) => p.getSeaontalStat('hitAndRuns', 'Boss'),
-    supportsAveraging: false,
-    background: 'undermine/stix-1.webp',
+    background: 'manaforge/trash-1.webp',
 };
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -270,21 +222,15 @@ export const StaticAwards: Award[] = [
 ];
 
 export const SeasonalAwards: Award[] = [
-    mostTimeStoodInTrash,
-    mostTimesRolledOver,
-    mostTimesRollingOver,
-    mostTimesScrewed,
-    mostHighRollerUptime,
-    mostTimesCrushed,
-    mostCoinsPushed,
-    mostBombsTossed,
-    mostCoilsDestroyed,
-    mostTimesFlattened,
-    mostBlazeOfGloryCasts,
-    mostStaticDischargeApplications,
-    mostBlastburnRoarcannonDeaths,
-    mostUnstableShrapnelApplications,
-    mostHitAndRuns,
+    disenchanted,
+    trapCardActivated,
+    tangledUp,
+    hungryHungryIre,
+    nomNomNom,
+    soulMate,
+    beamMeDownScotty,
+    intoTheVoid,
+    zapped,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];

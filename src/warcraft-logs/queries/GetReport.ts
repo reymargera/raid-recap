@@ -1,4 +1,15 @@
-import { BlazeOfGlory, BlastburnRoarcannon, ChargedGigaBomb, Crushed, GarbagePile, GigaBombDetonation, HighRoller, Payline, RedAsphalt, Rolled, RollingRubbish, Screwed, StaticDischarge, UnstableShrapnel } from '@/app/_config/auras';
+import {
+    ArcanomatrixAtomizer,
+    DisplacementMatrix,
+    LairWeaving,
+    SoulrendOrb,
+    DevourersIre,
+    Frailty,
+    PrimeSequence,
+    RefractedEntropy,
+    Oblivion,
+    OverchargedMana
+} from '@/app/_config/auras';
 import { gql } from '@apollo/client/core';
 
 
@@ -18,160 +29,113 @@ export const CoreReportFragment = gql`
     }
 `;
 
-export const StixGarbagePileFragment = gql`
-    fragment StixGarbagePileFragment on Report {
-        garbagePileApplications: table(
+// Plexus Sentinel - Deaths from Atomizer
+export const PlexusAtomizerDeathsFragment = gql`
+    fragment PlexusAtomizerDeathsFragment on Report {
+        atomizerDeaths: table(
+            fightIDs: $bossFightIds
+            dataType: Deaths
+            abilityID: 1217649
+        )
+    }
+`;
+
+// Plexus Sentinel - Displacement Matrix applications
+export const PlexusDisplacementMatrixFragment = gql`
+    fragment PlexusDisplacementMatrixFragment on Report {
+        displacementMatrixApplications: table(
             fightIDs: $bossFightIds
             dataType: Debuffs
-            abilityID: 464854
+            abilityID: 1218625
         )
     }
 `;
 
-export const StixRolledFragment = gql`
-    fragment StixRolledFragment on Report {
-        rolledApplications: events(
+// Loom'ithar - Lair Weaving applications
+export const LoomitharLairWeavingFragment = gql`
+    fragment LoomitharLairWeavingFragment on Report {
+        lairWeavingApplications: table(
             fightIDs: $bossFightIds
             dataType: Debuffs
-            filterExpression: "ability.id = 465611 and type = 'ApplyDebuff'"
-            useActorIDs: false
-        ) {
-            data
-        }
+            abilityID: 1237272
+        )
     }
 `;
 
-export const StixRollingRubbishFragment = gql`
-    fragment StixRollingRubbishFragment on Report {
-        rollingRubbish: table(
+// Soulbinder - Soulrend Orb applications
+export const SoulbinderSoulrendOrbFragment = gql`
+    fragment SoulbinderSoulrendOrbFragment on Report {
+        soulrendOrbApplications: table(
             fightIDs: $bossFightIds
             dataType: Debuffs
-            abilityID: 461536
+            abilityID: 1226827
         )
     }
 `;
 
-export const SprocketScrewedFragment = gql`
-    fragment SprocketScrewedFragment on Report {
-        screwedApplications: table(
+// Soul Hunters - Devourer's Ire applications
+export const SoulHuntersDevourersIreFragment = gql`
+    fragment SoulHuntersDevourersIreFragment on Report {
+        devourersIreApplications: table(
             fightIDs: $bossFightIds
             dataType: Debuffs
-            abilityID: 1217261
+            abilityID: 1222232
         )
     }
 `;
 
-// Take totalUptime from auras, totalTime on main data object will have length of fight
-export const OABHighRollerFragment = gql`
-    fragment OABHighRollerFragment on Report {
-        highRollerUptime: table(
+// Soul Hunters - Frailty applications
+export const SoulHuntersFrailtyFragment = gql`
+    fragment SoulHuntersFrailtyFragment on Report {
+        frailtyApplications: table(
             fightIDs: $bossFightIds
             dataType: Debuffs
-            abilityID: 460444
+            abilityID: 1241946
         )
     }
 `;
 
-// Take totalUses from auras - All on Smacked
-export const OABCrushedFragment = gql`
-    fragment OABCrushedFragment on Report {
-        crushedApplications: table(
+// Forgeweaver - Prime Sequence damage
+export const ForgeweaverPrimeSequenceFragment = gql`
+    fragment ForgeweaverPrimeSequenceFragment on Report {
+        primeSequenceDamage: table(
             fightIDs: $bossFightIds
-            dataType: Debuffs
-            abilityID: 460430
+            dataType: DamageTaken
+            abilityID: 1237322
         )
     }
 `;
 
-// Take total from auras
-export const OABPaylineFragment = gql`
-    fragment OABPaylineFragment on Report {
-        paylineCasts: table(
+// Fractillus - Refracted Entropy damage
+export const FractillusRefractedEntropyFragment = gql`
+    fragment FractillusRefractedEntropyFragment on Report {
+        refractedEntropyDamage: table(
             fightIDs: $bossFightIds
-            dataType: Casts
-            abilityID: 460674
+            dataType: DamageTaken
+            abilityID: 1241137
         )
     }
 `;
 
-// Take total from auras
-export const GallyBombFragment = gql`
-    fragment GallyBombFragment on Report {
-        gigaBombTosses: table(
+// Dimensius - Oblivion deaths
+export const DimensiusOblivionDeathsFragment = gql`
+    fragment DimensiusOblivionDeathsFragment on Report {
+        oblivionDeaths: table(
             fightIDs: $bossFightIds
-            dataType: Casts
-            abilityID: 469360
+            dataType: Deaths
+            abilityID: 1229327
         )
     }
 `;
 
-export const GallyCoilFragment = gql`
-    fragment GallyCoilFragment on Report {
-        coilsDestroyed: table(
-            fightIDs: $bossFightIds
-            dataType: Debuffs
-            abilityID: 469795
-        )
-    }
-`;
-
-export const HitAndRunFragment = gql`
-    fragment HitAndRunFragment on Report {
-        hitAndRuns: table(
+// Trash - Overcharged Mana deaths
+export const TrashOverchargedManaDeathsFragment = gql`
+    fragment TrashOverchargedManaDeathsFragment on Report {
+        overchargedManaDeaths: table(
             fightIDs: $trashFightIds
             dataType: Deaths
-            abilityID: 462797
+            abilityID: 1237718
         ) @skip(if: $skipTrashFights)
-    }
-`;
-
-export const RedAsphaltFragment = gql`
-    fragment RedAsphaltFragment on Report {
-        redAsphaltDeaths: table(
-            fightIDs: $trashFightIds
-            dataType: Deaths
-            abilityID: 468872
-        ) @skip(if: $skipTrashFights)
-    }
-`;
-
-export const VexieBlazeOfGloryFragment = gql`
-    fragment VexieBlazeOfGloryFragment on Report {
-        blazeOfGloryCasts: table(
-            fightIDs: $bossFightIds
-            dataType: Casts
-            abilityID: 466040
-        )
-    }
-`;
-
-export const CauldronStaticDischargeFragment = gql`
-    fragment CauldronStaticDischargeFragment on Report {
-        staticDischargeApplications: table(
-            fightIDs: $bossFightIds
-            dataType: Debuffs
-            abilityID: 473983
-        )
-    }
-`;
-
-export const CauldronBlastburnRoarcannonFragment = gql`
-    fragment CauldronBlastburnRoarcannonFragment on Report {
-        blastburnRoarcannonDeaths: table(
-            fightIDs: $bossFightIds
-            dataType: Deaths
-            abilityID: 472242
-        )
-    }
-`;
-
-export const LockenstockUnstableShrapnelFragment = gql`
-    fragment LockenstockUnstableShrapnelFragment on Report {
-        unstableShrapnelApplications: table(
-            fightIDs: $bossFightIds
-            dataType: Debuffs
-            abilityID: 1218342
-        )
     }
 `;
 
@@ -181,20 +145,16 @@ export const GetReport = gql`
         bossFights: reportData {
             report(code: $reportCode) {
                 ...CoreReportFragment
-                ...StixGarbagePileFragment
-                ...StixRolledFragment
-                ...SprocketScrewedFragment
-                ...OABHighRollerFragment
-                ...OABCrushedFragment
-                ...OABPaylineFragment
-                ...GallyBombFragment
-                ...GallyCoilFragment
-                ...HitAndRunFragment
-                ...RedAsphaltFragment
-                ...VexieBlazeOfGloryFragment
-                ...CauldronStaticDischargeFragment
-                ...CauldronBlastburnRoarcannonFragment
-                ...LockenstockUnstableShrapnelFragment
+                ...PlexusAtomizerDeathsFragment
+                ...PlexusDisplacementMatrixFragment
+                ...LoomitharLairWeavingFragment
+                ...SoulbinderSoulrendOrbFragment
+                ...SoulHuntersDevourersIreFragment
+                ...SoulHuntersFrailtyFragment
+                ...ForgeweaverPrimeSequenceFragment
+                ...FractillusRefractedEntropyFragment
+                ...DimensiusOblivionDeathsFragment
+                ...TrashOverchargedManaDeathsFragment
                 trackedDebuffs: events(fightIDs: $bossFightIds, dataType: Debuffs, filterExpression: $debuffFilter, useActorIDs: false, startTime: $debuffStart) {
                     nextPageTimestamp
                     data
@@ -207,18 +167,14 @@ export const GetReport = gql`
         }
     }
     ${CoreReportFragment}
-    ${StixGarbagePileFragment}
-    ${StixRolledFragment}
-    ${SprocketScrewedFragment}
-    ${OABHighRollerFragment}
-    ${OABCrushedFragment}
-    ${OABPaylineFragment}
-    ${GallyBombFragment}
-    ${GallyCoilFragment}
-    ${HitAndRunFragment}
-    ${RedAsphaltFragment}
-    ${VexieBlazeOfGloryFragment}
-    ${CauldronStaticDischargeFragment}
-    ${CauldronBlastburnRoarcannonFragment}
-    ${LockenstockUnstableShrapnelFragment}
+    ${PlexusAtomizerDeathsFragment}
+    ${PlexusDisplacementMatrixFragment}
+    ${LoomitharLairWeavingFragment}
+    ${SoulbinderSoulrendOrbFragment}
+    ${SoulHuntersDevourersIreFragment}
+    ${SoulHuntersFrailtyFragment}
+    ${ForgeweaverPrimeSequenceFragment}
+    ${FractillusRefractedEntropyFragment}
+    ${DimensiusOblivionDeathsFragment}
+    ${TrashOverchargedManaDeathsFragment}
 `;

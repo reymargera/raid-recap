@@ -67,3 +67,38 @@ export const LiberationHoldEncounters = [
         "name": "Chrome King Gallywix"
     }
 ];
+
+export const ManaforgeOmegaEncounters = [
+    {
+        "id": 3129,
+        "name": "Plexus Sentinel"
+    },
+    {
+        "id": 3131,
+        "name": "Loom'ithar"
+    },
+    {
+        "id": 3130,
+        "name": "Soulbinder Naazindhri"
+    },
+    {
+        "id": 3132,
+        "name": "Forgeweaver Araz"
+    },
+    {
+        "id": 3122,
+        "name": "The Soul Hunters"
+    },
+    {
+        "id": 3133,
+        "name": "Fractillus"
+    },
+    {
+        "id": 3134,
+        "name": "Nexus-King Salhadaar"
+    },
+    {
+        "id": 3135,
+        "name": "Dimensius, the All-Devouring"
+    }
+];

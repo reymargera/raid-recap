@@ -17,7 +17,20 @@ export const TWWSeason2StatKeys = [
     'hitAndRuns',
 ] as const;
 
-export const SeasonalStatKeys = [...TWWSeason2StatKeys];
+export const TWWSeason3StatKeys = [
+    'atomizerDeaths',
+    'displacementMatrixApplications',
+    'lairWeavingApplications',
+    'soulrendOrbApplications',
+    'devourersIreApplications',
+    'frailtyApplications',
+    'primeSequenceHits',
+    'refractedEntropyDamage',
+    'oblivionDeaths',
+    'overchargedManaDeaths',
+] as const;
+
+export const SeasonalStatKeys = [...TWWSeason3StatKeys];
 
 // This is the list of seasonal stats for the TWW Season 2.
 export type TWWSeason2Stats = typeof TWWSeason2StatKeys[number];
@@ -51,7 +64,7 @@ export interface Stats extends CoreStats {
 
 export function generateBlankStats(): Stats {
     const seasonalStats: SeasonalStats = {} as SeasonalStats;
-    for (const key of TWWSeason2StatKeys) {
+    for (const key of TWWSeason3StatKeys) {
         seasonalStats[key] = 0;
     }
 
