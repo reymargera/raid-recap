@@ -1,0 +1,33 @@
+name = "raid-recap"
+compatibility_date = "2024-11-28"
+
+# Pages configuration
+pages_build_output_dir = ".next"
+
+# Environment variables (non-sensitive)
+[vars]
+ENVIRONMENT = "development"
+# Note: Sensitive vars like WARCRAFTLOGS_TOKEN should be set via:
+# - wrangler secret put WARCRAFTLOGS_TOKEN (for production)
+# - .dev.vars file (for local development - not committed to git)
+
+# For local development, we'll use a .dev.vars file
+# Create .dev.vars with:
+# WARCRAFTLOGS_TOKEN=your_token_here
+
+# KV namespace for caching (optional - can add later)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-namespace-id"
+
+# D1 Database - local SQLite for development
+[[d1_databases]]
+binding = "DB"
+database_name = "raid-recap-db"
+database_id = "local-db" # For local dev, this creates .wrangler/state/v3/d1/
+migrations_dir = "drizzle/migrations"
+
+# Queues (will add when we implement background processing)
+# [[queues.producers]]
+# binding = "REPORT_QUEUE"
+# queue = "report-processing-queue"

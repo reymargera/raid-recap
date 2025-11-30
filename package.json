@@ -5,11 +5,14 @@
   "scripts": {
     "generate": "graphql-codegen",
     "dev": "next dev",
+    "dev:wrangler": "wrangler pages dev .next --compatibility-date=2024-11-28 -- npm run dev",
     "build": "npm run generate && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "db:init": "wrangler d1 execute raid-recap-db --local --file=./schemas/schema.sql",
+    "db:query": "wrangler d1 execute raid-recap-db --local --command"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
@@ -24,11 +27,14 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/client-preset": "^4.3.2",
+    "@opennextjs/cloudflare": "^1.14.0",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "drizzle-kit": "^0.31.7",
+    "drizzle-orm": "^0.44.7",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "jest": "^29.7.0",
@@ -36,6 +42,8 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.51.0",
+    "zod": "^4.1.13"
   }
 }
