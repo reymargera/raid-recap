@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    basePath: '/raid-recap',
     images: {
       unoptimized: true,
     },
@@ -12,3 +10,7 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+// Initialize OpenNext for development - enables Cloudflare bindings in dev server
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();

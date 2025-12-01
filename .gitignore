@@ -30,6 +30,14 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.dev.vars
+
+# wrangler
+.wrangler/
+wrangler-state/
+
+# local data storage
+/data/
 
 # vercel
 .vercel

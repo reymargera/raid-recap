@@ -12,7 +12,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "db:init": "wrangler d1 execute raid-recap-db --local --file=./schemas/schema.sql",
-    "db:query": "wrangler d1 execute raid-recap-db --local --command"
+    "db:query": "wrangler d1 execute raid-recap-db --local --command",
+    "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
@@ -33,6 +36,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "better-sqlite3": "^12.5.0",
     "drizzle-kit": "^0.31.7",
     "drizzle-orm": "^0.44.7",
     "eslint": "^8",

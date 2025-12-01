@@ -5,10 +5,11 @@ import {
     GetReportQueryVariables,
     GetReportsForGuildDocument,
     GetReportsForGuildQueryVariables,
+    GetReportMetadataDocument,
+    GetReportMetadataQueryVariables,
     Report
 } from "@/__generated__/graphql";
 import Bottleneck from "bottleneck";
-
 
 const useRateLimiter = process.env.NODE_ENV === 'production';
 
@@ -26,7 +27,7 @@ export class WarcraftLogsClient {
             uri: 'https://www.warcraftlogs.com/api/v2/client',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.TOKEN}`,
+                'Authorization': `Bearer ${process.env.WARCRAFTLOGS_TOKEN}`,
             },
             cache: new InMemoryCache({
                 typePolicies: {
@@ -102,6 +103,28 @@ export class WarcraftLogsClient {
         console.log(`Found a total of ${allReports.length} reports for guild ${guildId}`);
 
         return allReports;
+    }
+
+    public async getReportMetadata({reportCode}: GetReportMetadataQueryVariables): Promise<Report | null> {
+        console.log(`Executing request to fetch metadata for report ${reportCode}`);
+
+        const result = await this.client.query({
+            query: GetReportMetadataDocument,
+            variables: {
+                reportCode,
+            },
+            fetchPolicy: process.env.NODE_ENV === 'production' ? 'no-cache' : 'cache-first',
+        });
+
+        const report = result.data.reportData?.report as Report | null;
+
+        if (report) {
+            console.log(`Found report ${reportCode} with ${report.fights?.length ?? 0} fights`);
+        } else {
+            console.log(`Report ${reportCode} not found`);
+        }
+
+        return report;
     }
 
     private async scheduleQuery<T>(query: () => Promise<T>): Promise<T> {

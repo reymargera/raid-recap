@@ -118,11 +118,27 @@ function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegm
     return Object.fromEntries(reportEntries);
 }
 
+/**
+ * Split fights for a single report (exported for Server Actions)
+ */
+export function splitFightsForReport(fights: ReportFight[]): FightSegmentation {
+    const seasonalEncounters = ManaforgeOmegaEncounters.map(e => e.id);
+    const fightSegmentation: FightSegmentation = {bossFightIds: [], trashFightIds: []};
+
+    for (const fight of fights) {
+        isBossFight(seasonalEncounters, fight)
+            ? fightSegmentation.bossFightIds.push(fight.id)
+            : fightSegmentation.trashFightIds.push(fight.id);
+    }
+
+    return fightSegmentation;
+}
+
 function isBossFight(seasonalEncounters: number[], fight: ReportFight) {
     return seasonalEncounters.includes(fight.encounterID);
 }
 
-function extractPlayerStatsFromLog(reportData: GetReportQuery) {
+export function extractPlayerStatsFromLog(reportData: GetReportQuery) {
     const playerStats = new Map<number | string, PlayerStats>();
 
     const baseData = reportData.bossFights?.report?.baseData.data;

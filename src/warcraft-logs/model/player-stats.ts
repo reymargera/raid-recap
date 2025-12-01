@@ -252,6 +252,10 @@ export class PlayerStats {
             : this._statBreakDown['Boss'].seasonalStats[seasonalKey] + this._statBreakDown['Trash'].seasonalStats[seasonalKey];
     }
 
+    public getStats(type: FightTypes): Stats {
+        return this._statBreakDown[type];
+    }
+
     private getStatValue(field: keyof Omit<Stats, 'seasonalStats'>, type?: FightTypes): number {
         return type
             ? this._statBreakDown[type][field]
