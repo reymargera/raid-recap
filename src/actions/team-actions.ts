@@ -6,6 +6,7 @@ import { WarcraftLogsClient } from '@/warcraft-logs/client';
 import { ReportFight } from '@/__generated__/graphql';
 import { DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from '@/app/_config/auras';
 import { TeamStats } from '@/warcraft-logs/model/team-stats';
+import { PlayerStats } from '@/warcraft-logs/model/player-stats';
 import { extractPlayerStatsFromLog, splitFightsForReport } from '@/app/teams/[id]/log-puller';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { eq } from 'drizzle-orm';
@@ -111,6 +112,9 @@ export async function processReport(
         playerId: playerStat.id,
         playerName: playerStat.name,
         server: playerStat.server,
+        playerClass: playerStat.playerClass,
+        spec: playerStat.spec,
+        role: playerStat.role,
         season,
         stats: stats, // Drizzle handles JSON serialization with mode: 'json'
       };
@@ -126,6 +130,7 @@ export async function processReport(
 
     // Step 10: Extract and store team stats
     const teamStatsObj = new TeamStats();
+    teamStatsObj.addRaidNights([reportMetadata]);
     teamStatsObj.addReport(reportData);
 
     const teamStatsData = {
@@ -205,10 +210,54 @@ export async function getTeamStats(teamId: string) {
     where: eq(teamStats.teamId, teamId),
   });
 
-  // TODO: Implement aggregation logic
+  // Aggregate player stats by player ID
+  const playerStatsMap = new Map<number, PlayerStats>();
+
+  for (const dbPlayerStat of allPlayerStats) {
+    const playerId = dbPlayerStat.playerId;
+
+    // Get or create PlayerStats instance for this player
+    if (!playerStatsMap.has(playerId)) {
+      // Create new PlayerStats instance
+      const playerStatsInstance = new PlayerStats({
+        id: dbPlayerStat.playerId,
+        name: dbPlayerStat.playerName,
+        server: dbPlayerStat.server,
+        playerClass: dbPlayerStat.playerClass,
+        spec: dbPlayerStat.spec,
+        role: dbPlayerStat.role,
+      });
+
+      // Add the stats from this log
+      playerStatsInstance.addStats('Boss', dbPlayerStat.stats as any);
+      playerStatsMap.set(playerId, playerStatsInstance);
+    } else {
+      // Merge stats into existing PlayerStats
+      const existingPlayerStats = playerStatsMap.get(playerId)!;
+      existingPlayerStats.addStats('Boss', dbPlayerStat.stats as any);
+    }
+  }
+
+  // Aggregate team stats
+  let aggregatedTeamStats: TeamStats | null = null;
+
+  if (allTeamStats.length > 0) {
+    // Create first TeamStats instance from JSON
+    aggregatedTeamStats = TeamStats.fromJson(JSON.stringify(allTeamStats[0].stats));
+
+    // Merge remaining team stats
+    for (let i = 1; i < allTeamStats.length; i++) {
+      const teamStatToMerge = TeamStats.fromJson(JSON.stringify(allTeamStats[i].stats));
+      aggregatedTeamStats.merge(teamStatToMerge);
+    }
+  }
+
+  // Convert aggregated player stats to array of JSON strings (format expected by UI)
+  const aggregatedPlayerStatsJson = Array.from(playerStatsMap.values()).map((ps) => ps.toJson());
+
   return {
     team,
-    playerStats: allPlayerStats,
-    teamStats: allTeamStats,
+    playerStats: aggregatedPlayerStatsJson,
+    teamStats: aggregatedTeamStats ? aggregatedTeamStats.toJson() : null,
   };
 }

@@ -261,4 +261,8 @@ export class PlayerStats {
             ? this._statBreakDown[type][field]
             : this._statBreakDown['Boss'][field] + this._statBreakDown['Trash'][field];
     }
+
+    public toJson(): string {
+        return JSON.stringify(this);
+    }
 }

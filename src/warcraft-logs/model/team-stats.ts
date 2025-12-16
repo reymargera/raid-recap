@@ -1,5 +1,5 @@
 import { GetReportQuery, Report } from "@/__generated__/graphql";
-import { LiberationHoldEncounters } from "@/app/_config/encounters";
+import { ManaforgeOmegaEncounters } from "@/app/_config/encounters";
 import crypto from "crypto";
 
 interface DamageTakenAbility {
@@ -43,7 +43,7 @@ export class TeamStats {
     public topDeathAbilities: Map<string, DeathAbility> = new Map();
     public uniqueTalentLoadouts: Set<string> = new Set();
 
-    private allEncounters = [...LiberationHoldEncounters];
+    private allEncounters = [...ManaforgeOmegaEncounters];
 
     /**
      * Takes in top level report data to capture raid night specific data, such as total number of raid nights,
@@ -340,5 +340,66 @@ export class TeamStats {
         this.uniqueTalentLoadouts = parsedStats.uniqueTalentLoadouts;
 
         return this;
+    }
+
+    public static fromJson(json: string): TeamStats {
+        const instance = new TeamStats();
+        return instance.fromJson(json);
+    }
+
+    /**
+     * Merge another TeamStats instance into this one
+     */
+    public merge(other: TeamStats): void {
+        // Merge numeric fields
+        this.totalRaidNights += other.totalRaidNights;
+        this.timeSpentPullingBosses += other.timeSpentPullingBosses;
+        this.totalTime += other.totalTime;
+        this.totalResets += other.totalResets;
+        this.totalPulls += other.totalPulls;
+        this.totalFailedResets += other.totalFailedResets;
+        this.totalBossKills += other.totalBossKills;
+
+        // Merge Sets
+        for (const char of other.uniqueCharacters) {
+            this.uniqueCharacters.add(char);
+        }
+        for (const spec of other.uniqueSpecs) {
+            this.uniqueSpecs.add(spec);
+        }
+        for (const loadout of other.uniqueTalentLoadouts) {
+            this.uniqueTalentLoadouts.add(loadout);
+        }
+
+        // Merge Maps (damage taken abilities)
+        for (const [key, ability] of other.topDamageTakenAbilities) {
+            const existing = this.topDamageTakenAbilities.get(key);
+            if (existing) {
+                existing.total += ability.total;
+            } else {
+                this.topDamageTakenAbilities.set(key, { ...ability });
+            }
+        }
+
+        // Merge Maps (death abilities)
+        for (const [key, death] of other.topDeathAbilities) {
+            const existing = this.topDeathAbilities.get(key);
+            if (existing) {
+                existing.count += death.count;
+            } else {
+                this.topDeathAbilities.set(key, { ...death });
+            }
+        }
+
+        // Compare and update FightOverview fields (keep best/worst)
+        if (other.longestBossFightKill.duration > this.longestBossFightKill.duration) {
+            this.longestBossFightKill = other.longestBossFightKill;
+        }
+        if (other.shortestBossFightKill.duration < this.shortestBossFightKill.duration) {
+            this.shortestBossFightKill = other.shortestBossFightKill;
+        }
+        if (other.lowestWipePercentage.fightPercentage < this.lowestWipePercentage.fightPercentage) {
+            this.lowestWipePercentage = other.lowestWipePercentage;
+        }
     }
 }

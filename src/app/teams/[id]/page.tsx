@@ -2,8 +2,8 @@ import AwardSlides from '../../_components/award-slide/slides';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
-import {fetchTeamStats} from "@/app/teams/[id]/log-puller";
-import {RaidTeams, TeamConfig} from "@/app/_config/teams";
+import {RaidTeams} from "@/app/_config/teams";
+import {getTeamStats} from "@/actions/team-actions";
 
 export interface TeamPageParams {
     readonly id: string;
@@ -16,34 +16,23 @@ export interface Team {
     readonly teamStats: string;
 }
 
-// Don't fall back to runtime rendering when a path was not pre-rendered
-export const dynamicParams = false;
-
 export default async function Team({ params }: { params: Promise<TeamPageParams> }) {
     const teamId = (await params).id;
-    const teamConfig = RaidTeams[teamId];
-    const team = await getTeam(teamConfig);
+
+    // Fetch aggregated stats from database
+    const { team, playerStats, teamStats } = await getTeamStats(teamId);
+
+    // Format data for AwardSlides component
+    const teamData: Team = {
+        id: team.id,
+        name: team.name,
+        stats: playerStats,
+        teamStats: teamStats || '{}',
+    };
 
     return (
         <>
-            <AwardSlides team={team} />
+            <AwardSlides team={teamData} />
         </>
     );
 };
-
-export async function generateStaticParams(): Promise<TeamPageParams[]> {
-    return Object.keys(RaidTeams).map(k => ({id: k}));
-}
-
-async function getTeam(teamConfig: TeamConfig): Promise<Team> {
-    const { playerStats, teamStats } = await fetchTeamStats(teamConfig);
-
-    return {
-        id: teamConfig.id,
-        name: teamConfig.name,
-
-        // Need to serialize stats since you cant pass classes between client/server components
-        stats: playerStats.map(ps => JSON.stringify(ps)),
-        teamStats: teamStats.toJson(),
-    };
-}

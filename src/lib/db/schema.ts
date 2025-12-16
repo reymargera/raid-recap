@@ -20,6 +20,9 @@ export const playerStats = sqliteTable('playerStats', {
   playerId: integer('playerId').notNull(),
   playerName: text('playerName').notNull(),
   server: text('server').notNull(),
+  playerClass: text('playerClass').notNull(),
+  spec: text('spec').notNull(),
+  role: text('role').notNull(),
   season: text('season').notNull(),
   stats: text('stats', { mode: 'json' }).notNull(), // JSON object with all player stats
   createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
@@ -63,6 +66,9 @@ export const insertPlayerStatsSchema = z.object({
   playerId: z.number(),
   playerName: z.string(),
   server: z.string(),
+  playerClass: z.string(),
+  spec: z.string(),
+  role: z.string(),
   season: z.string(),
   stats: z.record(z.any()), // JSON object
 });
