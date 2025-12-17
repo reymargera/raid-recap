@@ -11,6 +11,8 @@ import { extractPlayerStatsFromLog, splitFightsForReport } from '@/app/teams/[id
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { TeamService } from '@/lib/services/team-service';
+import { StatsService } from '@/lib/services/stats-service';
 
 /**
  * Get the D1 database binding from the Cloudflare environment
@@ -188,76 +190,21 @@ function calculateFightSequenceId(fights: any[]): string {
  * Get aggregated stats for a team
  */
 export async function getTeamStats(teamId: string) {
-  const d1 = getD1Database();
-  const db = getDB(d1);
+  const teamService = new TeamService();
+  const statsService = new StatsService();
 
   // Get team
-  const team = await db.query.teams.findFirst({
-    where: eq(teams.id, teamId),
-  });
+  const team = await teamService.getTeamById(teamId);
 
   if (!team) {
     throw new Error(`Team not found: ${teamId}`);
   }
 
-  // Get all player stats for this team
-  const allPlayerStats = await db.query.playerStats.findMany({
-    where: eq(playerStats.teamId, teamId),
-  });
-
-  // Get all team stats for this team
-  const allTeamStats = await db.query.teamStats.findMany({
-    where: eq(teamStats.teamId, teamId),
-  });
-
-  // Aggregate player stats by player ID
-  const playerStatsMap = new Map<number, PlayerStats>();
-
-  for (const dbPlayerStat of allPlayerStats) {
-    const playerId = dbPlayerStat.playerId;
-
-    // Get or create PlayerStats instance for this player
-    if (!playerStatsMap.has(playerId)) {
-      // Create new PlayerStats instance
-      const playerStatsInstance = new PlayerStats({
-        id: dbPlayerStat.playerId,
-        name: dbPlayerStat.playerName,
-        server: dbPlayerStat.server,
-        playerClass: dbPlayerStat.playerClass,
-        spec: dbPlayerStat.spec,
-        role: dbPlayerStat.role,
-      });
-
-      // Add the stats from this log
-      playerStatsInstance.addStats('Boss', dbPlayerStat.stats as any);
-      playerStatsMap.set(playerId, playerStatsInstance);
-    } else {
-      // Merge stats into existing PlayerStats
-      const existingPlayerStats = playerStatsMap.get(playerId)!;
-      existingPlayerStats.addStats('Boss', dbPlayerStat.stats as any);
-    }
-  }
-
-  // Aggregate team stats
-  let aggregatedTeamStats: TeamStats | null = null;
-
-  if (allTeamStats.length > 0) {
-    // Create first TeamStats instance from JSON
-    aggregatedTeamStats = TeamStats.fromJson(JSON.stringify(allTeamStats[0].stats));
-
-    // Merge remaining team stats
-    for (let i = 1; i < allTeamStats.length; i++) {
-      const teamStatToMerge = TeamStats.fromJson(JSON.stringify(allTeamStats[i].stats));
-      aggregatedTeamStats.merge(teamStatToMerge);
-    }
-  }
-
-  // Convert aggregated player stats to array of JSON strings (format expected by UI)
-  const aggregatedPlayerStatsJson = Array.from(playerStatsMap.values()).map((ps) => ps.toJson());
+  // Get aggregated stats
+  const stats = await statsService.getAggregatedStats(teamId);
 
   return {
     team,
-    playerStats: aggregatedPlayerStatsJson,
-    teamStats: aggregatedTeamStats ? aggregatedTeamStats.toJson() : null,
+    ...stats,
   };
 }
