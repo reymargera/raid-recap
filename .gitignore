@@ -35,6 +35,9 @@ yarn-error.log*
 # wrangler
 .wrangler/
 wrangler-state/
+cloudflare-env.d.ts
+worker-configuration.d.ts
+/.open-next
 
 # local data storage
 /data/

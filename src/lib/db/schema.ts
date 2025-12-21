@@ -70,7 +70,7 @@ export const insertPlayerStatsSchema = z.object({
   spec: z.string(),
   role: z.string(),
   season: z.string(),
-  stats: z.record(z.any()), // JSON object
+  stats: z.record(z.string(), z.any()), // JSON object
 });
 
 export const insertTeamStatsSchema = z.object({
@@ -78,7 +78,7 @@ export const insertTeamStatsSchema = z.object({
   teamId: z.string(),
   logCode: z.string(),
   season: z.string(),
-  stats: z.record(z.any()), // JSON object
+  stats: z.record(z.string(), z.any()), // JSON object
 });
 
 export const insertProcessingJobSchema = z.object({

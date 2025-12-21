@@ -223,6 +223,7 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
     const powerInfusionEvents = (report?.trackedBuffs?.data ?? []).filter((b: any) => b.abilityGameID === PowerInfusion);
     const powerInfusions = sumByPlayer(powerInfusionEvents, (d: any) => 1, (p: any) => p.target.guid);
 
+    // @ts-ignore: DPS Loss Debuffs TBD
     const dpsLossMechanicEvents = (report?.trackedDebuffs?.data ?? []).filter((d: any) => DpsLossDebuffs.indexOf(d.abilityGameID) >= 0);
     const mechanicsTaken = sumByPlayer(dpsLossMechanicEvents, (d: any) => 1, (p: any) => p.target.guid);
 

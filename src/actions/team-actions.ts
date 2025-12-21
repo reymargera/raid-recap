@@ -127,7 +127,9 @@ export async function processReport(
       const insertStatements = playerStatsInserts.map(stat =>
         db.insert(playerStats).values(stat)
       );
-      await db.batch(insertStatements);
+
+      // Batch
+      await db.batch(insertStatements as [typeof insertStatements[0], ...typeof insertStatements[0][]]);
     }
 
     // Step 10: Extract and store team stats

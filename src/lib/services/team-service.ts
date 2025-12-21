@@ -33,7 +33,7 @@ export class TeamService {
       .update(teams)
       .set({
         ...data,
-        updatedAt: new Date(),
+        lastUpdated: new Date(),
       })
       .where(eq(teams.id, teamId));
 

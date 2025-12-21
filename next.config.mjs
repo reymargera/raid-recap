@@ -4,9 +4,17 @@ const nextConfig = {
       unoptimized: true,
     },
     experimental: {
-        cpus: 1
+        cpus: 1,
+        serverExternalPackages: [
+          'redis',
+          'ioredis',
+        ],
     },
     staticPageGenerationTimeout: 60 * 15,
+    serverExternalPackages: [
+      'redis',
+      'ioredis',
+    ],
 };
 
 export default nextConfig;

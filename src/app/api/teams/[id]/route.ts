@@ -7,11 +7,11 @@ import { TeamService } from '@/lib/services/team-service';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-
+    console.log(`Fetching team details for ${id}`);
     if (!isTeamIdValid(id)) {
       return NextResponse.json(
         { error: 'Provided team id is invalid' },
@@ -46,7 +46,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   return NextResponse.json(
     { error: 'Not implemented - authentication required' },
