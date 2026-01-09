@@ -12,6 +12,12 @@
   --swiper-pagination-bullet-height: 15px;
   --swiper-pagination-bullet-vertical-gap: 8px;
   --swiper-pagination-color: rgb(128, 128, 128);
+
+  /* Mythic Arcane Theme Colors */
+  --arcane-gold: 218, 165, 32;
+  --arcane-purple: 139, 92, 246;
+  --arcane-blue: 59, 130, 246;
+  --arcane-emerald: 16, 185, 129;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,4 +57,259 @@ body {
 
 .swiper-pagination-bullet {
   outline: 2px solid white;
+}
+
+/* Mythic Arcane Dashboard Styles */
+@layer components {
+  .mythic-card {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgba(15, 15, 25, 0.9) 0%,
+      rgba(25, 25, 40, 0.85) 50%,
+      rgba(15, 15, 25, 0.9) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 20px rgba(139, 92, 246, 0.03),
+      0 4px 24px -8px rgba(0, 0, 0, 0.5);
+  }
+
+  .mythic-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 40%,
+      rgba(139, 92, 246, 0.02) 50%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  .mythic-card-gold {
+    border-color: rgba(218, 165, 32, 0.2);
+    box-shadow:
+      inset 0 1px 0 0 rgba(218, 165, 32, 0.1),
+      inset 0 0 30px rgba(218, 165, 32, 0.03),
+      0 4px 24px -8px rgba(0, 0, 0, 0.5);
+  }
+
+  .mythic-stat-box {
+    @apply relative overflow-hidden rounded-xl p-4 text-center transition-all duration-300;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .mythic-stat-box:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+  }
+
+  .mythic-stat-box::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      rgba(255, 255, 255, 0.04) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .mythic-glow-blue {
+    box-shadow:
+      inset 0 0 20px rgba(59, 130, 246, 0.1),
+      0 0 20px rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+
+  .mythic-glow-emerald {
+    box-shadow:
+      inset 0 0 20px rgba(16, 185, 129, 0.1),
+      0 0 20px rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .mythic-glow-purple {
+    box-shadow:
+      inset 0 0 20px rgba(139, 92, 246, 0.1),
+      0 0 20px rgba(139, 92, 246, 0.05);
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+
+  .mythic-glow-gold {
+    box-shadow:
+      inset 0 0 20px rgba(218, 165, 32, 0.1),
+      0 0 20px rgba(218, 165, 32, 0.05);
+    border-color: rgba(218, 165, 32, 0.2);
+  }
+
+  .mythic-glow-red {
+    box-shadow:
+      inset 0 0 20px rgba(239, 68, 68, 0.1),
+      0 0 20px rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .mythic-glow-cyan {
+    box-shadow:
+      inset 0 0 20px rgba(6, 182, 212, 0.1),
+      0 0 20px rgba(6, 182, 212, 0.05);
+    border-color: rgba(6, 182, 212, 0.2);
+  }
+
+  .mythic-title {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(
+      135deg,
+      #ffd700 0%,
+      #fff8dc 25%,
+      #ffd700 50%,
+      #b8860b 75%,
+      #ffd700 100%
+    );
+    text-shadow: 0 0 40px rgba(218, 165, 32, 0.3);
+  }
+
+  .mythic-link {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      90deg,
+      rgba(218, 165, 32, 0.08) 0%,
+      rgba(255, 140, 0, 0.08) 100%
+    );
+    border: 1px solid rgba(218, 165, 32, 0.15);
+  }
+
+  .mythic-link:hover {
+    background: linear-gradient(
+      90deg,
+      rgba(218, 165, 32, 0.15) 0%,
+      rgba(255, 140, 0, 0.15) 100%
+    );
+    border-color: rgba(218, 165, 32, 0.3);
+    box-shadow:
+      0 0 30px rgba(218, 165, 32, 0.1),
+      inset 0 0 20px rgba(218, 165, 32, 0.05);
+  }
+
+  .mythic-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .mythic-link:hover::before {
+    left: 100%;
+  }
+}
+
+/* Decorative corner ornaments for cards */
+.mythic-corner-ornament {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.mythic-corner-ornament::before,
+.mythic-corner-ornament::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.4), transparent);
+}
+
+.mythic-corner-ornament::before {
+  width: 100%;
+  height: 1px;
+  top: 0;
+  left: 0;
+}
+
+.mythic-corner-ornament::after {
+  width: 1px;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.mythic-corner-tl { top: 0; left: 0; }
+.mythic-corner-tr { top: 0; right: 0; transform: rotate(90deg); }
+.mythic-corner-bl { bottom: 0; left: 0; transform: rotate(-90deg); }
+.mythic-corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
+
+/* Modal animations */
+@keyframes modalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalBackdropOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalScaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+}
+
+.modal-backdrop-enter {
+  animation: modalBackdropIn 150ms ease-out forwards;
+}
+
+.modal-backdrop-exit {
+  animation: modalBackdropOut 100ms ease-in forwards;
+}
+
+.modal-content-enter {
+  animation: modalScaleIn 200ms ease-out forwards;
+}
+
+.modal-content-exit {
+  animation: modalScaleOut 150ms ease-in forwards;
 }

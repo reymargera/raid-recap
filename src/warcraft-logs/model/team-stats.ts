@@ -14,13 +14,38 @@ interface DeathAbility {
     count: number;
 }
 
-
 interface FightOverview {
     name: string;
     difficulty: string;
     duration: number;
     kill: boolean;
     fightPercentage: number;
+}
+
+// Difficulty levels (skip LFR=1)
+export const DifficultyLevel = {
+    Normal: 3,
+    Heroic: 4,
+    Mythic: 5,
+} as const;
+
+export type DifficultyValue = typeof DifficultyLevel[keyof typeof DifficultyLevel];
+
+// Per-difficulty stats for a boss
+export interface BossDifficultyStats {
+    kills: number;
+    wipes: number;
+    firstKillTimestamp: number | null;  // UNIX timestamp (report.startTime + fight.endTime)
+    bestKillDuration: number | null;    // milliseconds
+    totalPullTime: number;              // milliseconds
+    bestWipePercentage: number | null;  // lowest boss % reached on a wipe (lower is better)
+}
+
+// Per-boss stats across all difficulties
+export interface BossStats {
+    encounterId: number;
+    name: string;
+    difficulties: Map<DifficultyValue, BossDifficultyStats>;
 }
 
 export class TeamStats {
@@ -35,6 +60,9 @@ export class TeamStats {
     public totalPulls: number = 0;
     public totalFailedResets: number = 0;
     public totalBossKills: number = 0;
+
+    // Boss progression tracking (per-boss, per-difficulty stats)
+    public bossProgression: Map<number, BossStats> = new Map();
 
     // Report specific stats
     public uniqueCharacters: Set<string> = new Set();
@@ -87,6 +115,9 @@ export class TeamStats {
                         lastPull = Math.max(lastPull, fight.endTime);
                         const fightDuration = fight.endTime - fight.startTime;
                         this.timeSpentPullingBosses += fightDuration;
+
+                        // Track boss-specific progression stats
+                        this.trackBossProgression(fight, report.startTime || 0);
 
                         // Track longest/shortest kills and total boss kills
                         if (fight.kill) {
@@ -235,6 +266,80 @@ export class TeamStats {
         return isBossFight && isWipe && isUnderMinute && isBossHighHealth;
     }
 
+    /**
+     * Track boss-specific progression stats per difficulty
+     * @param fight The fight data from the report
+     * @param reportStartTime UNIX timestamp of the report start (ms)
+     */
+    private trackBossProgression(fight: any, reportStartTime: number): void {
+        const encounterId = fight.encounterID;
+        const rawDifficulty = fight.difficulty as number;
+        const fightDuration = fight.endTime - fight.startTime;
+
+        // Skip if difficulty is not a tracked value (Normal=3, Heroic=4, Mythic=5)
+        // This also skips LFR (1) and any unknown difficulty values
+        if (rawDifficulty !== DifficultyLevel.Normal &&
+            rawDifficulty !== DifficultyLevel.Heroic &&
+            rawDifficulty !== DifficultyLevel.Mythic) {
+            return;
+        }
+
+        const difficulty = rawDifficulty as DifficultyValue;
+
+        // Initialize boss stats if not exists
+        if (!this.bossProgression.has(encounterId)) {
+            const encounter = this.allEncounters.find(e => e.id === encounterId);
+            this.bossProgression.set(encounterId, {
+                encounterId,
+                name: encounter?.name || fight.name || 'Unknown',
+                difficulties: new Map(),
+            });
+        }
+
+        const bossStats = this.bossProgression.get(encounterId)!;
+
+        // Initialize difficulty stats if not exists
+        if (!bossStats.difficulties.has(difficulty)) {
+            bossStats.difficulties.set(difficulty, {
+                kills: 0,
+                wipes: 0,
+                firstKillTimestamp: null,
+                bestKillDuration: null,
+                totalPullTime: 0,
+                bestWipePercentage: null,
+            });
+        }
+
+        const diffStats = bossStats.difficulties.get(difficulty)!;
+        diffStats.totalPullTime += fightDuration;
+
+        if (fight.kill) {
+            diffStats.kills++;
+
+            // Calculate actual kill timestamp: report start + fight end (relative)
+            const killTimestamp = reportStartTime + fight.endTime;
+
+            // Track first kill timestamp (keep earliest)
+            if (diffStats.firstKillTimestamp === null || killTimestamp < diffStats.firstKillTimestamp) {
+                diffStats.firstKillTimestamp = killTimestamp;
+            }
+
+            // Track best kill duration (keep shortest)
+            if (diffStats.bestKillDuration === null || fightDuration < diffStats.bestKillDuration) {
+                diffStats.bestKillDuration = fightDuration;
+            }
+        } else {
+            diffStats.wipes++;
+
+            // Track best wipe percentage (lower is better - closer to killing the boss)
+            if (fight.fightPercentage !== null && fight.fightPercentage !== undefined) {
+                if (diffStats.bestWipePercentage === null || fight.fightPercentage < diffStats.bestWipePercentage) {
+                    diffStats.bestWipePercentage = fight.fightPercentage;
+                }
+            }
+        }
+    }
+
     private hashTalentTree(talentTree: any[]): string {
         // Sort talents by nodeID to ensure consistent hashing
         const sortedTalents = talentTree
@@ -333,6 +438,7 @@ export class TeamStats {
         this.totalPulls = parsedStats.totalPulls || 0;
         this.totalFailedResets = parsedStats.totalFailedResets || 0;
         this.totalBossKills = parsedStats.totalBossKills || 0;
+        this.bossProgression = parsedStats.bossProgression || new Map();
         this.uniqueCharacters = parsedStats.uniqueCharacters;
         this.uniqueSpecs = parsedStats.uniqueSpecs;
         this.topDamageTakenAbilities = parsedStats.topDamageTakenAbilities;
@@ -400,6 +506,64 @@ export class TeamStats {
         }
         if (other.lowestWipePercentage.fightPercentage < this.lowestWipePercentage.fightPercentage) {
             this.lowestWipePercentage = other.lowestWipePercentage;
+        }
+
+        // Merge boss progression
+        for (const [encounterId, otherBossStats] of other.bossProgression) {
+            if (!this.bossProgression.has(encounterId)) {
+                // Clone the boss stats from other
+                this.bossProgression.set(encounterId, {
+                    encounterId: otherBossStats.encounterId,
+                    name: otherBossStats.name,
+                    difficulties: new Map(),
+                });
+            }
+
+            const thisBossStats = this.bossProgression.get(encounterId)!;
+
+            for (const [difficulty, otherDiffStats] of otherBossStats.difficulties) {
+                if (!thisBossStats.difficulties.has(difficulty)) {
+                    thisBossStats.difficulties.set(difficulty, {
+                        kills: 0,
+                        wipes: 0,
+                        firstKillTimestamp: null,
+                        bestKillDuration: null,
+                        totalPullTime: 0,
+                        bestWipePercentage: null,
+                    });
+                }
+
+                const thisDiffStats = thisBossStats.difficulties.get(difficulty)!;
+
+                // Merge numeric fields
+                thisDiffStats.kills += otherDiffStats.kills;
+                thisDiffStats.wipes += otherDiffStats.wipes;
+                thisDiffStats.totalPullTime += otherDiffStats.totalPullTime;
+
+                // Keep earliest first kill timestamp
+                if (otherDiffStats.firstKillTimestamp !== null) {
+                    if (thisDiffStats.firstKillTimestamp === null ||
+                        otherDiffStats.firstKillTimestamp < thisDiffStats.firstKillTimestamp) {
+                        thisDiffStats.firstKillTimestamp = otherDiffStats.firstKillTimestamp;
+                    }
+                }
+
+                // Keep best (shortest) kill duration
+                if (otherDiffStats.bestKillDuration !== null) {
+                    if (thisDiffStats.bestKillDuration === null ||
+                        otherDiffStats.bestKillDuration < thisDiffStats.bestKillDuration) {
+                        thisDiffStats.bestKillDuration = otherDiffStats.bestKillDuration;
+                    }
+                }
+
+                // Keep best (lowest) wipe percentage
+                if (otherDiffStats.bestWipePercentage !== null) {
+                    if (thisDiffStats.bestWipePercentage === null ||
+                        otherDiffStats.bestWipePercentage < thisDiffStats.bestWipePercentage) {
+                        thisDiffStats.bestWipePercentage = otherDiffStats.bestWipePercentage;
+                    }
+                }
+            }
         }
     }
 }

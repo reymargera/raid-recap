@@ -7,7 +7,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import './slides.css';
 
-import {Team} from "@/app/teams/[id]/page";
+import {Team} from "@/app/teams/[id]/awards/page";
 import {Award, CurrentAwards, TeamBits} from "@/app/_config/awards";
 import {PlayerStats} from "@/warcraft-logs/model/player-stats";
 import {TeamStats} from "@/warcraft-logs/model/team-stats";

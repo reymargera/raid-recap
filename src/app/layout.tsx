@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Cinzel, Outfit } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: '--font-cinzel',
+  weight: ['400', '500', '600', '700'],
+});
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: '--font-outfit',
+});
 
 export const metadata: Metadata = {
   title: "Raid Recap",
@@ -17,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${cinzel.variable} ${outfit.variable}`}>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-D4FYZT7LT3"
           strategy="afterInteractive"

@@ -6,6 +6,7 @@ export const GetReportMetadata = gql`
             report(code: $reportCode) {
                 code
                 title
+                startTime
                 owner {
                     id
                     name
