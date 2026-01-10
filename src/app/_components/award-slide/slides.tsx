@@ -31,24 +31,36 @@ function generateControlButtons(useOverallRef: React.MutableRefObject<boolean>, 
                     useOverallRef.current = !useOverallRef.current;
                     forceUpdate();
                 }}
-                className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ${
-                    useOverallRef.current
-                        ? "bg-gray-800 hover:bg-gray-900"
-                        : "bg-gray-800 hover:bg-gray-900 ring-2 ring-blue-400"
-                } dark:bg-gray-800 dark:hover:bg-gray-700`}
+                className={`
+                    text-white/80 font-medium rounded-lg text-sm px-4 py-2.5
+                    bg-black/40 backdrop-blur-md border
+                    hover:bg-black/60 hover:text-white
+                    transition-all duration-300
+                    ${useOverallRef.current
+                        ? "border-white/10 hover:border-white/20"
+                        : "border-amber-500/50 shadow-[0_0_15px_rgba(218,165,32,0.2)]"
+                    }
+                `}
             >
-                {useOverallRef.current ? "⚫ " : "🔵 "}Avg. Per Night
+                <span className={`inline-block w-2 h-2 rounded-full mr-2 ${useOverallRef.current ? "bg-white/30" : "bg-amber-400"}`}></span>
+                Avg. Per Night
             </button>
             <button
                 type="button"
                 onClick={() => setGuessMode(value => !value)}
-                className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ${
-                    guessMode
-                        ? "bg-gray-800 hover:bg-gray-900 ring-2 ring-blue-400"
-                        : "bg-gray-800 hover:bg-gray-900"
-                } dark:bg-gray-800 dark:hover:bg-gray-700`}
+                className={`
+                    text-white/80 font-medium rounded-lg text-sm px-4 py-2.5
+                    bg-black/40 backdrop-blur-md border
+                    hover:bg-black/60 hover:text-white
+                    transition-all duration-300
+                    ${guessMode
+                        ? "border-amber-500/50 shadow-[0_0_15px_rgba(218,165,32,0.2)]"
+                        : "border-white/10 hover:border-white/20"
+                    }
+                `}
             >
-                {guessMode ? "🔵 " : "⚫ "}Guess Mode
+                <span className={`inline-block w-2 h-2 rounded-full mr-2 ${guessMode ? "bg-amber-400" : "bg-white/30"}`}></span>
+                Guess Mode
             </button>
         </div>
     );
@@ -58,7 +70,17 @@ function generateHomeButton() {
     return (
         <div className={"fixed top-4 left-4 z-50"}>
             <a href={`${publicBase}`}>
-                <button type="button" className={"text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"}>Return Home</button>
+                <button type="button" className="
+                    flex items-center gap-2 text-white/80 font-medium rounded-lg text-sm px-4 py-2.5
+                    bg-black/40 backdrop-blur-md border border-white/10
+                    hover:bg-black/60 hover:border-white/20 hover:text-white
+                    transition-all duration-300
+                ">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Home</span>
+                </button>
             </a>
         </div>
     );
@@ -258,16 +280,25 @@ function generateDisclaimerSlide() {
     ]);
 }
 
+// Decorative separator component
+const MythicSeparator = () => (
+    <div className="flex items-center justify-center gap-3 my-4">
+        <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+        <div className="w-2 h-2 rotate-45 bg-amber-500/60" />
+        <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+    </div>
+);
+
 function generateTextSlide(heading: string, subtext: string[]) {
     return (
         <SwiperSlide>
-            <div className={"min-h-screen justify-center items-center"}>
-                <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
-                    <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2"}>{heading}</h1>
+            <div className={"min-h-screen flex justify-center items-center font-[var(--font-outfit)]"}>
+                <div className={"flex flex-col p-8 justify-center items-center text-center max-w-4xl"}>
+                    <h1 className={"font-[var(--font-cinzel)] text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide mythic-title mb-2"}>{heading}</h1>
+                    <MythicSeparator />
                     {subtext.map((text, index) => (
-                        <p key={index} className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48"}>{text}</p>
+                        <p key={index} className={"mb-4 text-base lg:text-lg text-white/60 leading-relaxed px-4 sm:px-8"}>{text}</p>
                     ))}
-                    {/*<p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48 dark:text-white-400"}>{subtext}</p>*/}
                 </div>
             </div>
         </SwiperSlide>
@@ -308,12 +339,17 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, 
                                className={"slide-background object-cover object-center"}
                                fill={true}
                         />
-                        <div className={"flex flex-col p-8 min-h-screen justify-center content-center"}>
+                        <div className={"flex flex-col p-8 min-h-screen justify-center content-center font-[var(--font-outfit)]"}>
                             <div className={"award-heading"}>
-                                <h1 className={"b-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl text-white p-2"}>{a.name}</h1>
-                                <p className={"mb-6 text-lg font-normal text-white-500 lg:text-xl sm:px-16 xl:px-48"}>{a.description}</p>
+                                <h1 className={"font-[var(--font-cinzel)] text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide mythic-title mb-2 p-2"}>{a.name}</h1>
+                                <div className="flex items-center justify-center gap-3 mb-4">
+                                    <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                                    <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+                                    <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                                </div>
+                                <p className={"text-base lg:text-lg text-white/60 sm:px-16 xl:px-48"}>{a.description}</p>
                             </div>
-                            <div className={"ranking-chart relative overflow-hidden"}>
+                            <div className={"ranking-chart relative overflow-hidden mt-6"}>
                                 <div className={`absolute inset-0 flex justify-center items-center transition-all duration-500 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:opacity-90'}`}>
                                     <div className={"text-center max-w-4xl px-4"}>
                                         <div className={"text-6xl mb-4"}>🤔</div>

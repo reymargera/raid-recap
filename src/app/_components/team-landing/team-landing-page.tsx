@@ -285,7 +285,7 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
         <div className="min-h-screen flex flex-col relative font-[var(--font-outfit)]" ref={containerRef}>
             {/* Background with enhanced overlay */}
             <Image
-                src={`${publicBase}/backgrounds/undermine/undermine-broll-1.webp`}
+                src={`${publicBase}/backgrounds/manaforge/manaforge-broll-3.webp`}
                 alt="Team Background"
                 className="object-cover object-center fixed inset-0 -z-20"
                 fill={true}

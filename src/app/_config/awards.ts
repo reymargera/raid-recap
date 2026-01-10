@@ -14,7 +14,7 @@ const attendance: Award = {
     description: 'Total Number Of Appearances Across All Raid Nights',
     stat: (p) => p.appearances('Boss'),
     supportsAveraging: false,
-    background: 'undermine/undermine-broll-1.webp',
+    background: 'manaforge/manaforge-broll-1.webp',
 }
 
 const mostDeathsOnBoss: Award = {
@@ -22,7 +22,7 @@ const mostDeathsOnBoss: Award = {
     description: 'Most Deaths On Boss Fights Before Wipe Is Called',
     stat: (p) => p.deaths('Boss'),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-2.webp',
+    background: 'manaforge/manaforge-broll-2.webp',
 };
 
 const mostDamageOnBoss: Award = {
@@ -30,7 +30,7 @@ const mostDamageOnBoss: Award = {
     description: 'Most Damage Done To Bosses',
     stat: (p) => p.damageDone('Boss'),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-4.webp',
+    background: 'manaforge/manaforge-broll-4.webp',
 };
 
 const mostHealingOnBoss: Award = {
@@ -38,7 +38,7 @@ const mostHealingOnBoss: Award = {
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-5.webp',
+    background: 'manaforge/manaforge-broll-5.webp',
 };
 
 const mostHealthStonesUsed: Award = {
@@ -46,7 +46,7 @@ const mostHealthStonesUsed: Award = {
     description: 'Most Health Stones Consumed Throughout All Encounters',
     stat: (p) => p.healthStonesUsed(),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-3.webp',
+    background: 'manaforge/manaforge-broll-3.webp',
 };
 
 const mostPotionsUsed: Award = {
@@ -54,7 +54,7 @@ const mostPotionsUsed: Award = {
     description: 'Most Potions Consumed Throughout All Encounters',
     stat: (p) => p.potionsUsed(),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-1.webp',
+    background: 'manaforge/manaforge-broll-6.webp',
 };
 
 const mostCasts: Award = {
@@ -62,7 +62,7 @@ const mostCasts: Award = {
     description: 'Most Casts Throughout All Encounters',
     stat: (p) => p.casts(),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-2.webp',
+    background: 'manaforge/manaforge-broll-7.webp',
 };
 
 const mostInterrupts: Award = {
@@ -94,7 +94,7 @@ const mostDamageReduced: Award = {
     description: 'Most Damage Reduced On Boss Encounters',
     stat: (p) => p.damageAbsorbed('Boss'),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-1.webp',
+    background: 'manaforge/manaforge-broll-8.webp',
 };
 
 const mostPowerInfusions: Award = {
@@ -103,7 +103,7 @@ const mostPowerInfusions: Award = {
     stat: (p) => p.powerInfusions('Boss'),
     playerFilter: (p) => p.playerClass.toLowerCase() !== 'priest',
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-2.webp',
+    background: 'manaforge/manaforge-broll-2.webp',
 };
 
 const mostFriendlyFire: Award = {
@@ -127,7 +127,7 @@ const mostMechanicsGiven: Award = {
     description: 'Target Of Mechanics That Result In DPS Loss',
     stat: (p) => p.mechanicsTaken('Boss'),
     supportsAveraging: true,
-    background: 'undermine/undermine-broll-4.webp',
+    background: 'manaforge/manaforge-broll-4.webp',
 };
 
 const disenchanted: Award = {
@@ -183,7 +183,7 @@ const beamMeDownScotty: Award = {
     description: 'Total Damage Taken From Refracted Entropy Beams',
     stat: (p) => p.getSeaontalStat('refractedEntropyDamage', 'Boss'),
     supportsAveraging: false,
-    background: 'manaforge/fractillus-1.webp',
+    background: 'manaforge/fractillus-2.webp',
 };
 
 const intoTheVoid: Award = {
@@ -199,7 +199,7 @@ const zapped: Award = {
     description: 'Number Of Deaths From Overcharged Mana On Trash',
     stat: (p) => p.getSeaontalStat('overchargedManaDeaths', 'Boss'),
     supportsAveraging: false,
-    background: 'manaforge/trash-1.webp',
+    background: 'manaforge/manaforge-broll-7.webp',
 };
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -255,26 +255,7 @@ export const mostSabatoges: Award = {
     background: 'undermine/rik-1.webp',
 }
 
-// Shadow Blue Team
-export const mostBaddlyTimedInterupts: Award = {
-    name: 'Cast Bar Enthusiast',
-    description: 'Number Of Interupts On Gallywix When Explictly Told Not To',
-    stat: (p) => p.id == 165314240 ? 2 : 0,
-    playerFilter: (p) => p.id == 165314240,
-    supportsAveraging: false,
-};
-
-// Shadow Hunters Green
-export const mostIntentionalEarlyPulls: Award = {
-    name: 'Well... I Was Ready',
-    description: 'Total Number Of Intentional Early Pulls',
-    stat: (p) => p.appearances('Boss'),
-    playerFilter: (p) => p.id == 247981764 || p.id == 252513154,
-    supportsAveraging: false,
-    background: 'nerubar-broll-4.jpg',
-}
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostWeakAuraOutdates, mostSabatoges],
-    'shadow-hunters-blue-team': [mostBaddlyTimedInterupts],
+    'shadow-hunters-gold-team': [mostWeakAuraOutdates, mostSabatoges]
 };

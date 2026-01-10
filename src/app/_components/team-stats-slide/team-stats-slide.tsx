@@ -72,24 +72,30 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
         <div className="team-inforgraphic-container" ref={slideRef}>
             <div className="min-h-screen flex flex-col relative">
                 <Image
-                    src={`${publicBase}/backgrounds/undermine/undermine-broll-1.webp`}
+                    src={`${publicBase}/backgrounds/manaforge/manaforge-broll-4.webp`}
                     alt="Team Stats Background"
                     className="slide-background object-cover object-center"
                     fill={true}
                 />
-                <div className="flex flex-col p-4 relative z-10 flex-1">
-                    <div className="award-heading mb-2">
-                        <h1 className="text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl text-white text-center">
+                <div className="flex flex-col p-4 relative z-10 flex-1 font-[var(--font-outfit)]">
+                    <div className="award-heading mb-4 py-4">
+                        <h1 className="font-[var(--font-cinzel)] text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide mythic-title text-center mb-2">
                             Season Overview
                         </h1>
+                        <div className="flex items-center justify-center gap-3">
+                            <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                            <div className="w-2 h-2 rotate-45 bg-amber-500/60" />
+                            <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto flex-1">
                         {/* Raid Summary */}
-                        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                        <div className="mythic-card rounded-2xl p-4 lg:p-5">
+                            <h2 className="font-[var(--font-cinzel)] text-xl lg:text-2xl font-semibold text-white/90 tracking-wide mb-1">
                                 Raid Summary
                             </h2>
+                            <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent mb-3" />
                             <div className="space-y-3">
                                 {/* First row: Raid Nights, Total Pulls, Boss Kills */}
                                 <div className="grid grid-cols-3 gap-3">
@@ -193,10 +199,11 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                         </div>
 
                         {/* Notable Fights */}
-                        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                        <div className="mythic-card rounded-2xl p-4 lg:p-5">
+                            <h2 className="font-[var(--font-cinzel)] text-xl lg:text-2xl font-semibold text-white/90 tracking-wide mb-1">
                                 Notable Fights
                             </h2>
+                            <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent mb-3" />
                             <div className="space-y-2">
                                 {teamStats.longestBossFightKill.name !== 'Placeholder' && (
                                     <div className="text-center bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 p-4 rounded-xl border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-300">
@@ -241,10 +248,11 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                         </div>
 
                         {/* Team Composition */}
-                        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                        <div className="mythic-card rounded-2xl p-4 lg:p-5">
+                            <h2 className="font-[var(--font-cinzel)] text-xl lg:text-2xl font-semibold text-white/90 tracking-wide mb-1">
                                 Team Composition
                             </h2>
+                            <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent mb-3" />
                             <div className="grid grid-cols-3 gap-3">
                                 <Tooltip content="Anyone who participated in any pull. Includes core team members and friendly pugs who joined raids.">
                                     <div className="text-center bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-3 rounded-xl border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 cursor-help">
@@ -285,10 +293,11 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
                         </div>
 
                         {/* Most Dangerous Abilities */}
-                        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                        <div className="mythic-card rounded-2xl p-4 lg:p-5">
+                            <h2 className="font-[var(--font-cinzel)] text-xl lg:text-2xl font-semibold text-white/90 tracking-wide mb-1">
                                 Damage Report
                             </h2>
+                            <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent mb-3" />
                             <div className="space-y-3">
                                 <div>
                                     <div className="text-sm text-white-400 mb-3 flex items-center">
