@@ -11,4 +11,6 @@ interface Env {
 
   // Secrets
   WARCRAFTLOGS_TOKEN: string;
+
+  ADMIN_API_KEY: string;
 }

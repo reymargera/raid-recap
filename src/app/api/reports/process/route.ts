@@ -14,9 +14,18 @@ const processReportSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
+    const apiKey = request.headers.get('X-API-Key');
+    const { env } = getCloudflareContext();
+
+    if (!apiKey || apiKey !== env.ADMIN_API_KEY) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
-    // Validate request body
     const validation = processReportSchema.safeParse(body);
 
     if (!validation.success) {
@@ -28,8 +37,6 @@ export async function POST(request: NextRequest) {
 
     const { teamId, reportCode, season } = validation.data;
 
-    // Get Cloudflare context and trigger workflow
-    const { env } = getCloudflareContext();
     const instance = await env.WORKFLOWS.create({
       params: { teamId, reportCode, season }
     });

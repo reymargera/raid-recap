@@ -10,27 +10,28 @@ binding = "ASSETS"
 # Environment variables (non-sensitive)
 [vars]
 ENVIRONMENT = "development"
-# Note: Sensitive vars like WARCRAFTLOGS_TOKEN should be set via:
-# - wrangler secret put WARCRAFTLOGS_TOKEN (for production)
-# - .dev.vars file (for local development - not committed to git)
 
-# For local development, we'll use a .dev.vars file
-# Create .dev.vars with:
-# WARCRAFTLOGS_TOKEN=your_token_here
-
-# KV namespace for caching (optional - can add later)
-# [[kv_namespaces]]
-# binding = "CACHE"
-# id = "your-namespace-id"
-
-# D1 Database - local SQLite for development
 [[d1_databases]]
 binding = "DB"
 database_name = "raid-recap-db"
-database_id = "local-db" # For local dev, this creates .wrangler/state/v3/d1/
+database_id = "local-db"
 migrations_dir = "drizzle/migrations"
 
-# Workflows - durable execution for long-running tasks
+# Production environment - deploy with: npm run deploy (or wrangler deploy)
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "raid-recap-db"
+database_id = "280c8d36-c4fb-4212-bef1-af8937e49475"
+migrations_dir = "drizzle/migrations"
+
+[[env.production.workflows]]
+binding = "WORKFLOWS"
+name = "process-report-workflow"
+class_name = "ProcessReportWorkflow"
+
 [[workflows]]
 binding = "WORKFLOWS"
 name = "process-report-workflow"
