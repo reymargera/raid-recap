@@ -22,7 +22,7 @@ function getLocalD1DB() {
 }
 
 export default {
-  schema: './src/lib/db/schema.ts',
+  schema: ['./src/lib/db/schema.ts', './src/lib/db/auth-schema.ts'],
   out: './drizzle/migrations',
   dialect: 'sqlite',
   ...(process.env.NODE_ENV === 'production'

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { publicBase } from "@/app/_config/paths";
+import { AuthButton } from "@/app/_components/auth";
 import {
     Tooltip,
     formatTime,
@@ -312,6 +313,11 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
                         <span>Home</span>
                     </button>
                 </a>
+            </div>
+
+            {/* Auth Button */}
+            <div className="fixed top-4 right-4 z-50">
+                <AuthButton />
             </div>
 
             {/* Main Content */}

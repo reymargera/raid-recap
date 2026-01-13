@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { z } from 'zod';
+import { authorizeProcessLogs } from '@/lib/auth-helpers';
 
 const processReportSchema = z.object({
   teamId: z.string().regex(/^\S+$/, 'Invalid team ID'),
@@ -11,19 +12,13 @@ const processReportSchema = z.object({
 /**
  * POST /api/reports/process
  * Trigger a Cloudflare Workflow to process a Warcraft Logs report
+ *
+ * Auth: Requires either:
+ * - Valid Battle.net OAuth session (super admin or team admin)
+ * - X-API-Key header (for CLI/automation)
  */
 export async function POST(request: NextRequest) {
   try {
-    const apiKey = request.headers.get('X-API-Key');
-    const { env } = getCloudflareContext();
-
-    if (!apiKey || apiKey !== env.ADMIN_API_KEY) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
 
     const validation = processReportSchema.safeParse(body);
@@ -36,6 +31,18 @@ export async function POST(request: NextRequest) {
     }
 
     const { teamId, reportCode, season } = validation.data;
+
+    // Check authorization (OAuth session or API key)
+    const auth = await authorizeProcessLogs(request, teamId);
+
+    if (!auth.authorized) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Login with Battle.net or provide valid API key.' },
+        { status: 401 }
+      );
+    }
+
+    const { env } = getCloudflareContext();
 
     const instance = await env.WORKFLOWS.create({
       params: { teamId, reportCode, season }

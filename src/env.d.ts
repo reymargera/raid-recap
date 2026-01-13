@@ -11,6 +11,9 @@ interface Env {
 
   // Secrets
   WARCRAFTLOGS_TOKEN: string;
-
   ADMIN_API_KEY: string;
+
+  // Battle.net OAuth credentials (set via wrangler secret)
+  BATTLENET_CLIENT_ID: string;
+  BATTLENET_CLIENT_SECRET: string;
 }

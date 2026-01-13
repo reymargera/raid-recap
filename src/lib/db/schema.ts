@@ -1,6 +1,7 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { users } from './auth-schema';
 
 // Teams table - stores team metadata
 export const teams = sqliteTable('teams', {
@@ -49,6 +50,15 @@ export const processingJobs = sqliteTable('processingJobs', {
   error: text('error'),
   createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
+
+// Team admins join table - links users to teams they can admin
+// References 'user' table from auth-schema.ts (managed by Better Auth)
+export const teamAdmins = sqliteTable('teamAdmins', {
+  id: text('id').primaryKey(),
+  teamId: text('teamId').notNull().references(() => teams.id),
+  userId: text('userId').notNull().references(() => users.id),
+  createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
 
 // Zod validators for runtime type checking
@@ -103,3 +113,15 @@ export type NewTeamStats = z.infer<typeof insertTeamStatsSchema>;
 
 export type ProcessingJob = typeof processingJobs.$inferSelect;
 export type NewProcessingJob = z.infer<typeof insertProcessingJobSchema>;
+
+export const insertTeamAdminSchema = z.object({
+  id: z.string(),
+  teamId: z.string(),
+  userId: z.string(),
+});
+
+export type TeamAdmin = typeof teamAdmins.$inferSelect;
+export type NewTeamAdmin = z.infer<typeof insertTeamAdminSchema>;
+
+// Re-export user types from auth-schema for convenience
+export type { users } from './auth-schema';
