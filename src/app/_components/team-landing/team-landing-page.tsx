@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { publicBase } from "@/app/_config/paths";
-import { AuthButton } from "@/app/_components/auth";
+import { AuthButton, UploadLogsModal } from "@/app/_components/auth";
 import {
     Tooltip,
     formatTime,
@@ -238,6 +238,7 @@ const FightCard = ({
 export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProps) {
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [cardsVisible, setCardsVisible] = useState(false);
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Get highlights for this team
@@ -562,19 +563,31 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
                                         </div>
                                     </div>
 
-                                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 opacity-50">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
-                                                <svg className="w-5 h-5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                                </svg>
+                                    <button
+                                        onClick={() => setIsUploadModalOpen(true)}
+                                        className="w-full text-left group"
+                                    >
+                                        <div className="mythic-link rounded-xl p-4 flex items-center justify-between transition-all duration-300">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border border-amber-500/20">
+                                                    <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <div className="text-white font-semibold group-hover:text-amber-200 transition-colors">
+                                                        Upload Logs
+                                                    </div>
+                                                    <div className="text-sm text-white/40">
+                                                        Process a Warcraft Logs report
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div className="text-white/50 font-medium">Upload Logs</div>
-                                                <div className="text-xs text-white/30 uppercase tracking-wider">Coming Soon</div>
+                                            <div className="text-amber-400/60 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-300">
+                                                <ArrowRightIcon />
                                             </div>
                                         </div>
-                                    </div>
+                                    </button>
 
                                     <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 opacity-50">
                                         <div className="flex items-center gap-4">
@@ -605,6 +618,13 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
                 {/* Footer spacing */}
                 <div className="h-8" />
             </div>
+
+            {/* Upload Logs Modal */}
+            <UploadLogsModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                teamId={team.id}
+            />
         </div>
     );
 }
