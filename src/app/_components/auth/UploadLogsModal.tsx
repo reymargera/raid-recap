@@ -217,17 +217,19 @@ export function UploadLogsModal({ isOpen, onClose, teamId }: UploadLogsModalProp
             </button>
 
             {/* Title with arcane styling */}
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border border-amber-500/30 shadow-[0_0_15px_rgba(218,165,32,0.15)]">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border border-amber-500/30 shadow-[0_0_15px_rgba(218,165,32,0.15)] shrink-0">
                 <UploadIcon />
               </div>
-              <h2 className="font-[var(--font-cinzel)] text-2xl font-semibold mythic-title">
-                Upload Logs
-              </h2>
+              <div>
+                <h2 className="font-[var(--font-cinzel)] text-2xl font-semibold mythic-title">
+                  Upload Logs
+                </h2>
+                <p className="text-white/50 text-sm mt-1">
+                  Process a Warcraft Logs report for this team
+                </p>
+              </div>
             </div>
-            <p className="text-white/50 text-sm mt-2 ml-[52px]">
-              Process a Warcraft Logs report for this team
-            </p>
           </div>
 
           {/* Separator */}

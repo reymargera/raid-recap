@@ -189,7 +189,7 @@ function calculateFightSequenceId(fights: any[]): string {
 }
 
 /**
- * Get aggregated stats for a team
+ * Get aggregated stats for a team with attendance filtering applied
  */
 export async function getTeamStats(teamId: string) {
   const teamService = new TeamService();
@@ -202,8 +202,12 @@ export async function getTeamStats(teamId: string) {
     throw new Error(`Team not found: ${teamId}`);
   }
 
-  // Get aggregated stats
-  const stats = await statsService.getAggregatedStats(teamId);
+  // Get filtered stats based on team attendance config
+  const stats = await statsService.getFilteredStats(teamId, {
+    attendancePercent: team.attendancePercent,
+    attendanceIncludeIds: team.attendanceIncludeIds ?? [],
+    attendanceExcludeIds: team.attendanceExcludeIds ?? [],
+  });
 
   return {
     team,

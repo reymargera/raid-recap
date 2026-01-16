@@ -5,6 +5,7 @@ import { StatsService } from '@/lib/services/stats-service';
 /**
  * GET /api/teams/:id/stats
  * Fetch aggregated player stats and team stats for a team
+ * Applies attendance filtering based on team config
  */
 export async function GET(
   request: NextRequest,
@@ -24,7 +25,11 @@ export async function GET(
     }
 
     const statsService = new StatsService();
-    const stats = await statsService.getAggregatedStats(id);
+    const stats = await statsService.getFilteredStats(id, {
+      attendancePercent: team.attendancePercent,
+      attendanceIncludeIds: team.attendanceIncludeIds ?? [],
+      attendanceExcludeIds: team.attendanceExcludeIds ?? [],
+    });
 
     return NextResponse.json({
       team,

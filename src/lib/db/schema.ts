@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { users } from './auth-schema';
@@ -9,6 +9,9 @@ export const teams = sqliteTable('teams', {
   name: text('name').notNull(),
   guildId: integer('guildId').notNull(),
   lastUpdatedBy: text('lastUpdatedBy'), // For future auth - nullable for now
+  attendancePercent: real('attendancePercent').notNull().default(0.2),
+  attendanceIncludeIds: text('attendanceIncludeIds', { mode: 'json' }).$type<number[]>().default([]),
+  attendanceExcludeIds: text('attendanceExcludeIds', { mode: 'json' }).$type<number[]>().default([]),
   createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   lastUpdated: integer('lastUpdated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
@@ -67,6 +70,9 @@ export const insertTeamSchema = z.object({
   name: z.string(),
   guildId: z.number(),
   lastUpdatedBy: z.string().optional(),
+  attendancePercent: z.number().optional(),
+  attendanceIncludeIds: z.array(z.number()).optional(),
+  attendanceExcludeIds: z.array(z.number()).optional(),
 });
 
 export const insertPlayerStatsSchema = z.object({

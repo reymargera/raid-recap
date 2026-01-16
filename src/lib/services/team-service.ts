@@ -1,6 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, type DB } from '@/lib/db';
-import { teams } from '@/lib/db/schema';
+import { teams, playerStats } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 /**
@@ -26,9 +26,13 @@ export class TeamService {
 
   /**
    * Update team metadata
-   * TODO: Implement when authentication is added
    */
-  async updateTeam(teamId: string, data: { name?: string }) {
+  async updateTeam(teamId: string, data: {
+    name?: string;
+    attendancePercent?: number;
+    attendanceIncludeIds?: number[];
+    attendanceExcludeIds?: number[];
+  }) {
     await this.db
       .update(teams)
       .set({
@@ -42,9 +46,48 @@ export class TeamService {
 
   /**
    * Delete team
-   * TODO: Implement when authentication is added
    */
   async deleteTeam(teamId: string) {
     await this.db.delete(teams).where(eq(teams.id, teamId));
+  }
+
+  /**
+   * Get unique players from playerStats for a team
+   * Returns player id, name, server, class, and appearance count
+   */
+  async getUniquePlayersForTeam(teamId: string) {
+    const allPlayerStats = await this.db.query.playerStats.findMany({
+      where: eq(playerStats.teamId, teamId),
+    });
+
+    // Group by playerId and count appearances
+    const playerMap = new Map<number, {
+      playerId: number;
+      playerName: string;
+      server: string;
+      playerClass: string;
+      appearances: number;
+    }>();
+
+    for (const stat of allPlayerStats) {
+      const existing = playerMap.get(stat.playerId);
+      if (existing) {
+        existing.appearances++;
+        // Keep most recent name/server/class
+        existing.playerName = stat.playerName;
+        existing.server = stat.server;
+        existing.playerClass = stat.playerClass;
+      } else {
+        playerMap.set(stat.playerId, {
+          playerId: stat.playerId,
+          playerName: stat.playerName,
+          server: stat.server,
+          playerClass: stat.playerClass,
+          appearances: 1,
+        });
+      }
+    }
+
+    return Array.from(playerMap.values());
   }
 }

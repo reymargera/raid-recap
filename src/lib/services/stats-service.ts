@@ -1,9 +1,15 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, type DB } from '@/lib/db';
-import { playerStats, teamStats } from '@/lib/db/schema';
+import { playerStats, teamStats, type Team } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { PlayerStats } from '@/warcraft-logs/model/player-stats';
 import { TeamStats } from '@/warcraft-logs/model/team-stats';
+
+export interface AttendanceConfig {
+  attendancePercent: number;
+  attendanceIncludeIds: number[];
+  attendanceExcludeIds: number[];
+}
 
 /**
  * Stats Service
@@ -80,6 +86,47 @@ export class StatsService {
     return {
       playerStats: aggregatedPlayerStatsJson,
       teamStats: aggregatedTeamStats ? aggregatedTeamStats.toJson() : null,
+    };
+  }
+
+  /**
+   * Get aggregated stats with attendance filtering applied
+   * Filters players based on team attendance config
+   */
+  async getFilteredStats(teamId: string, config: AttendanceConfig) {
+    const { playerStats: rawPlayerStats, teamStats: rawTeamStats } = await this.getAggregatedStats(teamId);
+
+    // Parse team stats to get total raid nights
+    const parsedTeamStats = rawTeamStats ? TeamStats.fromJson(rawTeamStats) : null;
+    const totalRaidNights = parsedTeamStats?.totalRaidNights ?? 0;
+
+    // Parse player stats for filtering
+    const parsedPlayerStats = rawPlayerStats.map(json => PlayerStats.fromJson(json));
+
+    // Step 1: Remove excluded players
+    const afterExclusion = parsedPlayerStats.filter(
+      ps => !config.attendanceExcludeIds.includes(ps.id)
+    );
+
+    // Step 2: Apply attendance threshold with include override
+    const filtered = afterExclusion.filter(ps => {
+      // Always include if in include list
+      if (config.attendanceIncludeIds.includes(ps.id)) {
+        return true;
+      }
+
+      // Check attendance threshold
+      if (totalRaidNights > 0) {
+        const attendanceRate = ps.appearances() / totalRaidNights;
+        return attendanceRate >= config.attendancePercent;
+      }
+
+      return true;
+    });
+
+    return {
+      playerStats: filtered.map(ps => ps.toJson()),
+      teamStats: rawTeamStats,
     };
   }
 }
