@@ -26,6 +26,8 @@ export async function GET(
       return NextResponse.json({
         canUploadLogs: false,
         canEditConfig: false,
+        canSubmitHighlights: false,
+        canDeleteAnyHighlight: false,
         isTeamAdmin: false,
         isSuperAdmin: false,
       });
@@ -37,6 +39,8 @@ export async function GET(
     return NextResponse.json({
       canUploadLogs: hasTeamAccess,
       canEditConfig: hasTeamAccess,
+      canSubmitHighlights: true, // Any authenticated user can submit
+      canDeleteAnyHighlight: hasTeamAccess, // Team admins can delete any highlight
       isTeamAdmin: hasTeamAccess && !session.isSuperAdmin,
       isSuperAdmin: session.isSuperAdmin ?? false,
     });

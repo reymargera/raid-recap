@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { RaidTeams } from "./_config/teams";
 import { publicBase } from "@/app/_config/paths";
 import { useState, useEffect } from "react";
@@ -39,7 +40,7 @@ const TeamCard = ({
   cardsVisible: boolean;
 }) => {
   return (
-    <a key={team.id} href={`${publicBase}/teams/${team.id}`} className="block group">
+    <Link key={team.id} href={`/teams/${team.id}`} className="block group">
       <div
         className={`
           mythic-card rounded-2xl p-6 w-72
@@ -73,7 +74,7 @@ const TeamCard = ({
           </h2>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 

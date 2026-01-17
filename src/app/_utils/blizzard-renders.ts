@@ -15,14 +15,23 @@
  * Converts a server/realm name to a URL-safe slug
  * Examples:
  * - "Area 52" -> "area-52"
- * - "Mal'Ganis" -> "malganis"
- * - "Bleeding Hollow" -> "bleeding-hollow"
+ * - "MoonGaurd" -> "moon-gaurd"
+ * - "Blade'sEdge" -> "blades-edge"
+ * - "Area52" -> "area-52"
+ * - "Raid52Kings" -> "raid-52-kings"
  */
 export function getRealmSlug(server: string): string {
   return server
+    // Insert hyphen before uppercase letters that follow lowercase letters or digits (CamelCase)
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    // Insert hyphen between letters and digits
+    .replace(/([a-zA-Z])(\d)/g, '$1-$2')
+    // Insert hyphen between digits and letters
+    .replace(/(\d)([a-zA-Z])/g, '$1-$2')
     .toLowerCase()
     .replace(/'/g, '')        // Remove apostrophes
     .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/--+/g, '-')     // Clean up multiple hyphens
     .replace(/[^a-z0-9-]/g, ''); // Remove any other special characters
 }
 

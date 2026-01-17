@@ -7,6 +7,7 @@ interface AdminConfigModalProps {
   onClose: () => void;
   teamId: string;
   isAdmin: boolean;
+  onSuccess?: () => void | Promise<void>;
 }
 
 interface RosterPlayer {
@@ -98,7 +99,7 @@ const classColors: Record<string, string> = {
   'Warrior': 'text-[#C69B6D]',
 };
 
-export function AdminConfigModal({ isOpen, onClose, teamId, isAdmin }: AdminConfigModalProps) {
+export function AdminConfigModal({ isOpen, onClose, teamId, isAdmin, onSuccess }: AdminConfigModalProps) {
   const [state, setState] = useState<ModalState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
   const [isClosing, setIsClosing] = useState(false);
@@ -222,6 +223,11 @@ export function AdminConfigModal({ isOpen, onClose, teamId, isAdmin }: AdminConf
       }
 
       setState('success');
+
+      // Call onSuccess callback to refresh parent component data
+      if (onSuccess) {
+        await onSuccess();
+      }
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Failed to save configuration');
       setState('error');

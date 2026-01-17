@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { publicBase } from "@/app/_config/paths";
 import { AuthButton, UploadLogsModal } from "@/app/_components/auth";
 import { AdminConfigModal } from "./admin-config-modal";
@@ -20,7 +21,6 @@ import {
     ArrowRightIcon,
     HomeIcon
 } from "@/app/_components/shared/stat-components";
-import { getTeamHighlights } from "@/app/_config/highlights";
 import HighlightsSection from "./highlights-section";
 import BossProgressionCard from "./boss-progression-card";
 import TeamRosterCard, { type RosterMember } from "./team-roster-card";
@@ -228,13 +228,31 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
     const [cardsVisible, setCardsVisible] = useState(false);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+    const [currentRoster, setCurrentRoster] = useState<RosterMember[]>(roster);
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Fetch user permissions for this team
     const { permissions, loading: permissionsLoading } = useTeamPermissions(team.id);
 
-    // Get highlights for this team
-    const highlights = getTeamHighlights(team.id);
+    // Refetch roster data when admin config changes
+    const refetchRoster = async () => {
+        try {
+            const response = await fetch(`/api/teams/${team.id}/stats`);
+            if (response.ok) {
+                const data: { roster?: RosterMember[] } = await response.json();
+                if (data.roster) {
+                    setCurrentRoster(data.roster);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to refetch roster:', err);
+        }
+    };
+
+    // Sync currentRoster with roster prop when roster changes
+    useEffect(() => {
+        setCurrentRoster(roster);
+    }, [roster]);
 
     // Trigger animation when component mounts or becomes visible
     useEffect(() => {
@@ -295,7 +313,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
 
             {/* Navigation */}
             <div className="fixed top-4 left-4 z-50">
-                <a href={`${publicBase}/`}>
+                <Link href="/">
                     <button className="
                         flex items-center gap-2 text-white/80 font-medium rounded-lg text-sm px-4 py-2.5
                         bg-black/40 backdrop-blur-md border border-white/10
@@ -305,7 +323,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                         <HomeIcon />
                         <span>Home</span>
                     </button>
-                </a>
+                </Link>
             </div>
 
             {/* Auth Button */}
@@ -497,7 +515,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
 
                                 <div className="space-y-3">
                                     {/* Awards Link - Primary CTA */}
-                                    <a href={`${publicBase}/teams/${team.id}/awards`} className="block group">
+                                    <Link href={`/teams/${team.id}/awards`} className="block group">
                                         <div className="mythic-link rounded-xl p-4 flex items-center justify-between transition-all duration-300">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border border-amber-500/20">
@@ -516,7 +534,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                                                 <ArrowRightIcon />
                                             </div>
                                         </div>
-                                    </a>
+                                    </Link>
 
                                     {/* Admin Config - Show only if user has permission */}
                                     {permissions?.canEditConfig ? (
@@ -596,14 +614,15 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
 
                         {/* Team Roster Card - spans full width */}
                         <TeamRosterCard
-                            roster={roster}
+                            roster={currentRoster}
                             animationDelay={400}
                             cardsVisible={cardsVisible}
                         />
 
                         {/* Highlights Section - spans full width */}
                         <HighlightsSection
-                            highlights={highlights}
+                            teamId={team.id}
+                            permissions={permissions}
                             animationDelay={500}
                             cardsVisible={cardsVisible}
                         />
@@ -627,6 +646,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                 onClose={() => setIsAdminModalOpen(false)}
                 teamId={team.id}
                 isAdmin={permissions?.canEditConfig ?? false}
+                onSuccess={refetchRoster}
             />
         </div>
     );

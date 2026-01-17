@@ -26,6 +26,8 @@ export interface Highlight {
     date?: string;
     /** Optional: Override the auto-generated thumbnail */
     thumbnailUrl?: string;
+    /** User ID of the person who submitted this highlight (from database) */
+    submittedBy?: string;
 }
 
 export interface TeamHighlights {

@@ -64,6 +64,19 @@ export const teamAdmins = sqliteTable('teamAdmins', {
   createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
 
+// Team highlights table - stores YouTube video highlights submitted by users
+export const teamHighlights = sqliteTable('teamHighlights', {
+  id: text('id').primaryKey(),
+  teamId: text('teamId').notNull().references(() => teams.id),
+  submittedBy: text('submittedBy').notNull().references(() => users.id),
+  encounterName: text('encounterName').notNull(),
+  title: text('title').notNull(),
+  videoUrl: text('videoUrl').notNull(),
+  description: text('description'),
+  date: text('date'), // ISO format: YYYY-MM-DD
+  createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
+
 // Zod validators for runtime type checking
 export const insertTeamSchema = z.object({
   id: z.string(),
@@ -128,6 +141,20 @@ export const insertTeamAdminSchema = z.object({
 
 export type TeamAdmin = typeof teamAdmins.$inferSelect;
 export type NewTeamAdmin = z.infer<typeof insertTeamAdminSchema>;
+
+export const insertTeamHighlightSchema = z.object({
+  id: z.string(),
+  teamId: z.string(),
+  submittedBy: z.string(),
+  encounterName: z.string().min(1),
+  title: z.string().min(1).max(100),
+  videoUrl: z.string().url(),
+  description: z.string().max(500).optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+});
+
+export type TeamHighlight = typeof teamHighlights.$inferSelect;
+export type NewTeamHighlight = z.infer<typeof insertTeamHighlightSchema>;
 
 // Re-export user types from auth-schema for convenience
 export type { users } from './auth-schema';

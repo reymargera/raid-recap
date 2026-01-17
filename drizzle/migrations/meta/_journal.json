@@ -22,6 +22,13 @@
       "when": 1768523740889,
       "tag": "0002_flippant_scream",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1768623484902,
+      "tag": "0003_curious_vulcan",
+      "breakpoints": true
     }
   ]
 }

@@ -2,6 +2,7 @@
 
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Keyboard, Mousewheel, Pagination} from 'swiper/modules';
+import Link from "next/link";
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -69,7 +70,7 @@ function generateControlButtons(useOverallRef: React.MutableRefObject<boolean>, 
 function generateHomeButton() {
     return (
         <div className={"fixed top-4 left-4 z-50"}>
-            <a href={`${publicBase}`}>
+            <Link href="/">
                 <button type="button" className="
                     flex items-center gap-2 text-white/80 font-medium rounded-lg text-sm px-4 py-2.5
                     bg-black/40 backdrop-blur-md border border-white/10
@@ -81,7 +82,7 @@ function generateHomeButton() {
                     </svg>
                     <span>Home</span>
                 </button>
-            </a>
+            </Link>
         </div>
     );
 }
