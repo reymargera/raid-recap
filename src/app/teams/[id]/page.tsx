@@ -6,6 +6,13 @@ import TeamLandingPage from '../../_components/team-landing/team-landing-page';
 import { publicBase } from '@/app/_config/paths';
 import { RaidTeams } from '@/app/_config/teams';
 
+interface RosterMember {
+    playerId: number;
+    playerName: string;
+    server: string;
+    playerClass: string;
+}
+
 export interface TeamStatsResponse {
     team: {
         id: string;
@@ -16,6 +23,7 @@ export interface TeamStatsResponse {
     };
     playerStats: unknown[];
     teamStats: string;
+    roster: RosterMember[];
 }
 
 export default function Team() {
@@ -26,6 +34,7 @@ export default function Team() {
     const [error, setError] = useState<string | null>(null);
     const [teamData, setTeamData] = useState<{ id: string; name: string; guildId: number } | null>(null);
     const [teamStats, setTeamStats] = useState<unknown>(null);
+    const [roster, setRoster] = useState<RosterMember[]>([]);
 
     useEffect(() => {
         async function fetchTeamData() {
@@ -75,6 +84,9 @@ export default function Team() {
                 } else {
                     setTeamStats(null);
                 }
+
+                // Set roster data
+                setRoster(data.roster ?? []);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
             } finally {
@@ -117,6 +129,7 @@ export default function Team() {
         <TeamLandingPage
             team={teamData}
             teamStats={teamStats as Parameters<typeof TeamLandingPage>[0]['teamStats']}
+            roster={roster}
         />
     );
 }

@@ -8,17 +8,11 @@ import { AdminConfigModal } from "./admin-config-modal";
 import { useTeamPermissions } from "./use-team-permissions";
 import {
     Tooltip,
-    formatTime,
     formatPercentage,
     AnimatedTimeCounter,
     AnimatedNumberCounter,
     CalendarIcon,
     ClockIcon,
-    SwordIcon,
-    TargetIcon,
-    RefreshIcon,
-    UsersIcon,
-    StarIcon,
     TrophyIcon,
     LightningIcon,
     SkullIcon,
@@ -29,6 +23,7 @@ import {
 import { getTeamHighlights } from "@/app/_config/highlights";
 import HighlightsSection from "./highlights-section";
 import BossProgressionCard from "./boss-progression-card";
+import TeamRosterCard, { type RosterMember } from "./team-roster-card";
 import { BossStats } from "@/warcraft-logs/model/team-stats";
 
 interface FightOverview {
@@ -63,16 +58,7 @@ interface TeamData {
 export interface TeamLandingPageProps {
     team: TeamData;
     teamStats: TeamStatsData | null;
-}
-
-// Helper to get size from Set or serialized Set
-function getSetSize(set: { __type: string; value: string[] } | Set<string> | undefined): number {
-    if (!set) return 0;
-    if (set instanceof Set) return set.size;
-    if (typeof set === 'object' && '__type' in set && set.__type === 'Set' && Array.isArray(set.value)) {
-        return set.value.length;
-    }
-    return 0;
+    roster?: RosterMember[];
 }
 
 // Decorative separator component
@@ -237,7 +223,7 @@ const FightCard = ({
     );
 };
 
-export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProps) {
+export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLandingPageProps) {
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [cardsVisible, setCardsVisible] = useState(false);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -421,27 +407,6 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
                                             trigger={animationTrigger}
                                             isTime={true}
                                             tooltip="Time from first pull to last pull of each raid night."
-                                        />
-                                    </div>
-
-                                    {/* Secondary Stats Row */}
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <StatBox
-                                            icon={<UsersIcon />}
-                                            value={getSetSize(teamStats.uniqueCharacters)}
-                                            label="Unique Players"
-                                            color="purple"
-                                            delay={400}
-                                            trigger={animationTrigger}
-                                            tooltip="Anyone who participated in any pull."
-                                        />
-                                        <StatBox
-                                            icon={<StarIcon />}
-                                            value={getSetSize(teamStats.uniqueSpecs)}
-                                            label="Unique Specs"
-                                            color="cyan"
-                                            delay={500}
-                                            trigger={animationTrigger}
                                         />
                                     </div>
                                 </div>
@@ -629,10 +594,17 @@ export default function TeamLandingPage({ team, teamStats }: TeamLandingPageProp
                             </div>
                         </div>
 
+                        {/* Team Roster Card - spans full width */}
+                        <TeamRosterCard
+                            roster={roster}
+                            animationDelay={400}
+                            cardsVisible={cardsVisible}
+                        />
+
                         {/* Highlights Section - spans full width */}
                         <HighlightsSection
                             highlights={highlights}
-                            animationDelay={400}
+                            animationDelay={500}
                             cardsVisible={cardsVisible}
                         />
                     </div>
