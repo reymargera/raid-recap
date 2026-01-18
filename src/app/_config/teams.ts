@@ -146,4 +146,12 @@ export const RaidTeams: { [key: string]: TeamConfig } = {
         reportFilter: (report: Report) => report.title.includes("Pink"),
         attendancePercent: 0.2,
     },
+    'shadow-hunters-purple-team': {
+        id: 'shadow-hunters-purple-team',
+        name: 'Shadow Hunters Purple Team',
+        logo: 'purple-team.png',
+        guildId: 44873,
+        reportFilter: (report: Report) => report.title.includes("Purple"),
+        attendancePercent: 0.2,
+    },
 };
