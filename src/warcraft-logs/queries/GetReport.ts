@@ -19,7 +19,7 @@ export const CoreReportFragment = gql`
         title
         startTime
         endTime
-        baseData: table (fightIDs: $bossFightIds)
+        baseData: table (fightIDs: $bossFightIds, wipeCutoff: 3)
         preWipeDeaths: table (fightIDs: $bossFightIds, wipeCutoff: 3, dataType: Deaths)
         casts: table (fightIDs: $bossFightIds, dataType: Casts)
         dispels: table (fightIDs: $bossFightIds, dataType: Dispels)
