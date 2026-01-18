@@ -70,7 +70,7 @@ const mostInterrupts: Award = {
     description: 'Most Interrupts Throughout All Encounters',
     stat: (p) => p.interrupts(),
     supportsAveraging: true,
-    background: 'undermine/stix-1.webp',
+    background: 'manaforge/forgeweaver-1.webp',
 };
 
 const mostDispels: Award = {
@@ -78,7 +78,7 @@ const mostDispels: Award = {
     description: 'Most Dispels Throughout All Encounters',
     stat: (p) => p.dispels(),
     supportsAveraging: true,
-    background: 'undermine/oab-1.webp'
+    background: 'manaforge/manaforge-broll-10.webp'
 };
 
 const mostDamageTaken: Award = {
@@ -86,7 +86,7 @@ const mostDamageTaken: Award = {
     description: 'Most Damage Taken On Boss Encounters',
     stat: (p) => p.damageTaken('Boss'),
     supportsAveraging: true,
-    background: 'undermine/mugzee-1.webp',
+    background: 'manaforge/dimensius-1.webp',
 };
 
 const mostDamageReduced: Award = {
@@ -111,7 +111,7 @@ const mostFriendlyFire: Award = {
     description: 'Most Friendly Fire Damage Done',
     stat: (p) => p.friendlyFireDamageDone('Boss'),
     supportsAveraging: false,
-    background: 'undermine/rik-1.webp',
+    background: 'manaforge/nexus-king-1.webp',
 };
 
 const mostFriendlyFireDamageTaken: Award = {
@@ -119,7 +119,7 @@ const mostFriendlyFireDamageTaken: Award = {
     description: 'Most Friendly Fire Damage Taken',
     stat: (p) => p.friendlyFireDamageTaken('Boss'),
     supportsAveraging: false,
-    background: 'undermine/rik-2.webp',
+    background: 'manaforge/nexus-king-1.webp',
 };
 
 const mostMechanicsGiven: Award = {
@@ -167,7 +167,7 @@ const nomNomNom: Award = {
     description: 'Number Of Soulrend Orbs And Prime Sequence Hits Eaten',
     stat: (p) => p.getSeaontalStat('soulrendOrbApplications', 'Boss') + p.getSeaontalStat('primeSequenceHits', 'Boss'),
     supportsAveraging: false,
-    background: 'manaforge/combined-1.webp',
+    background: 'manaforge/soulbinder-1.webp',
 };
 
 const soulMate: Award = {
@@ -239,23 +239,25 @@ export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
 
 // Shadow Hunters Gold
 export const mostWeakAuraOutdates: Award = {
-    name: 'Yep, Im Up To Date',
-    description: 'Number Of WeakAura Versions Behind When They Swore They Had The Latest Version',
-    stat: (p) => p.id == 129928572 ? 11 : 0,
-    playerFilter: (p) => p.id == 129928572,
+    name: 'AKDLJVCFWOIHNSDU',
+    description: 'Number Of Time Someones Mic Completely Crapped Out',
+    stat: (p) => p.id == 247519581 ? 36 : 0,
+    playerFilter: (p) => p.id == 247519581,
     supportsAveraging: false,
+    background: 'manaforge/manaforge-broll-10.webp',
 };
 
 export const mostSabatoges: Award = {
     name: 'Not Today',
-    description: 'Number Of Parses Ruined By Gripping Tad Into Danger',
-    stat: (p) => p.id == 252346432 ? 1 : 0,
-    playerFilter: (p) => p.id == 252346432,
+    description: 'Number Of Attempts To Grip Tad Off A Bridge',
+    stat: (p) => p.id == 259802310 ? p.appearances() : 0,
+    playerFilter: (p) => p.id == 259802310,
     supportsAveraging: false,
-    background: 'undermine/rik-1.webp',
+    background: 'manaforge/manaforge-broll-10.webp',
 }
 
 
 export const TeamBits: { [key: string]: Award[]; } = {
-    'shadow-hunters-gold-team': [mostWeakAuraOutdates, mostSabatoges]
+    'shadow-hunters-gold-team': [mostWeakAuraOutdates],
+    'shadow-hunters-green-team': [mostSabatoges]
 };
