@@ -9,16 +9,11 @@ import { AdminConfigModal } from "./admin-config-modal";
 import { useTeamPermissions } from "./use-team-permissions";
 import {
     Tooltip,
-    formatPercentage,
     AnimatedTimeCounter,
     AnimatedNumberCounter,
     CalendarIcon,
     ClockIcon,
-    TrophyIcon,
-    LightningIcon,
-    SkullIcon,
     CheckCircleIcon,
-    ArrowRightIcon,
     HomeIcon
 } from "@/app/_components/shared/stat-components";
 import HighlightsSection from "./highlights-section";
@@ -143,85 +138,6 @@ const StatBox = ({
         return <Tooltip content={tooltip}>{content}</Tooltip>;
     }
     return content;
-};
-
-// Fight highlight card
-const FightCard = ({
-    icon,
-    label,
-    bossName,
-    value,
-    difficulty,
-    color,
-    delay,
-    trigger,
-    isPercentage = false
-}: {
-    icon: React.ReactNode;
-    label: string;
-    bossName: string;
-    value: number;
-    difficulty: string;
-    color: 'gold' | 'blue' | 'red';
-    delay: number;
-    trigger: boolean;
-    isPercentage?: boolean;
-}) => {
-    const colorClasses = {
-        gold: 'from-amber-500/10 to-amber-600/5 border-amber-500/20 hover:border-amber-500/40',
-        blue: 'from-blue-500/10 to-blue-600/5 border-blue-500/20 hover:border-blue-500/40',
-        red: 'from-red-500/10 to-red-600/5 border-red-500/20 hover:border-red-500/40',
-    };
-
-    const textColors = {
-        gold: 'text-amber-400',
-        blue: 'text-blue-400',
-        red: 'text-red-400',
-    };
-
-    const labelColors = {
-        gold: 'text-amber-300/60',
-        blue: 'text-blue-300/60',
-        red: 'text-red-300/60',
-    };
-
-    return (
-        <div className={`
-            relative overflow-hidden rounded-xl p-4
-            bg-gradient-to-br ${colorClasses[color]}
-            border transition-all duration-300
-            hover:transform hover:scale-[1.02]
-        `}>
-            {/* Subtle glow effect */}
-            <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500">
-                <div className={`absolute inset-0 bg-gradient-to-t from-transparent ${
-                    color === 'gold' ? 'to-amber-500/5' :
-                    color === 'blue' ? 'to-blue-500/5' :
-                    'to-red-500/5'
-                }`} />
-            </div>
-
-            <div className="relative z-10 text-center">
-                <div className="flex justify-center mb-2 opacity-70">
-                    {icon}
-                </div>
-                <div className={`text-xs font-medium uppercase tracking-widest ${labelColors[color]}`}>
-                    {label}
-                </div>
-                <div className="text-white font-semibold mt-1 truncate">
-                    {bossName}
-                </div>
-                <div className={`text-2xl font-bold ${textColors[color]} mt-1`}>
-                    {isPercentage ? formatPercentage(value) : (
-                        <AnimatedTimeCounter endValue={value} delay={delay} trigger={trigger} />
-                    )}
-                </div>
-                <div className={`text-xs ${labelColors[color]} mt-1`}>
-                    {difficulty}
-                </div>
-            </div>
-        </div>
-    );
 };
 
 export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLandingPageProps) {
@@ -449,68 +365,10 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                             trigger={animationTrigger}
                         />
 
-                        {/* Notable Fights Card */}
-                        <div
-                            className={`
-                                mythic-card rounded-2xl p-5 lg:p-6
-                                opacity-0 ${cardsVisible ? 'animate-fade-in-up' : ''}
-                            `}
-                            style={{ animationDelay: '200ms' }}
-                        >
-                            <div className="mythic-corner-ornament mythic-corner-tl" />
-                            <div className="mythic-corner-ornament mythic-corner-tr" />
-                            <div className="mythic-corner-ornament mythic-corner-bl" />
-                            <div className="mythic-corner-ornament mythic-corner-br" />
-
-                            <div className="relative z-10">
-                                <SectionHeader>Notable Fights</SectionHeader>
-
-                                <div className="space-y-3">
-                                    {teamStats.longestBossFightKill && teamStats.longestBossFightKill.name !== 'Placeholder' && (
-                                        <FightCard
-                                            icon={<TrophyIcon />}
-                                            label="Longest Kill"
-                                            bossName={teamStats.longestBossFightKill.name}
-                                            value={teamStats.longestBossFightKill.duration}
-                                            difficulty={teamStats.longestBossFightKill.difficulty}
-                                            color="gold"
-                                            delay={600}
-                                            trigger={animationTrigger}
-                                        />
-                                    )}
-                                    {teamStats.shortestBossFightKill && teamStats.shortestBossFightKill.name !== 'Placeholder' && teamStats.shortestBossFightKill.duration !== Number.MAX_VALUE && (
-                                        <FightCard
-                                            icon={<LightningIcon />}
-                                            label="Shortest Kill"
-                                            bossName={teamStats.shortestBossFightKill.name}
-                                            value={teamStats.shortestBossFightKill.duration}
-                                            difficulty={teamStats.shortestBossFightKill.difficulty}
-                                            color="blue"
-                                            delay={700}
-                                            trigger={animationTrigger}
-                                        />
-                                    )}
-                                    {teamStats.lowestWipePercentage && teamStats.lowestWipePercentage.name !== 'Placeholder' && teamStats.lowestWipePercentage.fightPercentage < 100 && (
-                                        <FightCard
-                                            icon={<SkullIcon />}
-                                            label="Closest Wipe"
-                                            bossName={teamStats.lowestWipePercentage.name}
-                                            value={teamStats.lowestWipePercentage.fightPercentage}
-                                            difficulty={teamStats.lowestWipePercentage.difficulty}
-                                            color="red"
-                                            delay={800}
-                                            trigger={animationTrigger}
-                                            isPercentage={true}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Team Roster Card - spans full width */}
                         <TeamRosterCard
                             roster={currentRoster}
-                            animationDelay={400}
+                            animationDelay={300}
                             cardsVisible={cardsVisible}
                         />
 
@@ -518,7 +376,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                         <HighlightsSection
                             teamId={team.id}
                             permissions={permissions}
-                            animationDelay={500}
+                            animationDelay={400}
                             cardsVisible={cardsVisible}
                         />
                     </div>
