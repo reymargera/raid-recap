@@ -6,7 +6,7 @@
     "generate": "graphql-codegen",
     "dev": "next dev",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build --minify && opennextjs-cloudflare deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "build": "npm run generate && next build",
     "start": "next start",
