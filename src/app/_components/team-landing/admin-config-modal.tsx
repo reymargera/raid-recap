@@ -234,11 +234,20 @@ export function AdminConfigModal({ isOpen, onClose, teamId, isAdmin, onSuccess }
     }
   };
 
-  // Filter roster by search
+  // Filter roster by search with sorting
   const filteredRoster = useMemo(() => {
-    if (!searchQuery.trim()) return roster;
+    // First, sort by appearances (descending), then by name
+    const sorted = [...roster].sort((a, b) => {
+      if (b.appearances !== a.appearances) {
+        return b.appearances - a.appearances;
+      }
+      return a.playerName.localeCompare(b.playerName);
+    });
+
+    // Then apply search filter
+    if (!searchQuery.trim()) return sorted;
     const query = searchQuery.toLowerCase();
-    return roster.filter(p =>
+    return sorted.filter(p =>
       p.playerName.toLowerCase().includes(query) ||
       p.playerClass.toLowerCase().includes(query) ||
       p.server.toLowerCase().includes(query)

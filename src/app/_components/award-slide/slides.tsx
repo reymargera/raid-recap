@@ -385,6 +385,7 @@ function generateAwardSlides(team: Team, awards: Award[], userOverall: boolean, 
                                 </div>
                                 <div className={`transition-all duration-500 ${isRevealed ? 'opacity-100' : 'opacity-0'}`}>
                                     <RankingChart
+                                        key={a.name}
                                         playerStats={playerStats}
                                         statSelection={a.stat}
                                         filter={a.playerFilter}

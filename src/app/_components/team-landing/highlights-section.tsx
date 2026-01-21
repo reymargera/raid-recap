@@ -9,8 +9,35 @@ import {
     getYouTubeThumbnail,
     getYouTubeEmbedUrl,
 } from '@/app/_config/highlights';
+import {
+    ManaforgeOmegaEncounters,
+    NerubarPalaceEncounters,
+    LiberationHoldEncounters
+} from '@/app/_config/encounters';
 import { AddHighlightModal } from './add-highlight-modal';
 import { TeamPermissions } from './use-team-permissions';
+
+// Create encounter order lookup for sorting
+const createEncounterOrderMap = (): Map<string, number> => {
+  const orderMap = new Map<string, number>();
+
+  // Manaforge (most recent raid) = priority 0-7
+  ManaforgeOmegaEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx);
+  });
+  // Liberation Hold = priority 100-107
+  LiberationHoldEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 100);
+  });
+  // Nerub-ar Palace = priority 200-207
+  NerubarPalaceEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 200);
+  });
+
+  return orderMap;
+};
+
+const ENCOUNTER_ORDER = createEncounterOrderMap();
 
 interface HighlightsSectionProps {
     teamId: string;
@@ -236,7 +263,7 @@ export default function HighlightsSection({
         return highlight.submittedBy === userId || permissions?.canDeleteAnyHighlight;
     };
 
-    // Group highlights by encounter
+    // Group highlights by encounter (existing logic)
     const groupedHighlights = highlights.reduce((acc, highlight) => {
         const key = highlight.encounterName;
         if (!acc[key]) {
@@ -245,6 +272,22 @@ export default function HighlightsSection({
         acc[key].push(highlight);
         return acc;
     }, {} as Record<string, HighlightWithSubmitter[]>);
+
+    // Sort within each encounter group by date (newest first)
+    Object.keys(groupedHighlights).forEach(encounterName => {
+        groupedHighlights[encounterName].sort((a, b) => {
+            const dateA = a.date ? new Date(a.date).getTime() : 0;
+            const dateB = b.date ? new Date(b.date).getTime() : 0;
+            return dateB - dateA;
+        });
+    });
+
+    // Create sorted entries array for rendering
+    const sortedEncounterEntries = Object.entries(groupedHighlights).sort(([nameA], [nameB]) => {
+        const orderA = ENCOUNTER_ORDER.get(nameA) ?? 999;
+        const orderB = ENCOUNTER_ORDER.get(nameB) ?? 999;
+        return orderA - orderB;
+    });
 
     // Show section even if no highlights (so users can add them)
     const hasHighlights = highlights.length > 0;
@@ -346,7 +389,7 @@ export default function HighlightsSection({
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            {Object.entries(groupedHighlights).map(([encounterName, encounterHighlights]) => (
+                            {sortedEncounterEntries.map(([encounterName, encounterHighlights]) => (
                                 <div key={encounterName}>
                                     <h3 className="text-sm text-white/50 uppercase tracking-wider mb-3">
                                         {encounterName}

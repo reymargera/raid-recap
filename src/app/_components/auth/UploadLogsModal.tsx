@@ -266,6 +266,7 @@ export function UploadLogsModal({ isOpen, onClose, teamId }: UploadLogsModalProp
                           value={input}
                           onChange={(e) => setInput(e.target.value)}
                           placeholder="https://www.warcraftlogs.com/reports/... or ABC123XYZ"
+                          autoComplete="off"
                           className="
                             w-full px-4 py-3 rounded-xl
                             bg-black/40 text-white placeholder-white/30

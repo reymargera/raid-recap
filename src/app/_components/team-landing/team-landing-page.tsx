@@ -216,15 +216,15 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
             <Image
                 src={`${publicBase}/backgrounds/manaforge/manaforge-broll-3.webp`}
                 alt="Team Background"
-                className="object-cover object-center fixed inset-0 -z-20"
+                className="object-cover object-center absolute inset-0 -z-20"
                 fill={true}
                 priority
             />
             {/* Multi-layer overlay for depth */}
-            <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/70 to-black/80" />
-            <div className="fixed inset-0 -z-10 bg-gradient-to-t from-purple-950/20 via-transparent to-transparent" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/70 to-black/80" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-purple-950/20 via-transparent to-transparent" />
             {/* Subtle vignette */}
-            <div className="fixed inset-0 -z-10" style={{
+            <div className="absolute inset-0 -z-10" style={{
                 background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
             }} />
 
