@@ -20,7 +20,7 @@ import HighlightsSection from "./highlights-section";
 import BossProgressionCard from "./boss-progression-card";
 import TeamRosterCard, { type RosterMember } from "./team-roster-card";
 import ActionBar from "./action-bar";
-import { BossStats } from "@/warcraft-logs/model/team-stats";
+import { BossStats, TeamStats } from "@/warcraft-logs/model/team-stats";
 
 interface FightOverview {
     name: string;
@@ -43,6 +43,8 @@ interface TeamStatsData {
     shortestBossFightKill: FightOverview;
     lowestWipePercentage: FightOverview;
     bossProgression?: Map<number, BossStats> | { __type: string; value: [number, BossStats][] };
+    topDamageTakenAbilities?: Map<string, any> | { __type: string; value: [string, any][] };
+    topDeathAbilities?: Map<string, any> | { __type: string; value: [string, any][] };
 }
 
 interface TeamData {
@@ -360,6 +362,7 @@ export default function TeamLandingPage({ team, teamStats, roster = [] }: TeamLa
                         {/* Boss Progression Card */}
                         <BossProgressionCard
                             bossProgression={teamStats.bossProgression}
+                            teamStats={teamStats as any}
                             animationDelay={100}
                             cardsVisible={cardsVisible}
                             trigger={animationTrigger}

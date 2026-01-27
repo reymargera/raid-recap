@@ -103,7 +103,8 @@ export function DPSMeterBar({
     maxValue,
     index,
     trigger = true,
-    isDeathCount = false
+    isDeathCount = false,
+    abilityId
 }: {
     ability: string;
     value: number;
@@ -111,6 +112,7 @@ export function DPSMeterBar({
     index: number;
     trigger?: boolean;
     isDeathCount?: boolean;
+    abilityId?: number;
 }) {
     const [animatedWidth, setAnimatedWidth] = useState(0);
     const percentage = (value / maxValue) * 100;
@@ -159,9 +161,20 @@ export function DPSMeterBar({
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
                 <div className="absolute inset-0 flex items-center justify-between px-3 text-sm">
-                    <span className="text-white font-medium truncate drop-shadow-lg">
-                        {index + 1}. {ability}
-                    </span>
+                    {abilityId ? (
+                        <a
+                            href={`https://www.wowhead.com/spell=${abilityId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="!text-white !visited:text-white font-medium truncate drop-shadow-lg hover:!text-white/80 hover:underline transition-colors"
+                        >
+                            {index + 1}. {ability}
+                        </a>
+                    ) : (
+                        <span className="text-white font-medium truncate drop-shadow-lg">
+                            {index + 1}. {ability}
+                        </span>
+                    )}
                     <span className="text-white font-mono font-bold drop-shadow-lg">
                         {formatValue(value)}
                     </span>

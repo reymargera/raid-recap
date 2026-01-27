@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { BossStats, BossDifficultyStats, DifficultyValue, DifficultyLevel } from '@/warcraft-logs/model/team-stats';
-import { formatTime } from '@/app/_components/shared/stat-components';
+import { BossStats, BossDifficultyStats, DifficultyValue, DifficultyLevel, TeamStats } from '@/warcraft-logs/model/team-stats';
+import { formatTime, DPSMeterBar, Tooltip } from '@/app/_components/shared/stat-components';
+import { AbilityTag, BOSS_ABILITIES } from '@/warcraft-logs/data/boss-abilities';
+import type { BossEncounterId } from '@/warcraft-logs/data/boss-abilities';
 
 interface BossDetailsModalProps {
     boss: { id: number; name: string };
     bossStats: BossStats | undefined;
+    teamStats?: TeamStats;
     onClose: () => void;
 }
 
@@ -127,9 +130,22 @@ const CloseIcon = () => (
     </svg>
 );
 
-export default function BossDetailsModal({ boss, bossStats, onClose }: BossDetailsModalProps) {
+// Tag filters to display (can be customized to show/hide specific tags)
+const TAG_FILTERS = [
+    { tag: AbilityTag.Avoidable, label: 'Avoidable', color: 'red' },
+    { tag: AbilityTag.Unavoidable, label: 'Unavoidable', color: 'cyan' },
+    { tag: AbilityTag.DoT, label: 'DoT', color: 'green' },
+    { tag: AbilityTag.AoE, label: 'AoE', color: 'orange' },
+    { tag: AbilityTag.Mechanic, label: 'Mechanic', color: 'purple' },
+    { tag: AbilityTag.TankBuster, label: 'Tank Buster', color: 'rose' },
+    { tag: AbilityTag.Frontal, label: 'Frontal', color: 'yellow' },
+    { tag: AbilityTag.Targeted, label: 'Targeted', color: 'blue' },
+] as const;
+
+export default function BossDetailsModal({ boss, bossStats, teamStats, onClose }: BossDetailsModalProps) {
     const [isClosing, setIsClosing] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [selectedTags, setSelectedTags] = useState<AbilityTag[]>([]);
 
     // Parse difficulties map
     const difficultiesMap = useMemo(() =>
@@ -184,6 +200,52 @@ export default function BossDetailsModal({ boss, bossStats, onClose }: BossDetai
         return earliest;
     }, [difficultiesMap]);
 
+    // Toggle a tag in the selected tags array
+    const toggleTag = (tag: AbilityTag) => {
+        setSelectedTags(prev =>
+            prev.includes(tag)
+                ? prev.filter(t => t !== tag)
+                : [...prev, tag]
+        );
+    };
+
+    // Get tag styling classes based on color
+    const getTagClasses = (color: string, isActive: boolean) => {
+        const baseClasses = 'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200';
+
+        if (isActive) {
+            const activeColors: { [key: string]: string } = {
+                red: 'bg-red-500/30 text-red-300 border border-red-400/50 shadow-[0_0_12px_rgba(239,68,68,0.4)]',
+                cyan: 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 shadow-[0_0_12px_rgba(34,211,238,0.4)]',
+                green: 'bg-green-500/30 text-green-300 border border-green-400/50 shadow-[0_0_12px_rgba(34,197,94,0.4)]',
+                orange: 'bg-orange-500/30 text-orange-300 border border-orange-400/50 shadow-[0_0_12px_rgba(249,115,22,0.4)]',
+                purple: 'bg-purple-500/30 text-purple-300 border border-purple-400/50 shadow-[0_0_12px_rgba(168,85,247,0.4)]',
+                rose: 'bg-rose-500/30 text-rose-300 border border-rose-400/50 shadow-[0_0_12px_rgba(244,63,94,0.4)]',
+                yellow: 'bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 shadow-[0_0_12px_rgba(234,179,8,0.4)]',
+                blue: 'bg-blue-500/30 text-blue-300 border border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.4)]',
+            };
+            return `${baseClasses} ${activeColors[color] || activeColors['purple']}`;
+        }
+
+        return `${baseClasses} bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white/80`;
+    };
+
+    // Get boss-specific damage and death data
+    const bossId = boss.id as BossEncounterId;
+    const damageAbilities = useMemo(() =>
+        teamStats ? teamStats.getTopDamageTakenAbilitiesForBoss(bossId, 5, selectedTags.length > 0 ? selectedTags : undefined) : [],
+        [teamStats, bossId, selectedTags]
+    );
+
+    const deathAbilities = useMemo(() =>
+        teamStats ? teamStats.getTopDeathAbilitiesForBoss(bossId, 5, selectedTags.length > 0 ? selectedTags : undefined) : [],
+        [teamStats, bossId, selectedTags]
+    );
+
+    // Calculate max values for bar scaling
+    const maxDamage = damageAbilities.length > 0 ? damageAbilities[0].total : 1;
+    const maxDeaths = deathAbilities.length > 0 ? deathAbilities[0].count : 1;
+
     // Close with animation
     const handleClose = useCallback(() => {
         setIsClosing(true);
@@ -234,7 +296,7 @@ export default function BossDetailsModal({ boss, bossStats, onClose }: BossDetai
             {/* Modal Container */}
             <div
                 className={`
-                    relative mythic-card rounded-2xl p-6 w-full max-w-md
+                    relative mythic-card rounded-2xl p-6 w-full max-w-2xl
                     ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}
                 `}
                 onClick={(e) => e.stopPropagation()}
@@ -399,6 +461,119 @@ export default function BossDetailsModal({ boss, bossStats, onClose }: BossDetai
                                     />
                                 );
                             })}
+                        </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent my-6" />
+
+                    {/* Damage Report Section */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-3">
+                            <h3 className="text-xs text-white/50 uppercase tracking-wider">
+                                Damage Report
+                            </h3>
+                            <Tooltip content="Data is aggregated across all difficulties">
+                                <svg className="w-4 h-4 text-white/40 hover:text-white/60 transition-colors cursor-help" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                </svg>
+                            </Tooltip>
+                        </div>
+
+                        {/* Tag Filter Controls */}
+                        <div className="mb-5">
+                            <div className="flex flex-wrap gap-2">
+                                {/* "All" filter - clear all tags */}
+                                <button
+                                    onClick={() => setSelectedTags([])}
+                                    className={getTagClasses('purple', selectedTags.length === 0)}
+                                >
+                                    All
+                                </button>
+
+                                {/* Dynamic tag filters - generated from TAG_FILTERS array */}
+                                {TAG_FILTERS.map(({ tag, label, color }) => (
+                                    <button
+                                        key={tag}
+                                        onClick={() => toggleTag(tag)}
+                                        className={getTagClasses(color, selectedTags.includes(tag))}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Damage Taken Abilities */}
+                        <div className="mb-5">
+                            <h4 className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                                Top Damage Sources
+                            </h4>
+
+                            {damageAbilities.length > 0 ? (
+                                <div className="space-y-2">
+                                    {damageAbilities.map((ability, index) => (
+                                            <div
+                                                key={`${ability.name}-${ability.guid}`}
+                                                className="opacity-0 animate-fade-in-up"
+                                                style={{ animationDelay: `${400 + index * 50}ms` }}
+                                            >
+                                                <DPSMeterBar
+                                                    ability={ability.name}
+                                                    value={ability.total}
+                                                    maxValue={maxDamage}
+                                                    index={index}
+                                                    trigger={true}
+                                                    isDeathCount={false}
+                                                    abilityId={ability.guid}
+                                                />
+                                            </div>
+                                        ))}
+                                </div>
+                            ) : (
+                                <div className="text-white/30 text-sm text-center py-4">
+                                    {selectedTags.length > 0
+                                        ? 'No abilities match the selected filters'
+                                        : 'No damage data available for this boss'
+                                    }
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Death Abilities */}
+                        <div>
+                            <h4 className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                                Top Death Causes
+                            </h4>
+
+                            {deathAbilities.length > 0 ? (
+                                <div className="space-y-2">
+                                    {deathAbilities.map((ability, index) => (
+                                            <div
+                                                key={`${ability.name}-${ability.guid}`}
+                                                className="opacity-0 animate-fade-in-up"
+                                                style={{ animationDelay: `${650 + index * 50}ms` }}
+                                            >
+                                                <DPSMeterBar
+                                                    ability={ability.name}
+                                                    value={ability.count}
+                                                    maxValue={maxDeaths}
+                                                    index={index}
+                                                    trigger={true}
+                                                    isDeathCount={true}
+                                                    abilityId={ability.guid}
+                                                />
+                                            </div>
+                                        ))}
+                                </div>
+                            ) : (
+                                <div className="text-white/30 text-sm text-center py-4">
+                                    {selectedTags.length > 0
+                                        ? 'No abilities match the selected filters'
+                                        : 'No death data available for this boss'
+                                    }
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

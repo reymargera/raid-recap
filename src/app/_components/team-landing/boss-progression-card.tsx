@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { ManaforgeOmegaEncounters } from '@/app/_config/encounters';
-import { BossStats, BossDifficultyStats, DifficultyValue, DifficultyLevel } from '@/warcraft-logs/model/team-stats';
+import { BossStats, BossDifficultyStats, DifficultyValue, DifficultyLevel, TeamStats } from '@/warcraft-logs/model/team-stats';
 import {
     CheckCircleIcon,
     SkullIcon,
@@ -12,6 +12,7 @@ import BossDetailsModal from './boss-details-modal';
 
 interface BossProgressionCardProps {
     bossProgression: Map<number, BossStats> | { __type: string; value: [number, BossStats][] } | undefined;
+    teamStats?: TeamStats;
     animationDelay?: number;
     cardsVisible?: boolean;
     trigger?: boolean;
@@ -31,6 +32,21 @@ function parseProgressionMap(bossProgression: BossProgressionCardProps['bossProg
         return new Map(bossProgression.value);
     }
     return new Map<number, BossStats>();
+}
+
+// Helper to reconstruct TeamStats from serialized data
+function reconstructTeamStats(teamStatsData?: TeamStats | any): TeamStats | undefined {
+    if (!teamStatsData) return undefined;
+    if (teamStatsData instanceof TeamStats) return teamStatsData;
+
+    // If it's serialized data, reconstruct using fromJson
+    try {
+        // Convert to JSON string if it's an object
+        const jsonStr = typeof teamStatsData === 'string' ? teamStatsData : JSON.stringify(teamStatsData);
+        return TeamStats.fromJson(jsonStr);
+    } catch {
+        return undefined;
+    }
 }
 
 // Helper to parse nested difficulties Map
@@ -235,11 +251,15 @@ const SectionHeader = ({ children, rightContent }: { children: React.ReactNode; 
 
 export default function BossProgressionCard({
     bossProgression,
+    teamStats,
     animationDelay = 100,
     cardsVisible = false,
 }: BossProgressionCardProps) {
     // Parse serialized Map if needed
     const progressionMap = useMemo(() => parseProgressionMap(bossProgression), [bossProgression]);
+
+    // Reconstruct TeamStats from serialized data if needed
+    const reconstructedTeamStats = useMemo(() => reconstructTeamStats(teamStats), [teamStats]);
 
     // Modal state for selected boss
     const [selectedBoss, setSelectedBoss] = useState<{ id: number; name: string } | null>(null);
@@ -344,6 +364,7 @@ export default function BossProgressionCard({
                 <BossDetailsModal
                     boss={selectedBoss}
                     bossStats={progressionMap.get(selectedBoss.id)}
+                    teamStats={reconstructedTeamStats}
                     onClose={() => setSelectedBoss(null)}
                 />
             )}

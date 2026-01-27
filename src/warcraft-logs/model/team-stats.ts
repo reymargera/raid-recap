@@ -1,6 +1,7 @@
 import { GetReportQuery, Report } from "@/__generated__/graphql";
 import { ManaforgeOmegaEncounters } from "@/app/_config/encounters";
 import crypto from "crypto";
+import { BOSS_ABILITIES, BossEncounterId, AbilityTag } from '../data/boss-abilities';
 
 interface DamageTakenAbility {
     name: string;
@@ -388,6 +389,78 @@ export class TeamStats {
 
     public getTopDeathAbilities(limit: number = 5): DeathAbility[] {
         return Array.from(this.topDeathAbilities.values())
+            .sort((a, b) => b.count - a.count)
+            .slice(0, limit);
+    }
+
+    /**
+     * Get top damage taken abilities for a specific boss, with optional tag filtering
+     * Boss filtering is ALWAYS applied - only shows abilities from the specified boss
+     * Tag filtering is optional additional filtering on top of boss filtering
+     */
+    public getTopDamageTakenAbilitiesForBoss(
+        bossId: BossEncounterId,
+        limit: number = 5,
+        filterTags?: AbilityTag[]
+    ): DamageTakenAbility[] {
+        // ALWAYS filter by boss - get boss abilities from mapping
+        const bossAbilities = BOSS_ABILITIES.get(bossId) ?? [];
+
+        // OPTIONAL: Additional tag filtering on top of boss filtering
+        let relevantAbilities = bossAbilities;
+        if (filterTags && filterTags.length > 0) {
+            relevantAbilities = bossAbilities.filter(ability =>
+                filterTags.every(tag => ability.tags.includes(tag))
+            );
+        }
+
+        // Create set of GUIDs for efficient lookup
+        const bossAbilityGuids = new Set(relevantAbilities.map(a => a.guid));
+
+        // Filter team-wide data by:
+        // 1. Boss ability GUIDs (always applied)
+        // 2. Exclude melee attacks (always applied)
+        return Array.from(this.topDamageTakenAbilities.values())
+            .filter(ability =>
+                bossAbilityGuids.has(ability.guid) &&
+                !ability.name.toLowerCase().includes('melee')
+            )
+            .sort((a, b) => b.total - a.total)
+            .slice(0, limit);
+    }
+
+    /**
+     * Get top death abilities for a specific boss, with optional tag filtering
+     * Boss filtering is ALWAYS applied - only shows abilities from the specified boss
+     * Tag filtering is optional additional filtering on top of boss filtering
+     */
+    public getTopDeathAbilitiesForBoss(
+        bossId: BossEncounterId,
+        limit: number = 5,
+        filterTags?: AbilityTag[]
+    ): DeathAbility[] {
+        // ALWAYS filter by boss - get boss abilities from mapping
+        const bossAbilities = BOSS_ABILITIES.get(bossId) ?? [];
+
+        // OPTIONAL: Additional tag filtering on top of boss filtering
+        let relevantAbilities = bossAbilities;
+        if (filterTags && filterTags.length > 0) {
+            relevantAbilities = bossAbilities.filter(ability =>
+                filterTags.every(tag => ability.tags.includes(tag))
+            );
+        }
+
+        // Create set of GUIDs for efficient lookup
+        const bossAbilityGuids = new Set(relevantAbilities.map(a => a.guid));
+
+        // Filter team-wide data by:
+        // 1. Boss ability GUIDs (always applied)
+        // 2. Exclude melee attacks (always applied)
+        return Array.from(this.topDeathAbilities.values())
+            .filter(ability =>
+                bossAbilityGuids.has(ability.guid) &&
+                !ability.name.toLowerCase().includes('melee')
+            )
             .sort((a, b) => b.count - a.count)
             .slice(0, limit);
     }

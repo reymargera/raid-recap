@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import TeamLandingPage from '../../_components/team-landing/team-landing-page';
 import { publicBase } from '@/app/_config/paths';
 import { RaidTeams } from '@/app/_config/teams';
+import { TeamStats } from '@/warcraft-logs/model/team-stats';
 
 interface RosterMember {
     playerId: number;
