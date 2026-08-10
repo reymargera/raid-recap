@@ -1,7 +1,8 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, type DB } from '@/lib/db';
 import { teams, playerStats } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
+import { CURRENT_SEASON } from '@/app/_config/season';
 
 /**
  * Team Service
@@ -52,12 +53,12 @@ export class TeamService {
   }
 
   /**
-   * Get unique players from playerStats for a team
+   * Get unique players from playerStats for a team, scoped to the current season
    * Returns player id, name, server, class, and appearance count
    */
   async getUniquePlayersForTeam(teamId: string) {
     const allPlayerStats = await this.db.query.playerStats.findMany({
-      where: eq(playerStats.teamId, teamId),
+      where: and(eq(playerStats.teamId, teamId), eq(playerStats.season, CURRENT_SEASON)),
     });
 
     // Group by playerId and count appearances

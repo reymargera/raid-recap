@@ -13,6 +13,7 @@ import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import { TeamService } from '@/lib/services/team-service';
 import { StatsService } from '@/lib/services/stats-service';
+import { CURRENT_SEASON } from '@/app/_config/season';
 
 /**
  * Get the D1 database binding from the Cloudflare environment
@@ -31,7 +32,7 @@ function getD1Database(): D1Database {
 export async function processReport(
   teamId: string,
   reportCode: string,
-  season: string = 'season-3'
+  season: string = CURRENT_SEASON
 ) {
   const d1 = getD1Database();
   const db = getDB(d1);

@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { z } from 'zod';
 import { authorizeProcessLogs } from '@/lib/auth-helpers';
+import { CURRENT_SEASON } from '@/app/_config/season';
 
 const processReportSchema = z.object({
   teamId: z.string().regex(/^\S+$/, 'Invalid team ID'),
   reportCode: z.string().regex(/^[a-zA-Z0-9]+$/, 'Invalid report code'),
-  season: z.string().optional().default('season-3'),
+  season: z.string().optional().default(CURRENT_SEASON),
 });
 
 /**

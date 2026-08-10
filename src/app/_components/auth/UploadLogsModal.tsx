@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from '@/lib/auth-client';
+import { CURRENT_SEASON } from '@/app/_config/season';
 
 interface UploadLogsModalProps {
   isOpen: boolean;
@@ -150,7 +151,7 @@ export function UploadLogsModal({ isOpen, onClose, teamId }: UploadLogsModalProp
         body: JSON.stringify({
           teamId,
           reportCode,
-          season: 'season-3',
+          season: CURRENT_SEASON,
         }),
       });
 

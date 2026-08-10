@@ -1,9 +1,10 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, type DB } from '@/lib/db';
 import { playerStats, teamStats, type Team } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { PlayerStats } from '@/warcraft-logs/model/player-stats';
 import { TeamStats } from '@/warcraft-logs/model/team-stats';
+import { CURRENT_SEASON } from '@/app/_config/season';
 
 export interface AttendanceConfig {
   attendancePercent: number;
@@ -28,14 +29,17 @@ export class StatsService {
    * Returns aggregated player stats and team stats
    */
   async getAggregatedStats(teamId: string) {
-    // Get all player stats for this team
+    // Get all player stats for this team, scoped to the current season -
+    // rows from prior seasons use different seasonalStats shapes and would
+    // corrupt aggregation (e.g. summing into a key that doesn't exist on an
+    // old record produces NaN) if merged in.
     const allPlayerStats = await this.db.query.playerStats.findMany({
-      where: eq(playerStats.teamId, teamId),
+      where: and(eq(playerStats.teamId, teamId), eq(playerStats.season, CURRENT_SEASON)),
     });
 
-    // Get all team stats for this team
+    // Get all team stats for this team, same season scoping
     const allTeamStats = await this.db.query.teamStats.findMany({
-      where: eq(teamStats.teamId, teamId),
+      where: and(eq(teamStats.teamId, teamId), eq(teamStats.season, CURRENT_SEASON)),
     });
 
     // Aggregate player stats by player ID
