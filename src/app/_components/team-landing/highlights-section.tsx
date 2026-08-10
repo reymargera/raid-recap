@@ -10,6 +10,10 @@ import {
     getYouTubeEmbedUrl,
 } from '@/app/_config/highlights';
 import {
+    VoidspireEncounters,
+    DreamriftEncounters,
+    MarchOnQuelDanasEncounters,
+    SporefallEncounters,
     ManaforgeOmegaEncounters,
     NerubarPalaceEncounters,
     LiberationHoldEncounters
@@ -21,17 +25,30 @@ import { TeamPermissions } from './use-team-permissions';
 const createEncounterOrderMap = (): Map<string, number> => {
   const orderMap = new Map<string, number>();
 
-  // Manaforge (most recent raid) = priority 0-7
-  ManaforgeOmegaEncounters.forEach((enc, idx) => {
+  // Midnight Season 1 tier (most recent, 4 concurrent raids) = priority 0-9
+  VoidspireEncounters.forEach((enc, idx) => {
     orderMap.set(enc.name, idx);
   });
-  // Liberation Hold = priority 100-107
-  LiberationHoldEncounters.forEach((enc, idx) => {
+  DreamriftEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 6);
+  });
+  MarchOnQuelDanasEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 7);
+  });
+  SporefallEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 9);
+  });
+  // Manaforge = priority 100-107
+  ManaforgeOmegaEncounters.forEach((enc, idx) => {
     orderMap.set(enc.name, idx + 100);
   });
-  // Nerub-ar Palace = priority 200-207
-  NerubarPalaceEncounters.forEach((enc, idx) => {
+  // Liberation Hold = priority 200-207
+  LiberationHoldEncounters.forEach((enc, idx) => {
     orderMap.set(enc.name, idx + 200);
+  });
+  // Nerub-ar Palace = priority 300-307
+  NerubarPalaceEncounters.forEach((enc, idx) => {
+    orderMap.set(enc.name, idx + 300);
   });
 
   return orderMap;

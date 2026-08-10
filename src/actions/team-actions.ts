@@ -94,7 +94,6 @@ export async function processReport(
     const reportData = await warcraftLogs.getReport({
       reportCode,
       bossFightIds,
-      trashFightIds,
       buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
       debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(', ')})`,
     });

@@ -1,5 +1,5 @@
 import { GetReportQuery, Report } from "@/__generated__/graphql";
-import { ManaforgeOmegaEncounters } from "@/app/_config/encounters";
+import { VoidspireEncounters, DreamriftEncounters, MarchOnQuelDanasEncounters, SporefallEncounters } from "@/app/_config/encounters";
 import crypto from "crypto";
 import { BOSS_ABILITIES, BossEncounterId, AbilityTag } from '../data/boss-abilities';
 
@@ -72,7 +72,13 @@ export class TeamStats {
     public topDeathAbilities: Map<string, DeathAbility> = new Map();
     public uniqueTalentLoadouts: Set<string> = new Set();
 
-    private allEncounters = [...ManaforgeOmegaEncounters];
+    // Midnight Season 1 tier has 4 concurrent raids
+    private allEncounters = [
+        ...VoidspireEncounters,
+        ...DreamriftEncounters,
+        ...MarchOnQuelDanasEncounters,
+        ...SporefallEncounters,
+    ];
 
     /**
      * Takes in top level report data to capture raid night specific data, such as total number of raid nights,

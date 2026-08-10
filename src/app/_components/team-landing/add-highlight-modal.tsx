@@ -5,6 +5,10 @@ import { useSession } from '@/lib/auth-client';
 import Image from 'next/image';
 import { getYouTubeVideoId, getYouTubeThumbnail } from '@/app/_config/highlights';
 import {
+  VoidspireEncounters,
+  DreamriftEncounters,
+  MarchOnQuelDanasEncounters,
+  SporefallEncounters,
   ManaforgeOmegaEncounters,
   LiberationHoldEncounters,
   NerubarPalaceEncounters,
@@ -21,6 +25,10 @@ type ModalState = 'idle' | 'loading' | 'success' | 'error';
 
 // Combine all encounters for the dropdown
 const allEncounters = [
+  { raid: 'Voidspire', encounters: VoidspireEncounters },
+  { raid: 'Dreamrift', encounters: DreamriftEncounters },
+  { raid: "March on Quel'Danas", encounters: MarchOnQuelDanasEncounters },
+  { raid: 'Sporefall', encounters: SporefallEncounters },
   { raid: 'Manaforge Omega', encounters: ManaforgeOmegaEncounters },
   { raid: 'Liberation Hold', encounters: LiberationHoldEncounters },
   { raid: "Nerub'ar Palace", encounters: NerubarPalaceEncounters },

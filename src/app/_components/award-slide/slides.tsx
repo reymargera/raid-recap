@@ -245,7 +245,7 @@ export default function AwardSlides(props: AwardSlidesProps) {
 };
 
 function generateTitleSlide(team: Team) {
-    return generateTextSlide(team.name, ["The War Within", "Season 3 Award Ceremony"]);
+    return generateTextSlide(team.name, ["Midnight", "Season 1 Award Ceremony"]);
 }
 
 function generateTeamStatsSlide(team: Team) {

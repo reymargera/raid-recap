@@ -2,12 +2,20 @@ import {WarcraftLogsClient} from "@/warcraft-logs/client";
 import {GetReportQuery, Report, ReportFight} from "@/__generated__/graphql";
 import {PlayerStats, Stats} from "@/warcraft-logs/model/player-stats";
 import {DpsLossDebuffs, PowerInfusion, TrackedDebuffs } from "@/app/_config/auras";
-import { ManaforgeOmegaEncounters, LiberationHoldEncounters, NerubarPalaceEncounters } from "@/app/_config/encounters";
+import { ManaforgeOmegaEncounters, LiberationHoldEncounters, NerubarPalaceEncounters, VoidspireEncounters, DreamriftEncounters, MarchOnQuelDanasEncounters, SporefallEncounters } from "@/app/_config/encounters";
 import { TeamConfig } from "@/app/_config/teams";
 import { TeamStats } from "@/warcraft-logs/model/team-stats";
 import { DuplicateDetector } from "@/warcraft-logs/duplicate-detector";
 
-const SEASON_START_TIME = new Date("2025-08-12T22:00:00Z").getTime();
+const SEASON_START_TIME = new Date("2026-03-17T05:00:00Z").getTime();
+
+// Midnight Season 1 tier has 4 concurrent raids
+const CurrentSeasonEncounters = [
+    ...VoidspireEncounters,
+    ...DreamriftEncounters,
+    ...MarchOnQuelDanasEncounters,
+    ...SporefallEncounters,
+];
 
 export type ReportFilter =  (r: Report) => boolean;
 
@@ -61,7 +69,6 @@ export async function fetchTeamStats({
         const reportData = await warcraftLogs.getReport({
             reportCode,
             bossFightIds: reportsSplitByFightType[reportCode].bossFightIds,
-            trashFightIds: reportsSplitByFightType[reportCode].trashFightIds,
             buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
             debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(", ")})`,
         });
@@ -99,7 +106,7 @@ export async function fetchTeamStats({
 }
 
 function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegmentation; } {
-    const seasonalEncounters = ManaforgeOmegaEncounters.map(e => e.id);
+    const seasonalEncounters = CurrentSeasonEncounters.map(e => e.id);
 
     const reportEntries = reports.map(r => {
         const fights: ReportFight[] = r?.fights
@@ -122,7 +129,7 @@ function splitReportFights(reports: Report[]): { [reportCode: string]: FightSegm
  * Split fights for a single report (exported for Server Actions)
  */
 export function splitFightsForReport(fights: ReportFight[]): FightSegmentation {
-    const seasonalEncounters = ManaforgeOmegaEncounters.map(e => e.id);
+    const seasonalEncounters = CurrentSeasonEncounters.map(e => e.id);
     const fightSegmentation: FightSegmentation = {bossFightIds: [], trashFightIds: []};
 
     for (const fight of fights) {
@@ -179,16 +186,8 @@ export function extractPlayerStatsFromLog(reportData: GetReportQuery) {
             friendlyFireDamageTaken: bossStats.friendlyFireTaken[playerId] ?? 0,
 
             seasonalStats: {
-                atomizerDeaths: bossStats.atomizerDeaths[playerId] ?? 0,
-                displacementMatrixApplications: bossStats.displacementMatrixApplications[playerId] ?? 0,
-                lairWeavingApplications: bossStats.lairWeavingApplications[playerId] ?? 0,
-                soulrendOrbApplications: bossStats.soulrendOrbApplications[playerId] ?? 0,
-                devourersIreApplications: bossStats.devourersIreApplications[playerId] ?? 0,
-                frailtyApplications: bossStats.frailtyApplications[playerId] ?? 0,
-                primeSequenceHits: bossStats.primeSequenceHits[playerId] ?? 0,
-                refractedEntropyDamage: bossStats.refractedEntropyDamage[playerId] ?? 0,
-                oblivionDeaths: bossStats.oblivionDeaths[playerId] ?? 0,
-                overchargedManaDeaths: bossStats.overchargedManaDeaths[playerId] ?? 0,
+                beamDeaths: bossStats.beamDeaths[playerId] ?? 0,
+                fearApplications: bossStats.fearApplications[playerId] ?? 0,
             }
         };
 
@@ -234,17 +233,9 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
     );
     const friendlyFireTaken = sumByPlayer(getTableDataEntries(report?.friendlyFire));
 
-    // Seasonal Stats - TWW Season 3
-    const atomizerDeaths = sumByPlayer(getTableDataEntries(report?.atomizerDeaths), (d: any) => 1);
-    const displacementMatrixApplications = sumByPlayer(getTableDataAuras(report?.displacementMatrixApplications), (d: any) => d.totalUses);
-    const lairWeavingApplications = sumByPlayer(getTableDataAuras(report?.lairWeavingApplications), (d: any) => d.totalUses);
-    const soulrendOrbApplications = sumByPlayer(getTableDataAuras(report?.soulrendOrbApplications), (d: any) => d.totalUses);
-    const devourersIreApplications = sumByPlayer(getTableDataAuras(report?.devourersIreApplications), (d: any) => d.totalUses);
-    const frailtyApplications = sumByPlayer(getTableDataAuras(report?.frailtyApplications), (d: any) => d.totalUses);
-    const primeSequenceHits = sumByPlayer(getTableDataEntries(report?.primeSequenceDamage), (d: any) => 1);
-    const refractedEntropyDamage = sumByPlayer(getTableDataEntries(report?.refractedEntropyDamage));
-    const oblivionDeaths = sumByPlayer(getTableDataEntries(report?.oblivionDeaths), (d: any) => 1);
-    const overchargedManaDeaths = sumByPlayer(getTableDataEntries(report?.overchargedManaDeaths), (d: any) => 1);
+    // Seasonal Stats - Midnight Season 1
+    const beamDeaths = sumByPlayer(getTableDataEntries(report?.beamDeaths), (d: any) => 1);
+    const fearApplications = sumByPlayer(getTableDataAuras(report?.fearApplications), (d: any) => d.totalUses);
 
     return {
         damage,
@@ -259,17 +250,9 @@ function extractPlayerStatsFromFightReport(report:  MaybeReportType) {
         friendlyFireDoneByName,
         friendlyFireTaken,
 
-        // Seasonal Stats - TWW Season 3
-        atomizerDeaths,
-        displacementMatrixApplications,
-        lairWeavingApplications,
-        soulrendOrbApplications,
-        devourersIreApplications,
-        frailtyApplications,
-        primeSequenceHits,
-        refractedEntropyDamage,
-        oblivionDeaths,
-        overchargedManaDeaths,
+        // Seasonal Stats - Midnight Season 1
+        beamDeaths,
+        fearApplications,
     };
 }
 

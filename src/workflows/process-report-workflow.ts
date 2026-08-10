@@ -131,7 +131,6 @@ export class ProcessReportWorkflow extends WorkflowEntrypoint<Env, ProcessReport
       const reportData = await warcraftLogs.getReport({
         reportCode,
         bossFightIds,
-        trashFightIds,
         buffFilter: `type = "applybuff" AND ability.id IN (${PowerInfusion})`,
         debuffFilter: `type = "applydebuff" AND ability.id IN (${TrackedDebuffs.join(', ')})`,
       });

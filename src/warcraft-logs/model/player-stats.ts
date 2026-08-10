@@ -30,7 +30,12 @@ export const TWWSeason3StatKeys = [
     'overchargedManaDeaths',
 ] as const;
 
-export const SeasonalStatKeys = [...TWWSeason3StatKeys];
+export const MidnightSeason1StatKeys = [
+    'beamDeaths',
+    'fearApplications',
+] as const;
+
+export const SeasonalStatKeys = [...MidnightSeason1StatKeys];
 
 // This is the list of seasonal stats for the TWW Season 2.
 export type TWWSeason2Stats = typeof TWWSeason2StatKeys[number];
@@ -64,7 +69,7 @@ export interface Stats extends CoreStats {
 
 export function generateBlankStats(): Stats {
     const seasonalStats: SeasonalStats = {} as SeasonalStats;
-    for (const key of TWWSeason3StatKeys) {
+    for (const key of MidnightSeason1StatKeys) {
         seasonalStats[key] = 0;
     }
 

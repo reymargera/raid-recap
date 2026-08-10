@@ -102,3 +102,56 @@ export const ManaforgeOmegaEncounters = [
         "name": "Dimensius, the All-Devouring"
     }
 ];
+
+// Midnight Season 1 - tier has 4 concurrent raids
+export const VoidspireEncounters = [
+    {
+        "id": 3176,
+        "name": "Imperator Averzian"
+    },
+    {
+        "id": 3177,
+        "name": "Vorasius"
+    },
+    {
+        "id": 3179,
+        "name": "Fallen-King Salhadaar"
+    },
+    {
+        "id": 3178,
+        "name": "Vaelgor & Ezzorak"
+    },
+    {
+        "id": 3180,
+        "name": "Lightblinded Vanguard"
+    },
+    {
+        "id": 3181,
+        "name": "Crown of the Cosmos"
+    }
+];
+
+export const DreamriftEncounters = [
+    {
+        "id": 3306,
+        "name": "Chimaerus the Undreamt God"
+    }
+];
+
+export const MarchOnQuelDanasEncounters = [
+    {
+        "id": 3182,
+        "name": "Belo'ren, Child of Al'ar"
+    },
+    {
+        "id": 3183,
+        "name": "Midnight Falls"
+    }
+];
+
+export const SporefallEncounters = [
+    {
+        "id": 3159,
+        "name": "Rotmire"
+    }
+];

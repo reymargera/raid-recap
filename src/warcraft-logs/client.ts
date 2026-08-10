@@ -135,7 +135,7 @@ export class WarcraftLogsClient {
         }
     }
 
-    public async getReport({reportCode, bossFightIds, trashFightIds, debuffFilter, buffFilter}: Omit<GetReportQueryVariables, 'skipTrashFights'>): Promise<GetReportQuery> {
+    public async getReport({reportCode, bossFightIds, debuffFilter, buffFilter}: GetReportQueryVariables): Promise<GetReportQuery> {
         console.log(`Executing request to fetch logs for report ${reportCode}`);
 
         let buffStart: any = null;
@@ -145,20 +145,16 @@ export class WarcraftLogsClient {
         const allDebuffData: any[] = [];
         let coreReport: GetReportQuery | null = null;
 
-        // Possible that there are no trash fights due to lockouts directly at boss
-        const skipTrashFights = trashFightIds === null || trashFightIds === undefined || (Array.isArray(trashFightIds) && trashFightIds.length === 0);
         do {
             const result: ApolloQueryResult<GetReportQuery> = await this.scheduleQuery(() => this.client.query({
                 query: GetReportDocument,
                 variables: {
                     reportCode,
                     bossFightIds,
-                    trashFightIds,
                     debuffFilter,
                     buffFilter,
                     buffStart,
                     debuffStart,
-                    skipTrashFights,
                 }
             }));
 

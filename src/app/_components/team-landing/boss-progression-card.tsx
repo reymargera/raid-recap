@@ -1,7 +1,15 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ManaforgeOmegaEncounters } from '@/app/_config/encounters';
+import { VoidspireEncounters, DreamriftEncounters, MarchOnQuelDanasEncounters, SporefallEncounters } from '@/app/_config/encounters';
+
+// Midnight Season 1 tier has 4 concurrent raids
+const CurrentTierEncounters = [
+    ...VoidspireEncounters,
+    ...DreamriftEncounters,
+    ...MarchOnQuelDanasEncounters,
+    ...SporefallEncounters,
+];
 import { BossStats, BossDifficultyStats, DifficultyValue, DifficultyLevel, TeamStats } from '@/warcraft-logs/model/team-stats';
 import {
     CheckCircleIcon,
@@ -197,9 +205,9 @@ const ProgressionSummary = ({
     progressionMap: Map<number, BossStats>;
     selectedDifficulty: DifficultyValue;
 }) => {
-    const totalBosses = ManaforgeOmegaEncounters.length;
+    const totalBosses = CurrentTierEncounters.length;
 
-    const killedCount = ManaforgeOmegaEncounters.filter(boss => {
+    const killedCount = CurrentTierEncounters.filter(boss => {
         const bossStats = progressionMap.get(boss.id);
         if (!bossStats) return false;
 
@@ -331,7 +339,7 @@ export default function BossProgressionCard({
 
                 {/* Boss List */}
                 <div className="space-y-2 mb-4">
-                    {ManaforgeOmegaEncounters.map((boss, index) => {
+                    {CurrentTierEncounters.map((boss, index) => {
                         const stats = getBossStats(boss.id);
                         const isKilled = stats ? stats.kills > 0 : false;
 

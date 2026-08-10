@@ -130,76 +130,18 @@ const mostMechanicsGiven: Award = {
     background: 'manaforge/manaforge-broll-4.webp',
 };
 
-const disenchanted: Award = {
-    name: 'Disenchanted',
-    description: 'Number Of Deaths From Arcano-Matrix Atomizer Energy Field',
-    stat: (p) => p.getSeaontalStat('atomizerDeaths', 'Boss'),
+const beamed: Award = {
+    name: 'Beamed',
+    description: 'Number Of Deaths From Beam Mechanics This Tier',
+    stat: (p) => p.getSeaontalStat('beamDeaths', 'Boss'),
     supportsAveraging: false,
-    background: 'manaforge/plexus-1.webp',
 };
 
-const trapCardActivated: Award = {
-    name: 'Trap Card Activated',
-    description: 'Number Of Times Stepped On Displacement Matrix Traps',
-    stat: (p) => p.getSeaontalStat('displacementMatrixApplications', 'Boss'),
+const momPickMeUp: Award = {
+    name: 'Mom Pick Me Up Im Scared',
+    description: 'Number Of Times Feared',
+    stat: (p) => p.getSeaontalStat('fearApplications', 'Boss'),
     supportsAveraging: false,
-    background: 'manaforge/plexus-2.webp',
-};
-
-const tangledUp: Award = {
-    name: 'Tangled Up',
-    description: 'Number Of Times Caught In Lair Weaving',
-    stat: (p) => p.getSeaontalStat('lairWeavingApplications', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/loomithar-1.webp',
-};
-
-const hungryHungryIre: Award = {
-    name: 'Hungry, Hungry, Ire',
-    description: 'Number Of Devourer\'s Ire Debuff Applications',
-    stat: (p) => p.getSeaontalStat('devourersIreApplications', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/soul-hunters-1.webp',
-};
-
-const nomNomNom: Award = {
-    name: 'Nom Nom Nom',
-    description: 'Number Of Soulrend Orbs And Prime Sequence Hits Eaten',
-    stat: (p) => p.getSeaontalStat('soulrendOrbApplications', 'Boss') + p.getSeaontalStat('primeSequenceHits', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/soulbinder-1.webp',
-};
-
-const soulMate: Award = {
-    name: 'Soul Mate',
-    description: 'Number Of Frailty Soul Fragments Collected',
-    stat: (p) => p.getSeaontalStat('frailtyApplications', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/soul-hunters-2.webp',
-};
-
-const beamMeDownScotty: Award = {
-    name: 'Beam Me Down, Scotty',
-    description: 'Total Damage Taken From Refracted Entropy Beams',
-    stat: (p) => p.getSeaontalStat('refractedEntropyDamage', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/fractillus-2.webp',
-};
-
-const intoTheVoid: Award = {
-    name: 'Into the Void',
-    description: 'Number Of Deaths From Walking Into Dimensius',
-    stat: (p) => p.getSeaontalStat('oblivionDeaths', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/dimensius-1.webp',
-};
-
-const zapped: Award = {
-    name: 'Zapped',
-    description: 'Number Of Deaths From Overcharged Mana On Trash',
-    stat: (p) => p.getSeaontalStat('overchargedManaDeaths', 'Boss'),
-    supportsAveraging: false,
-    background: 'manaforge/manaforge-broll-7.webp',
 };
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -222,15 +164,8 @@ export const StaticAwards: Award[] = [
 ];
 
 export const SeasonalAwards: Award[] = [
-    disenchanted,
-    trapCardActivated,
-    tangledUp,
-    hungryHungryIre,
-    nomNomNom,
-    soulMate,
-    beamMeDownScotty,
-    intoTheVoid,
-    zapped,
+    beamed,
+    momPickMeUp,
 ];
 
 export const CurrentAwards = [...StaticAwards, ...SeasonalAwards];
