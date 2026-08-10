@@ -510,19 +510,19 @@ export class TeamStats {
         this.totalRaidNights = parsedStats.totalRaidNights || 0;
         this.timeSpentPullingBosses = parsedStats.timeSpentPullingBosses || 0;
         this.totalTime = parsedStats.totalTime || 0;
-        this.longestBossFightKill = parsedStats.longestBossFightKill;
-        this.shortestBossFightKill = parsedStats.shortestBossFightKill;
-        this.lowestWipePercentage = parsedStats.lowestWipePercentage;
+        this.longestBossFightKill = parsedStats.longestBossFightKill || this.longestBossFightKill;
+        this.shortestBossFightKill = parsedStats.shortestBossFightKill || this.shortestBossFightKill;
+        this.lowestWipePercentage = parsedStats.lowestWipePercentage || this.lowestWipePercentage;
         this.totalResets = parsedStats.totalResets || 0;
         this.totalPulls = parsedStats.totalPulls || 0;
         this.totalFailedResets = parsedStats.totalFailedResets || 0;
         this.totalBossKills = parsedStats.totalBossKills || 0;
         this.bossProgression = parsedStats.bossProgression || new Map();
-        this.uniqueCharacters = parsedStats.uniqueCharacters;
-        this.uniqueSpecs = parsedStats.uniqueSpecs;
-        this.topDamageTakenAbilities = parsedStats.topDamageTakenAbilities;
-        this.topDeathAbilities = parsedStats.topDeathAbilities;
-        this.uniqueTalentLoadouts = parsedStats.uniqueTalentLoadouts;
+        this.uniqueCharacters = parsedStats.uniqueCharacters || new Set();
+        this.uniqueSpecs = parsedStats.uniqueSpecs || new Set();
+        this.topDamageTakenAbilities = parsedStats.topDamageTakenAbilities || new Map();
+        this.topDeathAbilities = parsedStats.topDeathAbilities || new Map();
+        this.uniqueTalentLoadouts = parsedStats.uniqueTalentLoadouts || new Set();
 
         return this;
     }
