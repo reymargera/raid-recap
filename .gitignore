@@ -43,6 +43,10 @@ worker-configuration.d.ts
 # local data storage
 /data/
 
+# wow.export game data dumps (see wow-exports/README.md) - large, regenerated each season, never committed
+/wow-exports/*
+!/wow-exports/README.md
+
 # vercel
 .vercel
 
