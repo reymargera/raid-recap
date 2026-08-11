@@ -14,7 +14,7 @@ const attendance: Award = {
     description: 'Total Number Of Appearances Across All Raid Nights',
     stat: (p) => p.appearances('Boss'),
     supportsAveraging: false,
-    background: 'manaforge/manaforge-broll-1.webp',
+    background: 'midnight-season-1/midnight-broll-1.webp',
 }
 
 const mostDeathsOnBoss: Award = {
@@ -22,7 +22,7 @@ const mostDeathsOnBoss: Award = {
     description: 'Most Deaths On Boss Fights Before Wipe Is Called',
     stat: (p) => p.deaths('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-2.webp',
+    background: 'midnight-season-1/midnight-broll-2.webp',
 };
 
 const mostDamageOnBoss: Award = {
@@ -30,7 +30,7 @@ const mostDamageOnBoss: Award = {
     description: 'Most Damage Done To Bosses',
     stat: (p) => p.damageDone('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-4.webp',
+    background: 'midnight-season-1/midnight-broll-3.webp',
 };
 
 const mostHealingOnBoss: Award = {
@@ -38,7 +38,7 @@ const mostHealingOnBoss: Award = {
     description: 'Most Healing Done On Boss Encounters',
     stat: (p) => p.healingDone('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-5.webp',
+    background: 'midnight-season-1/midnight-broll-4.webp',
 };
 
 const mostHealthStonesUsed: Award = {
@@ -46,7 +46,7 @@ const mostHealthStonesUsed: Award = {
     description: 'Most Health Stones Consumed Throughout All Encounters',
     stat: (p) => p.healthStonesUsed(),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-3.webp',
+    background: 'midnight-season-1/midnight-broll-5.webp',
 };
 
 const mostPotionsUsed: Award = {
@@ -54,7 +54,7 @@ const mostPotionsUsed: Award = {
     description: 'Most Potions Consumed Throughout All Encounters',
     stat: (p) => p.potionsUsed(),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-6.webp',
+    background: 'midnight-season-1/midnight-broll-6.webp',
 };
 
 const mostCasts: Award = {
@@ -62,7 +62,7 @@ const mostCasts: Award = {
     description: 'Most Casts Throughout All Encounters',
     stat: (p) => p.casts(),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-7.webp',
+    background: 'midnight-season-1/midnight-broll-7.webp',
 };
 
 const mostInterrupts: Award = {
@@ -70,7 +70,7 @@ const mostInterrupts: Award = {
     description: 'Most Interrupts Throughout All Encounters',
     stat: (p) => p.interrupts(),
     supportsAveraging: true,
-    background: 'manaforge/forgeweaver-1.webp',
+    background: 'midnight-season-1/sporefall-rotmire-1.webp',
 };
 
 const mostDispels: Award = {
@@ -78,7 +78,7 @@ const mostDispels: Award = {
     description: 'Most Dispels Throughout All Encounters',
     stat: (p) => p.dispels(),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-10.webp'
+    background: 'midnight-season-1/midnight-broll-1.webp'
 };
 
 const mostDamageTaken: Award = {
@@ -86,7 +86,7 @@ const mostDamageTaken: Award = {
     description: 'Most Damage Taken On Boss Encounters',
     stat: (p) => p.damageTaken('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/dimensius-1.webp',
+    background: 'midnight-season-1/midnight-broll-2.webp',
 };
 
 const mostDamageReduced: Award = {
@@ -94,7 +94,7 @@ const mostDamageReduced: Award = {
     description: 'Most Damage Reduced On Boss Encounters',
     stat: (p) => p.damageAbsorbed('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-8.webp',
+    background: 'midnight-season-1/midnight-broll-3.webp',
 };
 
 const mostPowerInfusions: Award = {
@@ -103,7 +103,7 @@ const mostPowerInfusions: Award = {
     stat: (p) => p.powerInfusions('Boss'),
     playerFilter: (p) => p.playerClass.toLowerCase() !== 'priest',
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-2.webp',
+    background: 'midnight-season-1/midnight-broll-4.webp',
 };
 
 const mostFriendlyFire: Award = {
@@ -111,7 +111,7 @@ const mostFriendlyFire: Award = {
     description: 'Most Friendly Fire Damage Done',
     stat: (p) => p.friendlyFireDamageDone('Boss'),
     supportsAveraging: false,
-    background: 'manaforge/nexus-king-1.webp',
+    background: 'midnight-season-1/midnight-broll-5.webp',
 };
 
 const mostFriendlyFireDamageTaken: Award = {
@@ -119,7 +119,7 @@ const mostFriendlyFireDamageTaken: Award = {
     description: 'Most Friendly Fire Damage Taken',
     stat: (p) => p.friendlyFireDamageTaken('Boss'),
     supportsAveraging: false,
-    background: 'manaforge/nexus-king-1.webp',
+    background: 'midnight-season-1/midnight-broll-6.webp',
 };
 
 const mostMechanicsGiven: Award = {
@@ -127,7 +127,7 @@ const mostMechanicsGiven: Award = {
     description: 'Target Of Mechanics That Result In DPS Loss',
     stat: (p) => p.mechanicsTaken('Boss'),
     supportsAveraging: true,
-    background: 'manaforge/manaforge-broll-4.webp',
+    background: 'midnight-season-1/midnight-broll-7.webp',
 };
 
 const beamed: Award = {
@@ -135,6 +135,7 @@ const beamed: Award = {
     description: 'Number Of Deaths From Beam Mechanics This Tier',
     stat: (p) => p.getSeaontalStat('beamDeaths', 'Boss'),
     supportsAveraging: false,
+    background: 'midnight-season-1/midnight-broll-2.webp',
 };
 
 const momPickMeUp: Award = {
@@ -142,6 +143,7 @@ const momPickMeUp: Award = {
     description: 'Number Of Times Feared',
     stat: (p) => p.getSeaontalStat('fearApplications', 'Boss'),
     supportsAveraging: false,
+    background: 'midnight-season-1/midnight-broll-3.webp',
 };
 
 // Awards not tied to any seasonal encounters and can be leveraged any time
@@ -179,7 +181,7 @@ export const mostWeakAuraOutdates: Award = {
     stat: (p) => p.id == 247519581 ? 36 : 0,
     playerFilter: (p) => p.id == 247519581,
     supportsAveraging: false,
-    background: 'manaforge/manaforge-broll-10.webp',
+    background: 'midnight-season-1/sporefall-rotmire-1.webp',
 };
 
 export const mostSabatoges: Award = {
@@ -188,7 +190,7 @@ export const mostSabatoges: Award = {
     stat: (p) => p.id == 259802310 ? p.appearances() : 0,
     playerFilter: (p) => p.id == 259802310,
     supportsAveraging: false,
-    background: 'manaforge/manaforge-broll-10.webp',
+    background: 'midnight-season-1/midnight-broll-1.webp',
 }
 
 

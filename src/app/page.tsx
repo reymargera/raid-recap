@@ -107,7 +107,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col relative font-[var(--font-outfit)]">
       {/* Background with enhanced overlay */}
       <Image
-        src={`${publicBase}/backgrounds/manaforge/manaforge-broll-7.webp`}
+        src={`${publicBase}/backgrounds/midnight-season-1/midnight-splash.webp`}
         alt="Background Image"
         className="object-cover object-center fixed inset-0 -z-20"
         fill={true}

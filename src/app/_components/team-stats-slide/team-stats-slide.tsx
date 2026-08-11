@@ -72,7 +72,7 @@ export default function TeamStatsSlide({ teamStats, teamName }: TeamStatsSlidePr
         <div className="team-inforgraphic-container" ref={slideRef}>
             <div className="min-h-screen flex flex-col relative">
                 <Image
-                    src={`${publicBase}/backgrounds/manaforge/manaforge-broll-4.webp`}
+                    src={`${publicBase}/backgrounds/midnight-season-1/midnight-broll-5.webp`}
                     alt="Team Stats Background"
                     className="slide-background object-cover object-center"
                     fill={true}
