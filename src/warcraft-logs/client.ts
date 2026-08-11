@@ -23,6 +23,8 @@ export class WarcraftLogsClient {
     private client: ApolloClient<any>;
 
     constructor() {
+        // TODO: Apollo Client 3.14 deprecated passing uri/headers directly here in favor of
+        // an explicit HttpLink - still works, just prints a console warning. Low priority.
         this.client = new ApolloClient({
             uri: 'https://www.warcraftlogs.com/api/v2/client',
             headers: {
