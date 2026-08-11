@@ -13,7 +13,7 @@ export const CoreReportFragment = gql`
         dispels: table (fightIDs: $bossFightIds, dataType: Dispels)
         interupts: table (fightIDs: $bossFightIds, dataType: Interrupts)
         damageTaken: table (fightIDs: $bossFightIds, dataType: DamageTaken)
-        friendlyFire: table(fightIDs: $bossFightIds, dataType: DamageTaken filterExpression: "source.type = 'Player' and ability.name != 'Faulty Zap' and source.id != target.id")
+        friendlyFire: table(fightIDs: $bossFightIds, dataType: DamageTaken filterExpression: "source.type = 'Player' and ability.name != 'Blessing of Sacrifice' and ability.name != 'Shifting Sands' and source.id != target.id")
     }
 `;
 
